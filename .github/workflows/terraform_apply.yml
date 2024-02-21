@@ -42,7 +42,7 @@ jobs:
           role-to-assume: ${{ vars.TERRAFORM_DEPLOY_ROLE_ARN }}
           aws-region: ca-central-1
 
-      - name: deploying workbc-dam using terraform
+      - name: deploying bcparks-dam using terraform
         run: |
           cd src/terraform/
           cat <<EOF > backend.tf
@@ -59,3 +59,5 @@ jobs:
 
           terraform init -input=false
           terraform apply -auto-approve -input=false
+        env:
+          TF_VAR_branch_name: ${{ env.BRANCH_NAME }}
