@@ -84,3 +84,4 @@ $comments_resource_enable = true;
 $api_upload_urls = [];
 
 $use_native_input_for_date_field = true;
+
