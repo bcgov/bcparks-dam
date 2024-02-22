@@ -31,7 +31,7 @@ $ghostscript_path = '/usr/bin';
 $ffmpeg_path = '/usr/bin';
 $exiftool_path = '/usr/bin';
 $homeanim_folder = 'filestore/system/slideshow_a383ab9e2f595db';
-$php_path="/opt/bitnami/php/bin";
+$php_path = '/opt/bitnami/php/bin';
 
 $log_resource_access = false; # Log resource access
 $log_search_performance = false; # Log search performance information
@@ -49,7 +49,7 @@ This provides a mechanism for enabling new features for new installations withou
 */
 
 // Set imagemagick default for new installs to expect the newer version with the sRGB bug fixed.
-$imagemagick_colorspace = "sRGB";
+$imagemagick_colorspace = 'sRGB';
 
 $contact_link = false;
 
