@@ -35,7 +35,7 @@ variable "asg_name" {
 
 variable "app_port" {
   description = "Port exposed by the VM image to redirect traffic to"
-  default     = 80
+  default     = 443
 }
 
 variable "health_check_path" {
