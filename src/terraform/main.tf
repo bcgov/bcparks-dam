@@ -21,7 +21,7 @@ data "aws_alb_listener" "web" {
 resource "aws_alb_target_group" "app" {
   name                 = "bcparks-dam-vm"
   port                 = var.app_port
-  protocol             = "HTTP"
+  protocol             = "HTTPS"
   vpc_id               = module.network.aws_vpc.id
   target_type          = "instance"
   deregistration_delay = 30
@@ -29,7 +29,7 @@ resource "aws_alb_target_group" "app" {
   health_check {
     healthy_threshold   = "2"
     interval            = "5"
-    protocol            = "HTTP"
+    protocol            = "HTTPS"
     matcher             = "200"
     timeout             = "3"
     path                = var.health_check_path
