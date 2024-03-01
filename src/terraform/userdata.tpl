@@ -68,6 +68,8 @@ sudo chmod -R 775 /opt/bitnami/resourcespace/filestore/system
 # Download all the files from our git repo to get our customized copy of config.php
 #
 echo '### Customizing the Bitnami Resourcespace config ###'
+sudo apt-get update
+sudo apt-get install -y git
 cd /home/bitnami/repos
 sudo -u bitnami git clone ${git_url} bcparks-dam
 # Download from another branch
