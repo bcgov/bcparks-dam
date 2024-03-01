@@ -66,7 +66,7 @@ sudo chmod -R 775 /opt/bitnami/resourcespace/filestore/system
 
 # CUSTOMIZE THE BITNAMI RESOURCESPACE CONFIG
 # Download all the files from our git repo to get our customized copy of config.php
-#
+# Updated 2024-03-01 11:10
 echo '### Customizing the Bitnami Resourcespace config ###'
 sudo apt-get update
 sudo apt-get install -y git
