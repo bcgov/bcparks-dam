@@ -58,6 +58,8 @@ $home_slideshow_width = 1920;
 $home_slideshow_height = 1080;
 
 $themes_simple_view = true;
+$xlthumbs = true;
+$image_preview_zoom = true;
 
 $stemming = true;
 $case_insensitive_username = true;
@@ -72,7 +74,11 @@ $ffmpeg_preview_extension = 'mp4';
 $ffmpeg_preview_options = '-f mp4 -b:v 1200k -b:a 64k -ac 1 -c:v libx264 -pix_fmt yuv420p -profile:v baseline -level 3 -c:a aac -strict -2';
 
 $daterange_search = true;
+
 $upload_then_edit = true;
+$enable_related_resources = true; 
+$relate_on_upload = true;
+$relate_on_upload_default = true;
 
 $purge_temp_folder_age = 90;
 $filestore_evenspread = true; # enable/disable even spread mode
@@ -80,6 +86,9 @@ $filestore_migrate = true; # allows existing, non-even spread file structure to 
 $originals_separate_storage = false; # separate storage of originals from previews
 
 $comments_resource_enable = true;
+$collection_commenting = true;
+
+$check_upgrade_available = false;
 
 $api_upload_urls = [];
 
