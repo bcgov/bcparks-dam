@@ -76,7 +76,7 @@ $ffmpeg_preview_options = '-f mp4 -b:v 1200k -b:a 64k -ac 1 -c:v libx264 -pix_fm
 $daterange_search = true;
 
 $upload_then_edit = true;
-$enable_related_resources = true; 
+$enable_related_resources = true;
 $relate_on_upload = true;
 $relate_on_upload_default = true;
 
