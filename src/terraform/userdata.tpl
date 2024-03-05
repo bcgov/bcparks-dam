@@ -16,8 +16,8 @@ sudo dpkg -i amazon-ssm-agent.deb
 # We need to build this from source for Debian Linux; it isn't available, otherwise.
 #
 echo '### Installing amazon-efs-utils ###'
-sudo apt update -y
-sudo apt-get install git binutils -y
+sudo apt-get -y update
+sudo apt-get -y install git binutils
 sudo -u bitnami mkdir -p /home/bitnami/repos
 cd /home/bitnami/repos
 sudo -u bitnami git clone https://github.com/aws/efs-utils efs-utils
@@ -43,7 +43,7 @@ sudo chmod -R 775 filestore*
 # the AWS web console to upload and download data into this bucket from your computer.
 #
 echo '### Mounting the S3 bucket ###'
-sudo apt-get install s3fs -y
+sudo apt-get -y install s3fs
 sudo mkdir /mnt/s3-backup
 sudo s3fs bcparks-dam-${target_env}-backup /mnt/s3-backup -o iam_role=BCParks-Dam-EC2-Role -o use_cache=/tmp -o allow_other -o uid=0 -o gid=1 -o mp_umask=002  -o multireq_max=5 -o use_path_request_style -o url=https://s3-${aws_region}.amazonaws.com
 #sudo -u bitnami s3fs bcparks-dam-${target_env}-backup /mnt/s3-backup \
@@ -68,8 +68,7 @@ sudo chmod -R 775 /opt/bitnami/resourcespace/filestore/system
 # Download all the files from our git repo to get our customized copy of config.php
 # Updated 2024-03-01 11:10
 echo '### Customizing the Bitnami Resourcespace config ###'
-sudo apt-get update
-sudo apt-get install -y git
+sudo apt-get -y install git
 cd /home/bitnami/repos
 sudo -u bitnami git clone ${git_url} bcparks-dam
 # Download from another branch
@@ -184,8 +183,7 @@ export PATH=$PATH:/opt/bitnami
 
 # Install APC User Cache (APCu)
 # https://pecl.php.net/package/APCu
-sudo apt-get update
-sudo apt-get install build-essential autoconf
+sudo apt-get -y install build-essential autoconf
 cd /tmp
 sudo mkdir apcu
 cd apcu
