@@ -4,26 +4,86 @@ provider "aws" {
   region = var.aws_region
 }
 
-# Internal ALB 
 
-# Use the default ALB that is pre-provisioned as part of the account creation
-# This ALB has all traffic on *.LICENSE-PLATE-ENV.nimbus.cloud.gov.bc.ca routed to it
-data "aws_alb" "main" {
-  name = var.alb_name
+# Gather VPC information from the network module
+
+module "network" {
+  source      = "git::https://github.com/BCDevOps/terraform-octk-aws-sea-network-info.git//?ref=master"
+  environment = var.target_env
 }
 
-# Redirect all traffic from the ALB to the target group
-data "aws_alb_listener" "web" {
-  load_balancer_arn = data.aws_alb.main.id
-  port              = "443"
+# CloudFront distribution for the ALB
+
+resource "aws_cloudfront_origin_access_identity" "oai" {
+  comment = "OAI for ${var.app_name} site."
 }
 
+# API Gateway
+
+resource "aws_apigatewayv2_vpc_link" "app" {
+  name               = var.app_name
+  subnet_ids         = module.network.aws_subnet_ids.web.ids
+  security_group_ids = [module.network.aws_security_groups.web.id]
+}
+
+resource "aws_apigatewayv2_api" "app" {
+  name          = var.app_name
+  protocol_type = "HTTP"
+}
+
+resource "aws_apigatewayv2_integration" "app" {
+  api_id             = aws_apigatewayv2_api.app.id
+  integration_type   = "HTTP_PROXY"
+  connection_id      = aws_apigatewayv2_vpc_link.app.id
+  connection_type    = "VPC_LINK"
+  integration_method = "ANY"
+  integration_uri    = aws_alb_listener.internal.arn
+}
+
+resource "aws_apigatewayv2_route" "app" {
+  api_id    = aws_apigatewayv2_api.app.id
+  route_key = "ANY /{proxy+}"
+  target    = "integrations/${aws_apigatewayv2_integration.app.id}"
+}
+
+resource "aws_apigatewayv2_stage" "app" {
+  api_id      = aws_apigatewayv2_api.app.id
+  name        = "$default"
+  auto_deploy = true
+}
+
+
+# Internal ALB
+
+resource "aws_alb" "app-alb" {
+  name                             = var.app_name
+  internal                         = true
+  subnets                          = module.network.aws_subnet_ids.web.ids
+  security_groups                  = [module.network.aws_security_groups.web.id]
+  enable_cross_zone_load_balancing = true
+  tags                             = local.common_tags
+
+  lifecycle {
+    ignore_changes = [access_logs]
+  }
+}
+resource "aws_alb_listener" "internal" {
+  load_balancer_arn = aws_alb.app-alb.arn
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_alb_target_group.app.arn
+  }
+
+}
 resource "aws_alb_target_group" "app" {
-  name                 = "bcparks-dam-vm"
+  name                 = "${var.app_name}-tg"
   port                 = var.app_port
   protocol             = "HTTP"
   vpc_id               = module.network.aws_vpc.id
-  target_type          = "instance"
+  target_type          = "ip"
   deregistration_delay = 30
 
   health_check {
@@ -33,11 +93,14 @@ resource "aws_alb_target_group" "app" {
     matcher             = "200"
     timeout             = "3"
     path                = var.health_check_path
-    unhealthy_threshold = "10"
+    unhealthy_threshold = "2"
   }
 
-  tags = var.common_tags
+  tags = local.common_tags
 }
+
+
+# User data script
 
 data "template_file" "userdata_script" {
   template = file("userdata.tpl")
@@ -69,7 +132,7 @@ data "template_file" "userdata_script" {
   }
 }
 
-/* Auto Scaling & Launch Configuration */
+# Auto Scaling & Launch Configuration
 module "asg" {
   source  = "terraform-aws-modules/autoscaling/aws"
   version = "5.0.0"
