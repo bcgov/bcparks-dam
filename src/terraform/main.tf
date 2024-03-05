@@ -15,13 +15,13 @@ data "aws_alb" "main" {
 # Redirect all traffic from the ALB to the target group
 data "aws_alb_listener" "web" {
   load_balancer_arn = data.aws_alb.main.id
-  port              = "443"
+  port              = "80"
 }
 
 resource "aws_alb_target_group" "app" {
   name                 = "bcparks-dam-vm"
   port                 = var.app_port
-  protocol             = "HTTPS"
+  protocol             = "HTTP"
   vpc_id               = module.network.aws_vpc.id
   target_type          = "instance"
   deregistration_delay = 30
@@ -29,7 +29,7 @@ resource "aws_alb_target_group" "app" {
   health_check {
     healthy_threshold   = "2"
     interval            = "5"
-    protocol            = "HTTPS"
+    protocol            = "HTTP"
     matcher             = "200"
     timeout             = "3"
     path                = var.health_check_path

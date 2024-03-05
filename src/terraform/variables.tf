@@ -1,5 +1,11 @@
 # variables.tf
 
+variable "app_name" {
+  description = "BC Parks DAM"
+  type        = string
+  default     = "bcparks-dam"
+}
+
 variable "image_id" {
   description = "id of the AWS Marketplace AMI (Amazon Machine Image) for Bitnami ResourceSpace"
   default     = "ami-0e3cecd2b3d50ee5f"
