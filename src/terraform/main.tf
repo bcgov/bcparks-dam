@@ -4,6 +4,9 @@ provider "aws" {
   region = var.aws_region
 }
 
+locals {
+  common_tags        = var.common_tags
+}
 
 # CloudFront distribution for the ALB
 
