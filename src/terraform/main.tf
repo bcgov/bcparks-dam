@@ -79,7 +79,7 @@ resource "aws_alb_target_group" "app" {
   port                 = var.app_port
   protocol             = "HTTP"
   vpc_id               = module.network.aws_vpc.id
-  target_type          = "ip"
+  target_type          = "instance" # was "ip"
   deregistration_delay = 30
 
   health_check {
