@@ -51,7 +51,7 @@ variable "health_check_path" {
 variable "common_tags" {
   description = "Common tags for created resources"
   default = {
-    Application = "BCParks DAM"
+    Application = "BC Parks DAM"
   }
 }
 
@@ -71,10 +71,4 @@ variable "alb_name" {
   description = "Name of the internal alb"
   default     = "default"
   type        = string
-}
-
-variable "common_tags" {
-  description = "Common tags to be applied to resources"
-  type        = map(string)
-  default     = {}
 }
