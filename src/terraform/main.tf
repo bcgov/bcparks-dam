@@ -61,8 +61,8 @@ resource "aws_alb" "app-alb" {
 }
 resource "aws_alb_listener" "internal" {
   load_balancer_arn = aws_alb.app-alb.arn
-  port              = "80"
-  protocol          = "HTTP"
+  port              = "443"
+  protocol          = "HTTPS"
 
   default_action {
     type             = "forward"
@@ -73,7 +73,7 @@ resource "aws_alb_listener" "internal" {
 resource "aws_alb_target_group" "app" {
   name                 = "${var.app_name}-tg"
   port                 = var.app_port
-  protocol             = "HTTP"
+  protocol             = "HTTPS"
   vpc_id               = module.network.aws_vpc.id
   target_type          = "instance" # was "ip"
   deregistration_delay = 30
@@ -98,6 +98,8 @@ resource "aws_alb_target_group" "app" {
 
 resource "aws_cloudfront_distribution" "alb_distribution" {
   enabled = true
+
+  comment = "BC Parks DAM"
 
   origin {
     domain_name = aws_alb.app-alb.dns_name
