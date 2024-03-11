@@ -20,7 +20,7 @@ resource "aws_apigatewayv2_vpc_link" "app" {
 
 resource "aws_apigatewayv2_api" "app" {
   name          = var.app_name
-  protocol_type = "HTTP"
+  protocol_type = "HTTPS"
 }
 
 resource "aws_apigatewayv2_integration" "app" {
@@ -64,6 +64,8 @@ resource "aws_alb_listener" "internal" {
   port              = "443"
   protocol          = "HTTPS"
 
+  certificate_arn   = "${certificate_arn}"
+
   default_action {
     type             = "forward"
     target_group_arn = aws_alb_target_group.app.arn
@@ -77,6 +79,10 @@ resource "aws_alb_target_group" "app" {
   vpc_id               = module.network.aws_vpc.id
   target_type          = "instance" # was "ip"
   deregistration_delay = 30
+
+  lifecycle {
+    create_before_destroy = true
+  }
 
   health_check {
     healthy_threshold   = "2"
