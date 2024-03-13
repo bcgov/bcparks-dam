@@ -64,7 +64,7 @@ resource "aws_alb_listener" "internal" {
   port              = "443"
   protocol          = "HTTPS"
 
-  certificate_arn   = "${certificate_arn}"
+  certificate_arn   = local.secrets.certificate_arn
 
   default_action {
     type             = "forward"
@@ -147,18 +147,6 @@ resource "aws_cloudfront_distribution" "alb_distribution" {
     cloudfront_default_certificate = true
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
