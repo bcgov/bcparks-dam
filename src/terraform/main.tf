@@ -20,7 +20,7 @@ resource "aws_apigatewayv2_vpc_link" "app" {
 
 resource "aws_apigatewayv2_api" "app" {
   name          = var.app_name
-  protocol_type = "HTTP"
+  protocol_type = "HTTPS"
 }
 
 resource "aws_apigatewayv2_integration" "app" {
