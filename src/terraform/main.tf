@@ -37,7 +37,13 @@ resource "aws_alb_target_group" "app" {
     unhealthy_threshold = "10"
   }
 
-  tags = var.common_tags
+  #tags = var.common_tags
+  tags = merge(
+    var.common_tags,
+    {
+      "LastUpdated" = formatdate("YYYYMMDDhhmmss", timestamp())
+    }
+  )
 }
 
 data "template_file" "userdata_script" {
