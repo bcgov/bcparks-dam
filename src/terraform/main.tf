@@ -9,58 +9,56 @@ locals {
 }
 
 
+# CloudFront distribution
 
-# Internal ALB
+resource "aws_cloudfront_distribution" "alb_distribution" {
+  enabled = true
 
-resource "aws_alb" "app-alb" {
-  name                             = var.app_name
-  internal                         = true
-  subnets                          = module.network.aws_subnet_ids.web.ids
-  security_groups                  = [module.network.aws_security_groups.web.id]
-  enable_cross_zone_load_balancing = true
-  tags                             = local.common_tags
+  comment = "BC Parks DAM"
 
-  lifecycle {
-    ignore_changes = [access_logs]
+  origin {
+    domain_name = aws_alb.app-alb.dns_name
+    origin_id =  aws_alb.app-alb.dns_name
+    #origin_id   = "BCParksDAMOrigin"
+
+    custom_origin_config {
+      http_port                = 80
+      https_port               = 443
+      origin_protocol_policy   = "https-only"
+      origin_ssl_protocols     = ["TLSv1.2"]
+    }
+  }
+
+  default_cache_behavior {
+    allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+    cached_methods   = ["GET", "HEAD"]
+    #target_origin_id = "BCParksDAMOrigin"
+    target_origin_id = aws_alb.app-alb.dns_name
+
+    forwarded_values {
+      query_string = false
+      cookies {
+        forward = "none"
+      }
+    }
+
+    viewer_protocol_policy = "redirect-to-https"
+    min_ttl                = 0
+    default_ttl            = 3600
+    max_ttl                = 86400
+  }
+
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
+
+  viewer_certificate {
+    cloudfront_default_certificate = true
   }
 }
-resource "aws_alb_listener" "internal" {
-  load_balancer_arn = aws_alb.app-alb.arn
-  port              = "443"
-  protocol          = "HTTPS"
 
-  certificate_arn   = local.secrets.certificate_arn
-
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_alb_target_group.app.arn
-  }
-
-}
-resource "aws_alb_target_group" "app" {
-  name                 = "${var.app_name}-tg"
-  port                 = var.app_port
-  protocol             = "HTTPS"
-  vpc_id               = module.network.aws_vpc.id
-  target_type          = "instance" # was "ip"
-  deregistration_delay = 30
-
-  lifecycle {
-    create_before_destroy = true
-  }
-
-  health_check {
-    healthy_threshold   = "2"
-    interval            = "5"
-    protocol            = "HTTPS"
-    matcher             = "200"
-    timeout             = "3"
-    path                = var.health_check_path
-    unhealthy_threshold = "2"
-  }
-
-  tags = local.common_tags
-}
 
 
 # API Gateway
@@ -98,54 +96,59 @@ resource "aws_apigatewayv2_stage" "app" {
 }
 
 
-# CloudFront distribution
 
-resource "aws_cloudfront_distribution" "alb_distribution" {
-  enabled = true
 
-  comment = "BC Parks DAM"
+# Internal ALB
 
-  origin {
-    domain_name = aws_alb.app-alb.dns_name
-    origin_id   = "BCParksDAMOrigin"
+resource "aws_alb" "app-alb" {
+  name                             = var.app_name
+  internal                         = true
+  subnets                          = module.network.aws_subnet_ids.web.ids
+  security_groups                  = [module.network.aws_security_groups.web.id]
+  enable_cross_zone_load_balancing = true
+  tags                             = local.common_tags
 
-    custom_origin_config {
-      http_port                = 80
-      https_port               = 443
-      origin_protocol_policy   = "https-only"
-      origin_ssl_protocols     = ["TLSv1.2"]
-    }
-  }
-
-  default_cache_behavior {
-    allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
-    cached_methods   = ["GET", "HEAD"]
-    target_origin_id = "BCParksDAMOrigin"
-
-    forwarded_values {
-      query_string = false
-      cookies {
-        forward = "none"
-      }
-    }
-
-    viewer_protocol_policy = "redirect-to-https"
-    min_ttl                = 0
-    default_ttl            = 3600
-    max_ttl                = 86400
-  }
-
-  restrictions {
-    geo_restriction {
-      restriction_type = "none"
-    }
-  }
-
-  viewer_certificate {
-    cloudfront_default_certificate = true
+  lifecycle {
+    ignore_changes = [access_logs]
   }
 }
+resource "aws_alb_listener" "internal" {
+  load_balancer_arn = aws_alb.app-alb.arn
+  port              = "443"
+  protocol          = "HTTPS"
 
+  certificate_arn   = local.secrets.certificate_arn
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_alb_target_group.app.arn
+  }
+
+}
+resource "aws_alb_target_group" "app" {
+  name                 = "${var.app_name}-tg"
+  port                 = var.app_port
+  protocol             = "HTTP"
+  vpc_id               = module.network.aws_vpc.id
+  target_type          = "instance" # was "ip"
+  deregistration_delay = 30
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
+  health_check {
+    healthy_threshold   = "2"
+    interval            = "5"
+    protocol            = "HTTP"
+    matcher             = "200"
+    timeout             = "3"
+    path                = var.health_check_path
+    unhealthy_threshold = "2"
+  }
+
+  tags = local.common_tags
+}
 
 
 

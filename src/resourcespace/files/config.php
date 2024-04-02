@@ -68,6 +68,7 @@ $themes_show_background_image = true;
 
 $use_zip_extension = true;
 $collection_download = true;
+$collection_download_tar_size = 0; # Set to 0 to disable TAR download and to force to use ZIP every time
 
 $ffmpeg_preview_force = true;
 $ffmpeg_preview_extension = 'mp4';
