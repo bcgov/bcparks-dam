@@ -48,7 +48,7 @@ The following configuration options are set for new installations only.
 This provides a mechanism for enabling new features for new installations without affecting existing installations (as would occur with changes to config.default.php)
 */
 
-// Set imagemagick default for new installs to expect the newer version with the sRGB bug fixed.
+# Set imagemagick default for new installs to expect the newer version with the sRGB bug fixed.
 $imagemagick_colorspace = 'sRGB';
 
 $contact_link = false;
@@ -68,6 +68,7 @@ $themes_show_background_image = true;
 
 $use_zip_extension = true;
 $collection_download = true;
+$collection_download_tar_size = 0; # Set to 0 to disable TAR download and to force to use ZIP every time
 
 $ffmpeg_preview_force = true;
 $ffmpeg_preview_extension = 'mp4';
@@ -80,6 +81,8 @@ $upload_then_edit = true;
 $enable_related_resources = true;
 $relate_on_upload = true;
 $relate_on_upload_default = true;
+$offline_job_queue = true; # Use offline job queue to generate previews in the background for improved performance
+$preview_generate_max_file_size = 5; # Immediately generate previews if the file size is <=5MB
 
 $purge_temp_folder_age = 90;
 $filestore_evenspread = true; # enable/disable even spread mode
