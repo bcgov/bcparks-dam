@@ -13,14 +13,11 @@ locals {
 
 resource "aws_cloudfront_distribution" "alb_distribution" {
   enabled = true
-
-  comment = "BC Parks DAM"
+  comment = "${var.app_name} Distribution"
 
   origin {
     domain_name = aws_alb.app-alb.dns_name
     origin_id =  aws_alb.app-alb.dns_name
-    #origin_id   = "BCParksDAMOrigin"
-
     custom_origin_config {
       http_port                = 80
       https_port               = 443
@@ -61,6 +58,10 @@ resource "aws_cloudfront_distribution" "alb_distribution" {
     ssl_support_method  = "sni-only"
     minimum_protocol_version = "TLSv1.2_2021"
     cloudfront_default_certificate = false
+  }
+  
+  tags = {
+    Name = "${var.app_name}-distribution"
   }
 }
 
