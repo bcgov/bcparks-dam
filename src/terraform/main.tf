@@ -57,7 +57,7 @@ resource "aws_cloudfront_distribution" "alb_distribution" {
   aliases = ["dev-images.bcparks.ca"]
 
   viewer_certificate {
-    acm_certificate_arn = local.secrets.certificate_arn
+    acm_certificate_arn = local.secrets.cf_certificate_arn
     ssl_support_method  = "sni-only"
     minimum_protocol_version = "TLSv1.2_2021"
     cloudfront_default_certificate = false
@@ -127,7 +127,7 @@ resource "aws_alb_listener" "internal" {
   port              = "443"
   protocol          = "HTTPS"
 
-  certificate_arn   = local.secrets.certificate_arn
+  certificate_arn   = local.secrets.alb_certificate_arn
 
   default_action {
     type             = "forward"
