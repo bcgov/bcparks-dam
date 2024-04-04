@@ -13,16 +13,19 @@ locals {
 
 resource "aws_cloudfront_distribution" "alb_distribution" {
   enabled = true
-  comment = "${var.app_name} Distribution"
+  comment = "${var.app_name}-distribution"
 
   origin {
-    domain_name = aws_alb.app-alb.dns_name
-    origin_id =  aws_alb.app-alb.dns_name
+    #domain_name = aws_alb.app-alb.dns_name
+    domain_name = aws_apigatewayv2_api.app.api_endpoint
+    #origin_id =  aws_alb.app-alb.dns_name
+    origin_id = "APIGatewayOrigin"
+
     custom_origin_config {
       http_port                = 80
       https_port               = 443
       origin_protocol_policy   = "https-only"
-      origin_ssl_protocols     = ["TLSv1.2"]
+      origin_ssl_protocols     = ["TLSv1.2", "TLSv1.1"]
     }
   }
 
@@ -30,10 +33,11 @@ resource "aws_cloudfront_distribution" "alb_distribution" {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
     cached_methods   = ["GET", "HEAD"]
     #target_origin_id = "BCParksDAMOrigin"
-    target_origin_id = aws_alb.app-alb.dns_name
+    #target_origin_id = aws_alb.app-alb.dns_name
+    target_origin_id = aws_apigatewayv2_api.app.api_endpoint
 
     forwarded_values {
-      query_string = false
+      query_string = true
       cookies {
         forward = "none"
       }
@@ -127,14 +131,12 @@ resource "aws_alb_listener" "internal" {
   load_balancer_arn = aws_alb.app-alb.arn
   port              = "443"
   protocol          = "HTTPS"
-
   certificate_arn   = local.secrets.alb_certificate_arn
 
   default_action {
     type             = "forward"
     target_group_arn = aws_alb_target_group.app.arn
   }
-
 }
 resource "aws_alb_target_group" "app" {
   name                 = "${var.app_name}-tg"
