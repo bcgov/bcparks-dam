@@ -61,6 +61,8 @@ $themes_simple_view = true;
 $xlthumbs = true;
 $image_preview_zoom = true;
 
+$camera_autorotation = true;  # Auto-rotate images based on EXIF orientation
+
 $stemming = true;
 $case_insensitive_username = true;
 $user_pref_user_management_notifications = true;
