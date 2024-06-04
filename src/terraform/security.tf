@@ -112,8 +112,8 @@ resource "aws_iam_role_policy_attachment" "ec2_cloudwatch_attach" {
 resource "aws_iam_role_policy_attachment" "ec2_custom_ssm_write_attach" {
   role       = aws_iam_role.ec2_role.name
   #policy_arn = "arn:aws:iam::093135233083:policy/PBMMAccel-SSMWriteAccessPolicy-143CA3D7" # for DEV
-  #policy_arn = "arn:aws:iam::739959981576:policy/PBMMAccel-SSMWriteAccessPolicy-4F6F3B76" # for TEST
-  policy_arn = "arn:aws:iam::844740599776:policy/PBMMAccel-SSMWriteAccessPolicy-F239167B" # for PROD
+  policy_arn = "arn:aws:iam::739959981576:policy/PBMMAccel-SSMWriteAccessPolicy-4F6F3B76" # for TEST
+  #policy_arn = "arn:aws:iam::844740599776:policy/PBMMAccel-SSMWriteAccessPolicy-F239167B" # for PROD
 }
 
 
