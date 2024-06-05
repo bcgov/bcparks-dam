@@ -18,6 +18,7 @@ sudo dpkg -i amazon-ssm-agent.deb
 # We need to build this from source for Debian Linux; it isn't available, otherwise.
 #
 # Update package lists and install dependencies
+echo '### Installing amazon-efs-utils dependencies ###'
 sudo apt-get -y update
 sudo apt-get install -y git binutils pkg-config libssl-dev
 
@@ -31,7 +32,6 @@ EOF
 # Clone and build amazon-efs-utils as the bitnami user
 echo '### Installing amazon-efs-utils ###'
 sudo -u bitnami bash <<'EOF'
-echo '### Installing amazon-efs-utils ###'
 mkdir -p /home/bitnami/repos
 cd /home/bitnami/repos
 git clone https://github.com/aws/efs-utils efs-utils
@@ -39,7 +39,6 @@ cd efs-utils
 . "$HOME/.cargo/env"
 ./build-deb.sh
 EOF
-
 # Install the built package
 sudo apt-get -y install ./build/amazon-efs-utils*deb
 
