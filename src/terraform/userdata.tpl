@@ -17,19 +17,40 @@ sudo dpkg -i amazon-ssm-agent.deb
 # INSTALL AMAZON-EFS-UTILS
 # We need to build this from source for Debian Linux; it isn't available, otherwise.
 #
-# Install Rust and Cargo - prerequisite for building the 'efs-proxy' component from source
+# Update package lists and install dependencies
 sudo apt-get -y update
 sudo apt-get install -y git binutils pkg-config libssl-dev
+
+# Switch to the bitnami user and install Rust and Cargo
+sudo -u bitnami bash <<'EOF'
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+echo '. "$HOME/.cargo/env"' >> ~/.bashrc
 . "$HOME/.cargo/env"
+EOF
+
+# Clone and build amazon-efs-utils as the bitnami user
 echo '### Installing amazon-efs-utils ###'
-sudo apt-get -y install git binutils
-sudo -u bitnami mkdir -p /home/bitnami/repos
+sudo -u bitnami bash <<'EOF'
+echo '### Installing amazon-efs-utils ###'
+mkdir -p /home/bitnami/repos
 cd /home/bitnami/repos
-sudo -u bitnami git clone https://github.com/aws/efs-utils efs-utils
+git clone https://github.com/aws/efs-utils efs-utils
 cd efs-utils
-sudo -u bitnami ./build-deb.sh
+. "$HOME/.cargo/env"
+./build-deb.sh
+EOF
+
+#sudo apt-get -y install git binutils #redundant?
+#cd /home/bitnami/repos
+#sudo -u bitnami git clone https://github.com/aws/efs-utils efs-utils
+#cd efs-utils
+#./build-deb.sh
+
+# Install the built package
 sudo apt-get -y install ./build/amazon-efs-utils*deb
+
+
+
 
 
 # MOUNT THE EFS PERISTENT FILESYSTEM
