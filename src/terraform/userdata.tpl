@@ -36,7 +36,7 @@ mkdir -p /home/bitnami/repos
 cd /home/bitnami/repos
 git clone https://github.com/aws/efs-utils efs-utils
 cd efs-utils
-. "$HOME/.cargo/env"
+#. "$HOME/.cargo/env"
 ./build-deb.sh
 EOF
 
@@ -48,9 +48,6 @@ EOF
 
 # Install the built package
 sudo apt-get -y install ./build/amazon-efs-utils*deb
-
-
-
 
 
 # MOUNT THE EFS PERISTENT FILESYSTEM
