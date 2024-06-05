@@ -18,10 +18,11 @@ sudo dpkg -i amazon-ssm-agent.deb
 # We need to build this from source for Debian Linux; it isn't available, otherwise.
 #
 # Install Rust and Cargo - prerequisite for building the 'efs-proxy' component from source
+sudo apt-get -y update
+sudo apt-get install -y git binutils pkg-config libssl-dev
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 . "$HOME/.cargo/env"
 echo '### Installing amazon-efs-utils ###'
-sudo apt-get -y update
 sudo apt-get -y install git binutils
 sudo -u bitnami mkdir -p /home/bitnami/repos
 cd /home/bitnami/repos
