@@ -36,15 +36,8 @@ mkdir -p /home/bitnami/repos
 cd /home/bitnami/repos
 git clone https://github.com/aws/efs-utils efs-utils
 cd efs-utils
-#. "$HOME/.cargo/env"
 ./build-deb.sh
 EOF
-
-#sudo apt-get -y install git binutils #redundant?
-#cd /home/bitnami/repos
-#sudo -u bitnami git clone https://github.com/aws/efs-utils efs-utils
-#cd efs-utils
-#./build-deb.sh
 
 # Install the built package
 sudo apt-get -y install ./build/amazon-efs-utils*deb
