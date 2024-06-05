@@ -23,22 +23,33 @@ sudo apt-get -y update
 sudo apt-get install -y git binutils pkg-config libssl-dev
 
 # Switch to the bitnami user and install Rust and Cargo
-sudo -u bitnami bash <<'EOF'
+#sudo -u bitnami bash <<'EOF'
+sudo -u bitnami bash
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 echo '. "$HOME/.cargo/env"' >> ~/.bashrc
 . "$HOME/.cargo/env"
-EOF
+exit
+#EOF
 
 # Clone and build amazon-efs-utils as the bitnami user
 echo '### Installing amazon-efs-utils ###'
-sudo -u bitnami bash <<'EOF'
+sudo -u bitnami bash
 mkdir -p /home/bitnami/repos
 cd /home/bitnami/repos
 git clone https://github.com/aws/efs-utils efs-utils
 cd efs-utils
 . "$HOME/.cargo/env"
 ./build-deb.sh
-EOF
+exit
+
+#sudo -u bitnami bash <<'EOF'
+#mkdir -p /home/bitnami/repos
+#cd /home/bitnami/repos
+#git clone https://github.com/aws/efs-utils efs-utils
+#cd efs-utils
+#. "$HOME/.cargo/env"
+#./build-deb.sh
+#EOF
 # Install the built package
 sudo apt-get -y install ./build/amazon-efs-utils*deb
 
