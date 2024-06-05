@@ -36,6 +36,7 @@ mkdir -p /home/bitnami/repos
 cd /home/bitnami/repos
 git clone https://github.com/aws/efs-utils efs-utils
 cd efs-utils
+. "$HOME/.cargo/env"
 ./build-deb.sh
 EOF
 
