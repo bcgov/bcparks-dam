@@ -1,5 +1,10 @@
 #! /bin/bash
 
+
+# Redirect all output to a log file
+exec > /var/log/userdata.log 2>&1
+
+
 # INSTALL SSM AGENT
 # This allows SSH access into the VM from the Session Manager web interface.
 # This take a while to start up, so be patient. You can use the EC2 serial console
@@ -51,7 +56,9 @@ EOF
 # Install the built package
 echo '### Installing amazon-efs-utils ###'
 wait_for_dpkg_lock
-sudo apt-get -y install ./build/amazon-efs-utils*deb
+#sudo apt-get -y install ./build/amazon-efs-utils*deb
+sudo apt-get -y install /home/bitnami/repos/efs-utils/build/debbuild/amazon-efs-utils-2.0.2-1_all.deb
+
 
 # MOUNT THE EFS PERISTENT FILESYSTEM
 # This volume contains the resourcespace filestore. We tried using S3 but it was slow and unreliable.
