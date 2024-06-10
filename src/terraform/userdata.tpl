@@ -38,7 +38,7 @@ source $HOME/.cargo/env
 EOF
 
 # Clone and build amazon-efs-utils as the bitnami user
-echo '### Installing amazon-efs-utils ###'
+echo '### Building amazon-efs-utils ###'
 sudo -u bitnami bash <<'EOF'
 mkdir -p /home/bitnami/repos
 cd /home/bitnami/repos
@@ -49,6 +49,7 @@ source $HOME/.cargo/env
 EOF
 
 # Install the built package
+echo '### Installing amazon-efs-utils ###'
 wait_for_dpkg_lock
 sudo apt-get -y install ./build/amazon-efs-utils*deb
 
