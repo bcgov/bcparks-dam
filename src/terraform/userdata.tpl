@@ -12,14 +12,22 @@ wget -q https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/debian_am
 sudo dpkg -i amazon-ssm-agent.deb
 
 
-
+# Function to wait for dpkg lock
+wait_for_dpkg_lock() {
+  while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1; do
+    echo "Waiting for dpkg lock to be released..."
+    sleep 5
+  done
+}
 
 # INSTALL AMAZON-EFS-UTILS
 # We need to build this from source for Debian Linux; it isn't available, otherwise.
 #
 # Update package lists and install dependencies
 echo '### Installing amazon-efs-utils dependencies ###'
+wait_for_dpkg_lock
 sudo apt-get -y update
+wait_for_dpkg_lock
 sudo apt-get install -y git binutils pkg-config libssl-dev
 
 # Switch to the bitnami user and install Rust and Cargo
@@ -41,6 +49,7 @@ source $HOME/.cargo/env
 EOF
 
 # Install the built package
+wait_for_dpkg_lock
 sudo apt-get -y install ./build/amazon-efs-utils*deb
 
 # MOUNT THE EFS PERISTENT FILESYSTEM
@@ -50,6 +59,7 @@ sudo apt-get -y install ./build/amazon-efs-utils*deb
 echo '### Mounting the EFS filesystem ###'
 cd /opt/bitnami/resourcespace
 sudo cp -R filestore filestore.bitnami
+wait_for_dpkg_lock
 sudo mount -t efs -o iam -o tls ${efs_dns_name}:/ ./filestore
 sudo chown -R bitnami:daemon filestore*
 sudo chmod -R 775 filestore*
