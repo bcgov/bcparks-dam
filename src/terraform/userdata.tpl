@@ -38,10 +38,10 @@ git clone https://github.com/aws/efs-utils efs-utils
 cd efs-utils
 source $HOME/.cargo/env
 ./build-deb.sh
-# Install the built package
-sudo apt-get -y install ./build/amazon-efs-utils*deb
 EOF
 
+# Install the built package
+sudo apt-get -y install ./build/amazon-efs-utils*deb
 
 # MOUNT THE EFS PERISTENT FILESYSTEM
 # This volume contains the resourcespace filestore. We tried using S3 but it was slow and unreliable.
