@@ -1,7 +1,7 @@
 #! /bin/bash
 
 
-# Redirect all output to a log file
+# Save all output to a log file
 exec > /var/log/userdata.log 2>&1
 
 
@@ -56,7 +56,6 @@ EOF
 # Install the built package
 echo '### Installing amazon-efs-utils ###'
 wait_for_dpkg_lock
-#sudo apt-get -y install ./build/amazon-efs-utils*deb
 sudo apt-get -y install /home/bitnami/repos/efs-utils/build/debbuild/amazon-efs-utils-2.0.2-1_all.deb
 
 
