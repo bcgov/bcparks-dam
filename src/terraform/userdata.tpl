@@ -3,6 +3,7 @@
 
 # Save all output to a log file
 exec > /var/log/userdata.log 2>&1
+set -x
 
 
 # INSTALL SSM AGENT
@@ -67,7 +68,13 @@ echo '### Mounting the EFS filesystem ###'
 cd /opt/bitnami/resourcespace
 sudo cp -R filestore filestore.bitnami
 wait_for_dpkg_lock
-sudo mount -t efs -o iam -o tls ${efs_dns_name}:/ ./filestore
+#sudo mount -t efs -o iam -o tls ${efs_dns_name}:/ ./filestore
+if sudo mount -t efs -o iam -o tls ${efs_dns_name}:/ ./filestore; then
+  echo "EFS mounted successfully."
+else
+  echo "Failed to mount EFS." >&2
+  exit 1
+fi
 sudo chown -R bitnami:daemon filestore*
 sudo chmod -R 775 filestore*
 
