@@ -203,7 +203,7 @@ sudo chmod -R 775 plugins
 sudo rm /opt/bitnami/resourcespace/filestore/tmp/querycache/*
 
 
-# CLEAR THE TMP FOLDER
+# Clear the tmp folder
 echo '### Clear the tmp folder ###'
 sudo rm -rf /opt/bitnami/resourcespace/filestore/tmp/*
 
