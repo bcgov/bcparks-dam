@@ -75,9 +75,9 @@ else
   echo "Failed to mount EFS." >&2
   exit 1
 fi
-sudo chown -R bitnami:daemon filestore*
-sudo chmod -R 775 filestore*
-
+#sudo chown -R bitnami:daemon filestore*
+#sudo chmod -R 775 filestore*
+#^^temporarily disabled. This causes the rebuild to take a very long time, with assigning ownership and permissions to 130+GB, and impacts users.
 
 # MOUNT THE S3 BUCKET
 # The S3 bucket /mnt/s3-backup is used for backups and file transfers. You can use
