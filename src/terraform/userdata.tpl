@@ -57,7 +57,8 @@ EOF
 # Install the built package
 echo '### Installing amazon-efs-utils ###'
 wait_for_dpkg_lock
-sudo apt-get -y install /home/bitnami/repos/efs-utils/build/debbuild/amazon-efs-utils-2.0.2-1_all.deb
+#sudo apt-get -y install /home/bitnami/repos/efs-utils/build/debbuild/amazon-efs-utils-2.0.2-1_all.deb
+sudo apt-get -y install /home/bitnami/repos/efs-utils/build/debbuild/amazon-efs-utils-2.0.3-1_all.deb
 
 
 # MOUNT THE EFS PERISTENT FILESYSTEM
