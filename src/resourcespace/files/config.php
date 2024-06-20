@@ -35,9 +35,9 @@ $php_path = '/opt/bitnami/php/bin';
 
 $log_resource_access = false; # Log resource access
 $log_search_performance = false; # Log search performance information
-$log_php_errors = true; # Log php errors
+$log_php_errors = false; # Log php errors
 $log_all_php_errors = false; # Including E_NOTICE and E_WARNING level errors, recommended for debugging only
-$debug_log = true; # General debugging log
+$debug_log = false; # General debugging log
 $debug_log_location = '/opt/bitnami/resourcespace/logs/debug.txt'; # Specify the log file path
 $show_detailed_errors = false;
 
