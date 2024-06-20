@@ -58,7 +58,15 @@ EOF
 echo '### Installing amazon-efs-utils ###'
 wait_for_dpkg_lock
 #sudo apt-get -y install /home/bitnami/repos/efs-utils/build/debbuild/amazon-efs-utils-2.0.2-1_all.deb
-sudo apt-get -y install /home/bitnami/repos/efs-utils/build/debbuild/amazon-efs-utils-2.0.3-1_all.deb
+#sudo apt-get -y install /home/bitnami/repos/efs-utils/build/debbuild/amazon-efs-utils-2.0.3-1_all.deb
+# Find the built .deb package
+DEB_FILE=$(ls /home/bitnami/repos/efs-utils/build/*.deb | head -n 1)
+if [ -n "$DEB_FILE" ]; then
+    sudo apt-get -y install "$DEB_FILE"
+else
+    echo "No .deb file found to install."
+    exit 1
+fi
 
 
 # MOUNT THE EFS PERISTENT FILESYSTEM
