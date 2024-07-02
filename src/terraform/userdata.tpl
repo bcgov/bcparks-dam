@@ -262,3 +262,4 @@ sudo rm /tmp/update_slideshow.sh
 
 
 sudo /opt/bitnami/ctlscript.sh restart
+sudo rm /opt/bitnami/resourcespace/filestore/tmp/process_locks/*
