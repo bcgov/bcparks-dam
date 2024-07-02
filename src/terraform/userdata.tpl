@@ -57,9 +57,8 @@ EOF
 # Install the built package
 echo '### Installing amazon-efs-utils ###'
 wait_for_dpkg_lock
-#sudo apt-get -y install /home/bitnami/repos/efs-utils/build/debbuild/amazon-efs-utils-2.0.2-1_all.deb
-#sudo apt-get -y install /home/bitnami/repos/efs-utils/build/debbuild/amazon-efs-utils-2.0.3-1_all.deb
 # Find the built .deb package
+#sudo apt-get -y install /home/bitnami/repos/efs-utils/build/amazon-efs-utils*deb
 DEB_FILE=$(ls /home/bitnami/repos/efs-utils/build/*.deb | head -n 1)
 if [ -n "$DEB_FILE" ]; then
     sudo apt-get -y install "$DEB_FILE"
@@ -226,9 +225,14 @@ sudo sed -i 's|upload_tmp_dir = .*|upload_tmp_dir = /opt/bitnami/resourcespace/f
 sudo sed -i 's|date.timezone = .*|date.timezone = "America/Vancouver"|' /opt/bitnami/php/etc/php.ini
 sudo sed -i 's|max_execution_time = .*|max_execution_time = 150|' /opt/bitnami/php/etc/php.ini
 
+
 # Add PHP to path
 export PATH=$PATH:/opt/bitnami/php
 export PATH=$PATH:/opt/bitnami
+
+
+# Set the cronjob for the offline job script, to generate previews in the background for improved performance
+(crontab -l -u bitnami 2>/dev/null; echo "*/2 * * * * cd /opt/bitnami/resourcespace/pages/tools && /opt/bitnami/php/bin/php offline_jobs.php --max-jobs 5") | sudo crontab -u bitnami -
 
 
 # Install APC User Cache (APCu)

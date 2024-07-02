@@ -8,7 +8,7 @@ variable "app_name" {
 
 variable "image_id" {
   description = "id of the AWS Marketplace AMI (Amazon Machine Image) for Bitnami ResourceSpace"
-  default     = "ami-0e591624006f49399" 
+  default     = "ami-0e3cecd2b3d50ee5f" 
   type        = string
 }
 #ami-0e3cecd2b3d50ee5f  10.3.0-1-r02 on Debian 11
