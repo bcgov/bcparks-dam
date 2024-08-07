@@ -217,13 +217,20 @@ sudo rm -rf /opt/bitnami/resourcespace/filestore/tmp/*
 
 
 # Set the php memory_limit (999M recommended by Montala)
-sudo sed -i 's/memory_limit = .*/memory_limit = 2048M/' /opt/bitnami/php/etc/php.ini
-sudo sed -i 's/post_max_size = .*/post_max_size = 999M/' /opt/bitnami/php/etc/php.ini
-sudo sed -i 's/upload_max_filesize = .*/upload_max_filesize = 999M/' /opt/bitnami/php/etc/php.ini
-sudo sed -i 's/max_file_uploads = .*/max_file_uploads = 40/' /opt/bitnami/php/etc/php.ini
+sudo sed -i 's|memory_limit = .*|memory_limit = 2048M|' /opt/bitnami/php/etc/php.ini
+sudo sed -i 's|post_max_size = .*|post_max_size = 2048M|' /opt/bitnami/php/etc/php.ini
+sudo sed -i 's|upload_max_filesize = .*|upload_max_filesize = 2048M|' /opt/bitnami/php/etc/php.ini
+sudo sed -i 's|max_file_uploads = .*|max_file_uploads = 40|' /opt/bitnami/php/etc/php.ini
 sudo sed -i 's|upload_tmp_dir = .*|upload_tmp_dir = /opt/bitnami/resourcespace/filestore/tmp|' /opt/bitnami/php/etc/php.ini
 sudo sed -i 's|date.timezone = .*|date.timezone = "America/Vancouver"|' /opt/bitnami/php/etc/php.ini
 sudo sed -i 's|max_execution_time = .*|max_execution_time = 150|' /opt/bitnami/php/etc/php.ini
+sudo sed -i 's|max_input_time = .*|max_input_time = 180|' /opt/bitnami/php/etc/php.ini
+# ImageMagick config to handle images larger than 128MP
+sudo sed -i 's|<policy domain="resource" name="memory" value="[^"]*"/>|<policy domain="resource" name="memory" value="2GiB"/>|' /etc/ImageMagick-6/policy.xml
+sudo sed -i 's|<policy domain="resource" name="map" value="[^"]*"/>|<policy domain="resource" name="map" value="4GiB"/>|' /etc/ImageMagick-6/policy.xml
+sudo sed -i 's|<policy domain="resource" name="area" value="[^"]*"/>|<policy domain="resource" name="area" value="200MP"/>|' /etc/ImageMagick-6/policy.xml
+sudo sed -i 's|<policy domain="resource" name="disk" value="[^"]*"/>|<policy domain="resource" name="disk" value="5GiB"/>|' /etc/ImageMagick-6/policy.xml
+sudo sed -i 's|<!-- <policy domain="resource" name="thread" value="[^"]*"/> -->|<policy domain="resource" name="thread" value="2"/>|' /etc/ImageMagick-6/policy.xml
 
 
 # Add PHP to path
@@ -252,6 +259,10 @@ sudo make install
 echo "extension=apcu.so" | sudo tee /opt/bitnami/php/etc/conf.d/apcu.ini
 cd /tmp
 sudo rm -R apcu
+
+
+# Install performance monitor utility
+sudo apt-get install -y htop
 
 
 # Update the slideshow directory in config.php

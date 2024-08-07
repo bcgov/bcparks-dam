@@ -11,10 +11,10 @@ variable "image_id" {
   default     = "ami-0023310960cb82ef6" 
   type        = string
 }
-#ami-0e3cecd2b3d50ee5f  10.3.0-1-r02 on Debian 11
+#ami-0e3cecd2b3d50ee5f  10.3.0-1-r02 on Debian 11 | current version on prod
 #ami-05ffc9127116f1111  10.3.0-4-r164 on Debian 12
 #ami-0e591624006f49399  10.3.0-5-r165 on Debian 12
-#ami-0023310960cb82ef6  10.3.0-5-r166 on Debian 12
+#ami-0023310960cb82ef6  10.3.0-5-r166 on Debian 12 | current version on test
 
 variable "target_env" {
   description = "AWS workload account env (e.g. dev, test, prod, sandbox, unclass)"

@@ -83,6 +83,7 @@ $upload_then_edit = true;
 $enable_related_resources = true;
 $relate_on_upload = true;
 $relate_on_upload_default = true;
+$related_search_show_self = true; # Include the current resource in the related resources set
 $offline_job_queue = true; # Use offline job queue to generate previews in the background for improved performance
 $preview_generate_max_file_size = 5; # Immediately generate previews if the file size is <=5MB
 
