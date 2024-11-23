@@ -1,0 +1,7 @@
+<?php
+
+function HookSystem_resetAdmin_homeCustomadminfunction()
+    {
+    global $baseurl,$lang;
+    ?><li><a href="<?php echo $baseurl ?>/plugins/system_reset/pages/reset.php"><i aria-hidden="true" class="fa fa-fw fa-soap"></i><br /><?php echo escape($lang["system_reset"]); ?></a></li><?php
+    }

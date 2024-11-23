@@ -1,0 +1,11 @@
+name    : antivirus
+title   : Antivirus
+author  : Alin Cota
+version : 1.1
+desc    : [Advanced] Antivirus capabilities by integrating with most known antivirus engines that can run command line
+icon    : fa fa-shield-alt
+info_url: http://www.resourcespace.com/knowledge-base/user/plugin-antivirus
+config_url: /plugins/antivirus/pages/setup.php
+default_priority: 100
+category: asset processing
+disable_group_select: 1
