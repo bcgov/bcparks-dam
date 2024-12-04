@@ -26,6 +26,86 @@ wait_for_dpkg_lock() {
   done
 }
 
+
+# INSTALL NGINX AND PHP
+echo '### Installing Nginx and php'
+# Update package lists
+echo '### Updating package lists ###'
+wait_for_dpkg_lock
+sudo apt-get update -y
+
+# Install Nginx
+echo '### Installing Nginx ###'
+wait_for_dpkg_lock
+sudo apt-get install -y nginx
+
+# Install PHP and required extensions
+echo '### Installing PHP and extensions ###'
+wait_for_dpkg_lock
+sudo apt-get install -y php-fpm php-mysqli php-curl php-dom php-gd php-intl php-mbstring php-xml php-zip php-ldap php-imap php-json php-apcu php-cli unzip
+
+# Start and enable Nginx and PHP-FPM services
+echo '### Starting services ###'
+sudo systemctl enable nginx
+sudo systemctl start nginx
+sudo systemctl enable php8.2-fpm  # Adjust the PHP version as necessary
+sudo systemctl start php8.2-fpm
+
+
+sudo apt-get -y install git
+cd /home/bitnami/repos
+# sudo -u bitnami git clone ${git_url} bcparks-dam
+# Download from another branch
+# BRANCH_NAME = "${branch_name}"
+# sudo -u bitnami git clone -b $BRANCH_NAME ${git_url} bcparks-dam
+sudo -u bitnami git clone -b generic-ami ${git_url} bcparks-dam
+
+# INSTALL ResourceSpace
+# Clone ResourceSpace repository from GitHub
+echo '### Cloning ResourceSpace repository ###'
+sudo apt-get install -y git
+git clone https://github.com/bcgov/bcparks-dam/tree/generic-ami/src/resourcespace/releases/10.4 /tmp/bcparks-dam
+
+# Copy ResourceSpace files
+echo '### Copying ResourceSpace files ###'
+sudo mkdir -p /var/www/resourcespace
+sudo cp -R /tmp/bcparks-dam/* /var/www/resourcespace
+sudo chown -R www-data:www-data /var/www/resourcespace
+sudo chmod -R 755 /var/www/resourcespace
+
+# Set up Nginx server block
+echo '### Configuring Nginx ###'
+cat <<EOF | sudo tee /etc/nginx/sites-available/resourcespace
+server {
+    listen 80;
+    server_name ${domain_name};
+
+    root /var/www/resourcespace;
+    index index.php index.html;
+
+    location / {
+        try_files \$uri \$uri/ /pages/home.php?\$args;
+    }
+
+    location ~ \.php\$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;  # Adjust PHP version if needed
+        fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+        include fastcgi_params;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}
+EOF
+
+# Enable the Nginx configuration
+sudo ln -s /etc/nginx/sites-available/resourcespace /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+
+
 # INSTALL AMAZON-EFS-UTILS
 # We need to build this from source for Debian Linux; it isn't available, otherwise.
 #
@@ -68,7 +148,7 @@ else
 fi
 
 
-# MOUNT THE EFS PERISTENT FILESYSTEM
+# MOUNT THE EFS PERSISTENT FILESYSTEM
 # This volume contains the resourcespace filestore. We tried using S3 but it was slow and unreliable.
 # EBS wouldn't work either because the autoscaling group runs in 2 availability zones.  
 #
@@ -119,11 +199,11 @@ sudo chmod -R 775 /opt/bitnami/resourcespace/filestore/system
 echo '### Customizing the Bitnami Resourcespace config ###'
 sudo apt-get -y install git
 cd /home/bitnami/repos
-sudo -u bitnami git clone ${git_url} bcparks-dam
+# sudo -u bitnami git clone ${git_url} bcparks-dam
 # Download from another branch
 # BRANCH_NAME = "${branch_name}"
 # sudo -u bitnami git clone -b $BRANCH_NAME ${git_url} bcparks-dam
-# sudo -u bitnami git clone -b rfiddler ${git_url} bcparks-dam
+sudo -u bitnami git clone -b generic-ami ${git_url} bcparks-dam
 
 # use values from AWS secrets manager secrets to append settings to the file
 tee -a bcparks-dam/src/resourcespace/files/config.php << END
