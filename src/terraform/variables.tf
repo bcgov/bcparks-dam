@@ -84,3 +84,9 @@ variable "domain_name" {
   default     = "dam.lqc63d-dev.nimbus.cloud.gov.bc.ca"
   type        = string
 }
+
+variable "licence_plate" {
+  description = "The licence plate for the application"
+  default     = "lqc63d"
+  type        = string
+}
