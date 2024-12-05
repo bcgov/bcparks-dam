@@ -68,6 +68,8 @@ sudo cp -R /tmp/bcparks-dam/src/resourcespace/releases/10.4/* /var/www/resources
 sudo chown -R www-data:www-data /var/www/resourcespace
 sudo chmod -R 755 /var/www/resourcespace
 
+echo 'Domain name value: ' ${domain_name}
+
 # Set up Nginx server block
 echo '### Configuring Nginx ###'
 cat <<EOF | sudo tee /etc/nginx/sites-available/resourcespace
