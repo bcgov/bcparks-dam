@@ -78,3 +78,9 @@ variable "alb_name" {
   default     = "default"
   type        = string
 }
+
+variable "domain_name" {
+  description = "The domain name for the application"
+  default     = "dam.lqc63d-dev.nimbus.cloud.gov.bc.ca"
+  type        = string
+}
