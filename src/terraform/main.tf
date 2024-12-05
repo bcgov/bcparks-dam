@@ -46,6 +46,10 @@ resource "aws_alb_target_group" "app" {
   )
 }
 
+locals {
+  domain_name = "${var.service_names[0]}.${var.licence_plate}-${var.target_env}.nimbus.cloud.gov.bc.ca"
+}
+
 data "template_file" "userdata_script" {
   template = file("userdata.tpl")
   vars = {
