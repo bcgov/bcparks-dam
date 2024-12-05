@@ -78,3 +78,9 @@ variable "alb_name" {
   default     = "default"
   type        = string
 }
+
+variable "domain_name" {
+  description = "The dynamically built domain name for the application"
+  type        = string
+  default     = "${var.service_names[0]}.[LICENCEPLATE]-${var.target_env}.nimbus.cloud.gov.bc.ca"
+}
