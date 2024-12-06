@@ -131,7 +131,7 @@ echo '### Installing the build-essential package ###'
 sudo apt-get install -y build-essential
 
 
-# Clone and build amazon-efs-utils as the bitnami user
+# Clone and build amazon-efs-utils
 echo '### Building amazon-efs-utils ###'
 #sudo -u www-data bash <<'EOF'
 #mkdir -p /tmp/bcparks-dam/repos
@@ -200,10 +200,10 @@ sudo chown -R www-data:www-data /var/www/resourcespace
 sudo chmod -R 755 /var/www/resourcespace
 
 
-# CUSTOMIZE THE BITNAMI RESOURCESPACE CONFIG
+# CUSTOMIZE THE RESOURCESPACE CONFIG
 # Download all the files from our git repo to get our customized copy of config.php
 # Updated 2024-03-01 11:10
-echo '### Customizing the Bitnami Resourcespace config ###'
+echo '### Customizing the Resourcespace config ###'
 sudo mkdir /tmp/bcparks-dam/repos
 cd /tmp
 
@@ -264,7 +264,7 @@ sudo cat bcparks-dam/src/resourcespace/files/simplesaml-metadata-4.php | tee -a 
 
 # copy the customized config.php file to overwrite the resourcespace config
 cd /var/www/resourcespace/include
-sudo cp config.php config.php.bitnami
+#sudo cp config.php config.php.bitnami
 sudo cp /tmp/bcparks-dam/src/resourcespace/files/config.php .
 sudo chown www-data:www-data config.php
 sudo chmod 664 config.php
