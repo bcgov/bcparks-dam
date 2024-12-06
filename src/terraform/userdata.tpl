@@ -169,6 +169,9 @@ fi
 #
 echo '### Mounting the EFS filesystem ###'
 cd /var/www/resourcespace
+sudo mkdir filestore
+sudo chown www-data:www-data filestore
+sudo chmod -R 775 filestore
 #sudo cp -R filestore filestore.bitnami
 wait_for_dpkg_lock
 if sudo mount -t efs -o iam -o tls ${efs_dns_name}:/ ./filestore; then
