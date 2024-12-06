@@ -74,7 +74,7 @@ echo 'Domain name value: ' ${domain_name}
 echo '### Configuring Nginx ###'
 cat <<EOF | sudo tee /etc/nginx/sites-available/resourcespace
 server {
-    listen 80;
+    listen 443;
     server_name ${domain_name};
 
     root /var/www/resourcespace;
