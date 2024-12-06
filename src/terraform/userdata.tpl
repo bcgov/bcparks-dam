@@ -135,7 +135,6 @@ EOF
 echo '### Installing amazon-efs-utils ###'
 wait_for_dpkg_lock
 # Find the built .deb package
-#sudo apt-get -y install /home/bitnami/repos/efs-utils/build/amazon-efs-utils*deb
 DEB_FILE=$(ls /tmp/bcparks-dam/repos/efs-utils/build/*.deb | head -n 1)
 if [ -n "$DEB_FILE" ]; then
     sudo apt-get -y install "$DEB_FILE"
@@ -153,7 +152,6 @@ echo '### Mounting the EFS filesystem ###'
 cd /var/www/resourcespace
 #sudo cp -R filestore filestore.bitnami
 wait_for_dpkg_lock
-#sudo mount -t efs -o iam -o tls ${efs_dns_name}:/ ./filestore
 if sudo mount -t efs -o iam -o tls ${efs_dns_name}:/ ./filestore; then
   echo "EFS mounted successfully."
 else
@@ -172,22 +170,10 @@ echo '### Mounting the S3 bucket ###'
 sudo apt-get -y install s3fs
 sudo mkdir /mnt/s3-backup
 sudo s3fs bcparks-dam-${target_env}-backup /mnt/s3-backup -o iam_role=BCParks-Dam-EC2-Role -o use_cache=/tmp -o allow_other -o uid=0 -o gid=1 -o mp_umask=002  -o multireq_max=5 -o use_path_request_style -o url=https://s3-${aws_region}.amazonaws.com
-#sudo -u bitnami s3fs bcparks-dam-${target_env}-backup /mnt/s3-backup \
-#        -o iam_role=BCParks-Dam-EC2-Role \
-#        -o use_cache=/tmp \
-#        -o allow_other \
-#        -o uid=$(id -u bitnami) \
-#        -o gid=$(id -g daemon) \
-#        -o umask=002 \
-#        -o multireq_max=5 \
-#        -o use_path_request_style \
-#        -o url=https://s3-${aws_region}.amazonaws.com
 
 
 # Copy the default filestore data
 #sudo cp -R /opt/bitnami/resourcespace/filestore.bitnami/system /opt/bitnami/resourcespace/filestore
-#sudo chown -R bitnami:daemon /opt/bitnami/resourcespace/filestore/system
-#sudo chmod -R 775 /opt/bitnami/resourcespace/filestore/system
 sudo chown -R www-data:www-data /var/www/resourcespace
 sudo chmod -R 755 /var/www/resourcespace
 
@@ -196,15 +182,8 @@ sudo chmod -R 755 /var/www/resourcespace
 # Download all the files from our git repo to get our customized copy of config.php
 # Updated 2024-03-01 11:10
 echo '### Customizing the Bitnami Resourcespace config ###'
-#sudo apt-get -y install git
 sudo mkdir /tmp/bcparks-dam/repos
 cd /tmp
-# sudo -u bitnami git clone ${git_url} bcparks-dam
-# Download from another branch
-# BRANCH_NAME = "${branch_name}"
-# sudo -u bitnami git clone -b $BRANCH_NAME ${git_url} bcparks-dam
-#sudo -u bitnami git clone -b generic-ami ${git_url} bcparks-dam
-#sudo -u www-data git clone -b generic-ami ${git_url} bcparks-dam
 
 # use values from AWS secrets manager secrets to append settings to the file
 tee -a bcparks-dam/src/resourcespace/files/config.php << END
@@ -262,7 +241,6 @@ sudo cat bcparks-dam/src/resourcespace/files/simplesaml-metadata-4.php | tee -a 
 
 
 # copy the customized config.php file to overwrite the resourcespace config
-#cd /opt/bitnami/resourcespace/include
 cd /var/www/resourcespace/include
 sudo cp config.php config.php.bitnami
 sudo cp /tmp/bcparks-dam/src/resourcespace/files/config.php .
@@ -298,15 +276,6 @@ echo '### Clear the tmp folder ###'
 sudo rm -rf /var/www/resourcespace/filestore/tmp/*
 
 
-# Set the php memory_limit (999M recommended by Montala)
-#sudo sed -i 's|memory_limit = .*|memory_limit = 2048M|' /opt/bitnami/php/etc/php.ini
-#sudo sed -i 's|post_max_size = .*|post_max_size = 2048M|' /opt/bitnami/php/etc/php.ini
-#sudo sed -i 's|upload_max_filesize = .*|upload_max_filesize = 2048M|' /opt/bitnami/php/etc/php.ini
-#sudo sed -i 's|max_file_uploads = .*|max_file_uploads = 40|' /opt/bitnami/php/etc/php.ini
-#sudo sed -i 's|upload_tmp_dir = .*|upload_tmp_dir = /opt/bitnami/resourcespace/filestore/tmp|' /opt/bitnami/php/etc/php.ini
-#sudo sed -i 's|date.timezone = .*|date.timezone = "America/Vancouver"|' /opt/bitnami/php/etc/php.ini
-#sudo sed -i 's|max_execution_time = .*|max_execution_time = 150|' /opt/bitnami/php/etc/php.ini
-#sudo sed -i 's|max_input_time = .*|max_input_time = 180|' /opt/bitnami/php/etc/php.ini
 # Set the PHP memory_limit and other configurations (recommended by Montala)
 sudo sed -i 's|^memory_limit = .*|memory_limit = 2048M|' /etc/php/8.2/fpm/php.ini
 sudo sed -i 's|^post_max_size = .*|post_max_size = 2048M|' /etc/php/8.2/fpm/php.ini
@@ -317,12 +286,6 @@ sudo sed -i 's|^date.timezone = .*|date.timezone = "America/Vancouver"|' /etc/ph
 sudo sed -i 's|^max_execution_time = .*|max_execution_time = 150|' /etc/php/8.2/fpm/php.ini
 sudo sed -i 's|^max_input_time = .*|max_input_time = 180|' /etc/php/8.2/fpm/php.ini
 
-# ImageMagick config to handle images larger than 128MP
-#sudo sed -i 's|<policy domain="resource" name="memory" value="[^"]*"/>|<policy domain="resource" name="memory" value="2GiB"/>|' /etc/ImageMagick-6/policy.xml
-#sudo sed -i 's|<policy domain="resource" name="map" value="[^"]*"/>|<policy domain="resource" name="map" value="4GiB"/>|' /etc/ImageMagick-6/policy.xml
-#sudo sed -i 's|<policy domain="resource" name="area" value="[^"]*"/>|<policy domain="resource" name="area" value="200MP"/>|' /etc/ImageMagick-6/policy.xml
-#sudo sed -i 's|<policy domain="resource" name="disk" value="[^"]*"/>|<policy domain="resource" name="disk" value="5GiB"/>|' /etc/ImageMagick-6/policy.xml
-#sudo sed -i 's|<!-- <policy domain="resource" name="thread" value="[^"]*"/> -->|<policy domain="resource" name="thread" value="2"/>|' /etc/ImageMagick-6/policy.xml
 # Update ImageMagick policy to handle large images (over 128MP)
 sudo sed -i 's|<policy domain="resource" name="memory" value="[^"]*"/>|<policy domain="resource" name="memory" value="2GiB"/>|' /etc/ImageMagick-6/policy.xml
 sudo sed -i 's|<policy domain="resource" name="map" value="[^"]*"/>|<policy domain="resource" name="map" value="4GiB"/>|' /etc/ImageMagick-6/policy.xml
@@ -333,62 +296,37 @@ sudo sed -i 's|<!-- <policy domain="resource" name="thread" value="[^"]*"/> -->|
 
 
 # Add PHP to path
-#export PATH=$PATH:/opt/bitnami/php
-#export PATH=$PATH:/opt/bitnami
 export PATH=$PATH:/usr/bin/php
 
 
 # Set the cronjob for the offline job script, to generate previews in the background for improved performance
-#(crontab -l -u bitnami 2>/dev/null; echo "*/2 * * * * cd /opt/bitnami/resourcespace/pages/tools && /opt/bitnami/php/bin/php offline_jobs.php --max-jobs 5") | sudo crontab -u bitnami -
 echo '### Setting up cronjob for offline jobs ###'
 (crontab -l -u www-data 2>/dev/null; echo "*/2 * * * * cd /var/www/resourcespace/pages/tools && /usr/bin/php offline_jobs.php --max-jobs 5") | sudo crontab -u www-data -
 
 
 # Install APC User Cache (APCu)
 # https://pecl.php.net/package/APCu
-#sudo apt-get -y install build-essential autoconf
-#cd /tmp
-#sudo mkdir apcu
-#cd apcu
-# Set to the latest version compatible with your php version
-#sudo wget https://pecl.php.net/get/apcu-5.1.23.tgz
-#sudo tar -xf apcu-5.1.23.tgz
-#cd apcu-5.1.23
-#sudo /opt/bitnami/php/bin/phpize
-#sudo ./configure --with-php-config=/opt/bitnami/php/bin/php-config
-#sudo make
-#sudo make install
-#echo "extension=apcu.so" | sudo tee /opt/bitnami/php/etc/conf.d/apcu.ini
-#cd /tmp
-#sudo rm -R apcu
-
 # Install required build tools and PHP development packages
 sudo apt-get -y install build-essential autoconf php-dev php-pear
-
 # Download and extract the APCu source code
 cd /tmp
 sudo wget https://pecl.php.net/get/apcu-5.1.23.tgz  # Replace with the latest compatible version
 sudo tar -xf apcu-5.1.23.tgz
 cd apcu-5.1.23
-
 # Build and install APCu
 phpize
 ./configure
 make
 sudo make install
-
 # Enable the APCu extension
 echo "extension=apcu.so" | sudo tee /etc/php/8.2/mods-available/apcu.ini  # Adjust for PHP version
 sudo phpenmod apcu
-
 # Restart PHP-FPM and Nginx to apply changes
 sudo systemctl restart php8.2-fpm  # Adjust for PHP version
 sudo systemctl reload nginx
-
 # Cleanup
 cd /tmp
 sudo rm -rf apcu-5.1.23 apcu-5.1.23.tgz
-
 echo '### APCu installation completed ###'
 
 
