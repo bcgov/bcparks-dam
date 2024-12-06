@@ -31,14 +31,14 @@ $ghostscript_path = '/usr/bin';
 $ffmpeg_path = '/usr/bin';
 $exiftool_path = '/usr/bin';
 $homeanim_folder = 'filestore/system/slideshow_a383ab9e2f595db';
-$php_path = '/opt/bitnami/php/bin';
+$php_path = '/usr/bin/php';
 
 $log_resource_access = false; # Log resource access
 $log_search_performance = false; # Log search performance information
 $log_php_errors = false; # Log php errors
 $log_all_php_errors = false; # Including E_NOTICE and E_WARNING level errors, recommended for debugging only
 $debug_log = false; # General debugging log
-$debug_log_location = '/opt/bitnami/resourcespace/logs/debug.txt'; # Specify the log file path
+$debug_log_location = '/var/www/resourcespace/logs/debug.txt'; # Specify the log file path
 $show_detailed_errors = false;
 
 /*
