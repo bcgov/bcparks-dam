@@ -114,7 +114,13 @@ wait_for_dpkg_lock
 sudo apt-get install -y git binutils pkg-config libssl-dev
 
 # Switch to the www-data user and install Rust and Cargo
-sudo -u www-data bash <<'EOF'
+echo '### Installing Rust and Cargo ###'
+#sudo -u www-data bash <<'EOF'
+#curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+#echo '. "$HOME/.cargo/env"' >> ~/.bashrc
+#source $HOME/.cargo/env
+#EOF
+sudo bash <<'EOF'
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 echo '. "$HOME/.cargo/env"' >> ~/.bashrc
 source $HOME/.cargo/env
@@ -122,7 +128,15 @@ EOF
 
 # Clone and build amazon-efs-utils as the bitnami user
 echo '### Building amazon-efs-utils ###'
-sudo -u www-data bash <<'EOF'
+#sudo -u www-data bash <<'EOF'
+#mkdir -p /tmp/bcparks-dam/repos
+#cd /tmp/bcparks-dam/repos
+#git clone https://github.com/aws/efs-utils efs-utils
+#cd efs-utils
+#source $HOME/.cargo/env
+#./build-deb.sh
+#EOF
+sudo bash <<'EOF'
 mkdir -p /tmp/bcparks-dam/repos
 cd /tmp/bcparks-dam/repos
 git clone https://github.com/aws/efs-utils efs-utils
