@@ -70,12 +70,20 @@ sudo chmod -R 755 /var/www/resourcespace
 
 echo 'Domain name value: ' ${domain_name}
 
+# Install certbot to provide SSL support to Nginx
+#sudo apt-get install -y certbot python3-certbot-nginx
+
 # Set up Nginx server block
 echo '### Configuring Nginx ###'
 cat <<EOF | sudo tee /etc/nginx/sites-available/resourcespace
 server {
-    listen 443;
+    listen 80;
     server_name ${domain_name};
+
+    # Redirect only if the original request was HTTP
+    if (\$http_x_forwarded_proto = 'http') {
+        return 301 https://\$host\$request_uri;
+    }
 
     root /var/www/resourcespace;
     index index.php index.html;
@@ -94,8 +102,15 @@ server {
     location ~ /\.ht {
         deny all;
     }
+
+    # SSL certificate placeholders (Certbot will replace these)
+    #ssl_certificate /etc/ssl/certs/placeholder.crt;
+    #ssl_certificate_key /etc/ssl/private/placeholder.key;
 }
 EOF
+
+# Run Certbot to obtain and configure SSL/TLS certificates dynamically
+#sudo certbot --nginx -d ${domain_name}
 
 # Enable the Nginx configuration
 sudo ln -s /etc/nginx/sites-available/resourcespace /etc/nginx/sites-enabled/
