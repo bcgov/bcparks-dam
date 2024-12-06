@@ -57,7 +57,7 @@ sudo systemctl start php8.2-fpm
 echo '### Cloning ResourceSpace repository ###'
 sudo apt-get install -y git
 sudo mkdir /tmp/bcparks-dam
-sudo -u www-data git clone -b generic-ami ${git_url} /tmp/bcparks-dam
+sudo git clone -b generic-ami ${git_url} /tmp/bcparks-dam
 #git clone ${git_url} /tmp/bcparks-dam
 #https://github.com/bcgov/bcparks-dam/tree/generic-ami/src/resourcespace/releases/10.4
 
