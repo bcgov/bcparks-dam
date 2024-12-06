@@ -126,6 +126,11 @@ echo '. "$HOME/.cargo/env"' >> ~/.bashrc
 source $HOME/.cargo/env
 EOF
 
+# Install the build-essential packed, which includes C compiler that is required by Cargo #
+echo '### Installing the build-essential package ###'
+sudo apt-get install -y build-essential
+
+
 # Clone and build amazon-efs-utils as the bitnami user
 echo '### Building amazon-efs-utils ###'
 #sudo -u www-data bash <<'EOF'
