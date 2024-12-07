@@ -80,32 +80,35 @@ server {
     listen 80;
     server_name ${domain_name};
 
-    # Redirect only if the original request was HTTP
-    if (\$http_x_forwarded_proto = 'http') {
-        return 301 https://\$host\$request_uri;
-    }
-
     root /var/www/resourcespace;
     index index.php index.html;
-
-    location / {
-        try_files \$uri \$uri/ /pages/home.php?\$args;
-    }
-
-    location ~ \.php\$ {
+    
+    # Handle the health check for /login.php
+    location = /login.php {
+        # Pass the request to PHP-FPM
         include snippets/fastcgi-php.conf;
-        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;  # Adjust PHP version if needed
+        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
         fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
         include fastcgi_params;
     }
 
+    # Main application block
+    location / {
+        try_files \$uri \$uri/ /pages/home.php?\$args;
+    }
+
+    # PHP processing
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+        include fastcgi_params;
+    }
+
+    # Restrict access to hidden files
     location ~ /\.ht {
         deny all;
     }
-
-    # SSL certificate placeholders (Certbot will replace these)
-    #ssl_certificate /etc/ssl/certs/placeholder.crt;
-    #ssl_certificate_key /etc/ssl/private/placeholder.key;
 }
 EOF
 
