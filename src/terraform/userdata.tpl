@@ -68,7 +68,9 @@ sudo cp -R /tmp/bcparks-dam/src/resourcespace/releases/10.4/* /var/www/resources
 sudo chown -R www-data:www-data /var/www/resourcespace
 sudo chmod -R 755 /var/www/resourcespace
 
-echo 'Domain name value: ' ${domain_name}
+
+echo '### Licence plate value: ' ${licence_plate}
+echo '### Domain name value: ' ${domain_name}
 
 # Install certbot to provide SSL support to Nginx
 #sudo apt-get install -y certbot python3-certbot-nginx
@@ -83,13 +85,10 @@ server {
     root /var/www/resourcespace;
     index index.php index.html;
     
-    # Handle the health check for /login.php
-    location = /login.php {
-        # Pass the request to PHP-FPM
-        include snippets/fastcgi-php.conf;
-        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
-        fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
-        include fastcgi_params;
+    # Health check endpoint
+    location = /health {
+        return 200 "OK";
+        add_header Content-Type text/plain;
     }
 
     # Main application block
