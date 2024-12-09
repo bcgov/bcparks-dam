@@ -85,10 +85,13 @@ server {
     root /var/www/resourcespace;
     index index.php index.html;
     
-    # Health check endpoint
-    location = /health {
-        return 200 "OK";
-        add_header Content-Type text/plain;
+    # Handle the health check for /login.php
+    location = /login.php {
+        # Pass the request to PHP-FPM
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
+        include fastcgi_params;
     }
 
     # Main application block
