@@ -87,6 +87,6 @@ variable "domain_name" {
 
 variable "licence_plate" {
   description = "The licence plate for the application"
-  default     = "[LICENCEPLATE]"
+  default     = [LICENCEPLATE]
   type        = string
 }
