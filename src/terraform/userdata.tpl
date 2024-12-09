@@ -85,14 +85,35 @@ server {
     root /var/www/resourcespace;
     index index.php index.html;
     
-    location = /health {
-        return 200 "OK";
-        add_header Content-Type text/plain;
+    location / {
+        try_files \$uri \$uri/ /index.php?\$args;
     }
 
-    # Main application block
-    location / {
-        try_files \$uri \$uri/ /pages/home.php?\$args;
+    location /plugins/simplesaml/ {
+        alias /var/www/resourcespace/plugins/simplesaml/;
+        index index.php;
+
+        location ~ \.php$ {
+            include snippets/fastcgi-php.conf;
+            fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+            fastcgi_param SCRIPT_FILENAME \$request_filename;
+            include fastcgi_params;
+
+            # Pass X-Forwarded-Proto to PHP
+            fastcgi_param HTTPS \$http_x_forwarded_proto;
+        }
+
+        # Pass additional path info to PHP
+        location ~ ^/plugins/simplesaml/lib/www/module\.php(/.*)?$ {
+            include snippets/fastcgi-php.conf;
+            fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+            fastcgi_param SCRIPT_FILENAME /var/www/resourcespace/plugins/simplesaml/lib/www/module.php;
+            fastcgi_param PATH_INFO $1;
+            include fastcgi_params;
+
+            # Pass X-Forwarded-Proto to PHP
+            fastcgi_param HTTPS \$http_x_forwarded_proto;
+        }
     }
 
     # PHP processing
@@ -101,6 +122,9 @@ server {
         fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
         fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
         include fastcgi_params;
+        
+        # Pass X-Forwarded-Proto to PHP
+        fastcgi_param HTTPS \$http_x_forwarded_proto;
     }
 
     # Restrict access to hidden files
@@ -342,6 +366,11 @@ echo '### Setting up cronjob for offline jobs ###'
 (crontab -l -u www-data 2>/dev/null; echo "*/2 * * * * cd /var/www/resourcespace/pages/tools && /usr/bin/php offline_jobs.php --max-jobs 5") | sudo crontab -u www-data -
 
 
+# Install SQLite
+echo '### Installing sqlite3 ###'
+sudo apt-get install php8.2-sqlite3
+
+
 # Install APC User Cache (APCu)
 # https://pecl.php.net/package/APCu
 # Install required build tools and PHP development packages
@@ -366,8 +395,6 @@ sudo systemctl reload nginx
 cd /tmp
 sudo rm -rf apcu-5.1.23 apcu-5.1.23.tgz
 echo '### APCu installation completed ###'
-
-
 
 
 # Install performance monitor utility
