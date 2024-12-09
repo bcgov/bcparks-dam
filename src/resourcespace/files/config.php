@@ -13,7 +13,8 @@ $show_detailed_errors = true;
 $baseurl = 'http://127.0.0.1'; # Fallback for cron job execution
 # When running cli php scripts, HTTP_HOST is not set
 if (isset($_SERVER['HTTP_HOST'])) {
-    if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
+    if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') { # Used with Nginx server
+    #if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') { # Used with Apache server
         $_SERVER['SERVER_PORT'] = 443;
         $_SERVER['HTTPS'] = 'true';
         $baseurl = 'https://' . $_SERVER['HTTP_HOST'];
