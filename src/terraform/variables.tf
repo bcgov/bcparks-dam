@@ -51,7 +51,7 @@ variable "app_port" {
 }
 
 variable "health_check_path" {
-  default = "/health"
+  default = "/login.php"
 }
 
 variable "common_tags" {
