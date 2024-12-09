@@ -658,7 +658,7 @@
      * syntaxes.
     */
     #'store.sql.dsn'                 => 'sqlite:/path/to/sqlitedatabase.sq3',
-    'store.sql.dsn'                 => 'sqlite:/opt/bitnami/resourcespace/filestore/tmp/simplesamldb.sq3',
+    'store.sql.dsn'                 => 'sqlite:/var/www/resourcespace/filestore/tmp/simplesamldb.sq3',
 
     /*
      * The username and password to use when connecting to the database.
