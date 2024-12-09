@@ -139,8 +139,6 @@ sudo systemctl reload nginx
 
 # INSTALL AMAZON-EFS-UTILS
 # We need to build this from source for Debian Linux; it isn't available, otherwise.
-#
-# Update package lists and install dependencies
 echo '### Installing amazon-efs-utils dependencies ###'
 wait_for_dpkg_lock
 sudo apt-get -y update
@@ -149,11 +147,6 @@ sudo apt-get install -y git binutils pkg-config libssl-dev
 
 # Switch to the www-data user and install Rust and Cargo
 echo '### Installing Rust and Cargo ###'
-#sudo -u www-data bash <<'EOF'
-#curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-#echo '. "$HOME/.cargo/env"' >> ~/.bashrc
-#source $HOME/.cargo/env
-#EOF
 sudo bash <<'EOF'
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 echo '. "$HOME/.cargo/env"' >> ~/.bashrc
@@ -167,14 +160,6 @@ sudo apt-get install -y build-essential
 
 # Clone and build amazon-efs-utils
 echo '### Building amazon-efs-utils ###'
-#sudo -u www-data bash <<'EOF'
-#mkdir -p /tmp/bcparks-dam/repos
-#cd /tmp/bcparks-dam/repos
-#git clone https://github.com/aws/efs-utils efs-utils
-#cd efs-utils
-#source $HOME/.cargo/env
-#./build-deb.sh
-#EOF
 sudo bash <<'EOF'
 mkdir -p /tmp/bcparks-dam/repos
 cd /tmp/bcparks-dam/repos
