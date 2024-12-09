@@ -72,9 +72,6 @@ sudo chmod -R 755 /var/www/resourcespace
 echo '### Licence plate value: ' ${licence_plate}
 echo '### Domain name value: ' ${domain_name}
 
-# Install certbot to provide SSL support to Nginx
-#sudo apt-get install -y certbot python3-certbot-nginx
-
 # Set up Nginx server block
 echo '### Configuring Nginx ###'
 cat <<EOF | sudo tee /etc/nginx/sites-available/resourcespace
@@ -133,9 +130,6 @@ server {
     }
 }
 EOF
-
-# Run Certbot to obtain and configure SSL/TLS certificates dynamically
-#sudo certbot --nginx -d ${domain_name}
 
 # Enable the Nginx configuration
 sudo ln -s /etc/nginx/sites-available/resourcespace /etc/nginx/sites-enabled/
