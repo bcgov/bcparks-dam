@@ -108,7 +108,7 @@ server {
             include snippets/fastcgi-php.conf;
             fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
             fastcgi_param SCRIPT_FILENAME /var/www/resourcespace/plugins/simplesaml/lib/www/module.php;
-            fastcgi_param PATH_INFO $1;
+            fastcgi_param PATH_INFO \$1;
             include fastcgi_params;
 
             # Pass X-Forwarded-Proto to PHP
