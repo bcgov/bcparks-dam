@@ -28,7 +28,7 @@ if (!isset($_SERVER['REQUEST_URI'])) {
 
 # Paths
 $imagemagick_path = '/usr/bin';
-$ghostscript_path = '/usr/bin';
+$ghostscript_path = '/usr/bin/gs';
 $ffmpeg_path = '/usr/bin';
 $exiftool_path = '/usr/bin';
 $homeanim_folder = 'filestore/system/slideshow_a383ab9e2f595db';
@@ -48,6 +48,8 @@ New Installation Defaults
 The following configuration options are set for new installations only.
 This provides a mechanism for enabling new features for new installations without affecting existing installations (as would occur with changes to config.default.php)
 */
+
+$mysql_charset = 'utf8mb4';
 
 # Set imagemagick default for new installs to expect the newer version with the sRGB bug fixed.
 $imagemagick_colorspace = 'sRGB';
