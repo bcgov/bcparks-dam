@@ -327,6 +327,9 @@ sudo sed -i 's|^date.timezone = .*|date.timezone = "America/Vancouver"|' /etc/ph
 sudo sed -i 's|^max_execution_time = .*|max_execution_time = 150|' /etc/php/8.2/fpm/php.ini
 sudo sed -i 's|^max_input_time = .*|max_input_time = 180|' /etc/php/8.2/fpm/php.ini
 
+# Install ImageMagick
+sudo apt-get install -y imagemagick php-imagick
+
 # Update ImageMagick policy to handle large images (over 128MP)
 sudo sed -i 's|<policy domain="resource" name="memory" value="[^"]*"/>|<policy domain="resource" name="memory" value="2GiB"/>|' /etc/ImageMagick-6/policy.xml
 sudo sed -i 's|<policy domain="resource" name="map" value="[^"]*"/>|<policy domain="resource" name="map" value="4GiB"/>|' /etc/ImageMagick-6/policy.xml
@@ -334,21 +337,22 @@ sudo sed -i 's|<policy domain="resource" name="area" value="[^"]*"/>|<policy dom
 sudo sed -i 's|<policy domain="resource" name="disk" value="[^"]*"/>|<policy domain="resource" name="disk" value="5GiB"/>|' /etc/ImageMagick-6/policy.xml
 sudo sed -i 's|<!-- <policy domain="resource" name="thread" value="[^"]*"/> -->|<policy domain="resource" name="thread" value="2"/>|' /etc/ImageMagick-6/policy.xml
 
-
+# Install Ghostscript, FFmpeg, ExifTool, and MariaDB client
+sudo apt-get install -y ghostscript
+sudo apt-get install -y ffmpeg
+sudo apt-get install -y libimage-exiftool-perl
+sudo apt install -y mariadb-client
 
 # Add PHP to path
 export PATH=$PATH:/usr/bin/php
-
 
 # Set the cronjob for the offline job script, to generate previews in the background for improved performance
 echo '### Setting up cronjob for offline jobs ###'
 (crontab -l -u www-data 2>/dev/null; echo "*/2 * * * * cd /var/www/resourcespace/pages/tools && /usr/bin/php offline_jobs.php --max-jobs 5") | sudo crontab -u www-data -
 
-
 # Install SQLite
 echo '### Installing sqlite3 ###'
 sudo apt-get install php8.2-sqlite3
-
 
 # Install APC User Cache (APCu)
 # https://pecl.php.net/package/APCu
@@ -375,17 +379,14 @@ cd /tmp
 sudo rm -rf apcu-5.1.23 apcu-5.1.23.tgz
 echo '### APCu installation completed ###'
 
-
 # Install performance monitor utility
 sudo apt-get install -y htop
-
 
 # Update the slideshow directory in config.php
 sudo cp /tmp/bcparks-dam/src/resourcespace/files/update_slideshow.sh /tmp/
 sudo chmod +x /tmp/update_slideshow.sh
 sudo /tmp/update_slideshow.sh
 sudo rm /tmp/update_slideshow.sh
-
 
 # Restart PHP-FPM and Nginx
 echo '### Restarting services ###'
