@@ -1,10 +1,8 @@
 #! /bin/bash
 
-
 # Save all output to a log file
 exec > /var/log/userdata.log 2>&1
 set -x
-
 
 # INSTALL SSM AGENT
 # This allows SSH access into the VM from the Session Manager web interface.
@@ -17,7 +15,6 @@ cd /tmp/ssm
 wget -q https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/debian_amd64/amazon-ssm-agent.deb
 sudo dpkg -i amazon-ssm-agent.deb
 
-
 # Function to wait for dpkg lock
 wait_for_dpkg_lock() {
   while sudo fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1; do
@@ -25,7 +22,6 @@ wait_for_dpkg_lock() {
     sleep 5
   done
 }
-
 
 # INSTALL NGINX AND PHP
 echo '### Installing Nginx and php'
@@ -51,7 +47,6 @@ sudo systemctl start nginx
 sudo systemctl enable php8.2-fpm  # Adjust the PHP version as necessary
 sudo systemctl start php8.2-fpm
 
-
 # INSTALL ResourceSpace
 # Clone ResourceSpace repository from GitHub
 echo '### Cloning ResourceSpace repository ###'
@@ -59,7 +54,6 @@ sudo apt-get install -y git
 sudo mkdir /tmp/bcparks-dam
 sudo git clone -b generic-ami ${git_url} /tmp/bcparks-dam
 #git clone ${git_url} /tmp/bcparks-dam
-#https://github.com/bcgov/bcparks-dam/tree/generic-ami/src/resourcespace/releases/10.4
 
 # Copy ResourceSpace files
 echo '### Copying ResourceSpace files ###'
@@ -67,7 +61,6 @@ sudo mkdir -p /var/www/resourcespace
 sudo cp -R /tmp/bcparks-dam/src/resourcespace/releases/10.4/* /var/www/resourcespace
 sudo chown -R www-data:www-data /var/www/resourcespace
 sudo chmod -R 755 /var/www/resourcespace
-
 
 echo '### Licence plate value: ' ${licence_plate}
 echo '### Domain name value: ' ${domain_name}
@@ -136,7 +129,6 @@ sudo ln -s /etc/nginx/sites-available/resourcespace /etc/nginx/sites-enabled/
 sudo nginx -t
 sudo systemctl reload nginx
 
-
 # INSTALL AMAZON-EFS-UTILS
 # We need to build this from source for Debian Linux; it isn't available, otherwise.
 echo '### Installing amazon-efs-utils dependencies ###'
@@ -156,7 +148,6 @@ EOF
 # Install the build-essential packed, which includes C compiler that is required by Cargo #
 echo '### Installing the build-essential package ###'
 sudo apt-get install -y build-essential
-
 
 # Clone and build amazon-efs-utils
 echo '### Building amazon-efs-utils ###'
@@ -181,9 +172,8 @@ else
     exit 1
 fi
 
-
 # MOUNT THE EFS PERSISTENT FILESYSTEM
-# This volume contains the resourcespace filestore. We tried using S3 but it was slow and unreliable.
+# This volume contains the resourcespace filestore. We tried using S3, but it was slow and unreliable.
 # EBS wouldn't work either because the autoscaling group runs in 2 availability zones.  
 #
 echo '### Mounting the EFS filesystem ###'
@@ -212,16 +202,13 @@ sudo apt-get -y install s3fs
 sudo mkdir /mnt/s3-backup
 sudo s3fs bcparks-dam-${target_env}-backup /mnt/s3-backup -o iam_role=BCParks-Dam-EC2-Role -o use_cache=/tmp -o allow_other -o uid=0 -o gid=1 -o mp_umask=002  -o multireq_max=5 -o use_path_request_style -o url=https://s3-${aws_region}.amazonaws.com
 
-
 # Copy the default filestore data
-#sudo cp -R /opt/bitnami/resourcespace/filestore.bitnami/system /opt/bitnami/resourcespace/filestore
 sudo chown -R www-data:www-data /var/www/resourcespace
 sudo chmod -R 755 /var/www/resourcespace
 
-
 # CUSTOMIZE THE RESOURCESPACE CONFIG
 # Download all the files from our git repo to get our customized copy of config.php
-# Updated 2024-03-01 11:10
+# Updated 2024-12-11 11:10
 echo '### Customizing the Resourcespace config ###'
 sudo mkdir /tmp/bcparks-dam/repos
 cd /tmp
@@ -280,14 +267,12 @@ tee -a bcparks-dam/src/resourcespace/files/config.php << END
 END
 sudo cat bcparks-dam/src/resourcespace/files/simplesaml-metadata-4.php | tee -a bcparks-dam/src/resourcespace/files/config.php
 
-
 # copy the customized config.php file to overwrite the resourcespace config
 cd /var/www/resourcespace/include
 #sudo cp config.php config.php.bitnami
 sudo cp /tmp/bcparks-dam/src/resourcespace/files/config.php .
 sudo chown www-data:www-data config.php
 sudo chmod 664 config.php
-
 
 # copy the favicon, header image, and custom font (BC Sans)
 sudo mkdir /var/www/resourcespace/filestore/system/config
@@ -300,22 +285,18 @@ sudo cp /tmp/bcparks-dam/src/resourcespace/files/custom_font.woff2 .
 sudo chown www-data:www-data *.*
 sudo chmod 664 *.*
 
-
 # extract the Montala Support plugin
 cd /var/www/resourcespace/filestore/system
 sudo unzip /tmp/bcparks-dam/src/resourcespace/files/montala_support.zip
 sudo chown -R www-data:www-data plugins
 sudo chmod -R 775 plugins
 
-
 # Delete cache files
 sudo rm /var/www/resourcespace/filestore/tmp/querycache/*
-
 
 # Clear the tmp folder
 echo '### Clear the tmp folder ###'
 sudo rm -rf /var/www/resourcespace/filestore/tmp/*
-
 
 # Set the PHP memory_limit and other configurations (recommended by Montala)
 sudo sed -i 's|^memory_limit = .*|memory_limit = 2048M|' /etc/php/8.2/fpm/php.ini
