@@ -9,7 +9,7 @@ resource "aws_db_subnet_group" "data_subnet" {
 
 resource "aws_rds_cluster" "mysql" {
   cluster_identifier      = "bcparks-dam-mysql-cluster"
-  engine                  = "aurora-mysql"
+  engine                  = "aurora-mysql-8-0"
   engine_version          = "8.0.mysql_aurora.3.04.0"  # Specify Aurora MySQL 3.x version
   engine_mode             = "serverless"
   #engine_mode = "provisioned" # Remove the scaling_configuration block as it's not applicable for provisioned clusters
