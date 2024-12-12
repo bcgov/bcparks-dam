@@ -11,7 +11,7 @@ resource "aws_rds_cluster" "mysql" {
   cluster_identifier      = "bcparks-dam-mysql-cluster"
   engine                  = "aurora-mysql"
   engine_version          = "8.0.mysql_aurora.3.08.0"  # Specify Aurora MySQL 3.x version
-  engine_mode             = "serverless-v2"
+  engine_mode             = "serverless"
   database_name           = "resourcespace"
   scaling_configuration {
     auto_pause               = true
