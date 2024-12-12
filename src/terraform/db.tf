@@ -10,17 +10,17 @@ resource "aws_db_subnet_group" "data_subnet" {
 resource "aws_rds_cluster" "mysql" {
   cluster_identifier      = "bcparks-dam-mysql-cluster"
   engine                  = "aurora-mysql"
-  engine_version          = "8.0.mysql_aurora.3.08.0"  # Specify Aurora MySQL 3.x version
-  #engine_mode             = "serverless"
-  engine_mode = "provisioned" # Remove the scaling_configuration block as it's not applicable for provisioned clusters
+  #engine_version          = "8.0.mysql_aurora.3.08.0"  # Specify Aurora MySQL 3.x version
+  engine_mode             = "serverless"
+  #engine_mode = "provisioned" # Remove the scaling_configuration block as it's not applicable for provisioned clusters
   database_name           = "resourcespace"
-  #scaling_configuration {
-  #  auto_pause               = true
-  #  max_capacity             = 16
-  #  min_capacity             = 2
-  #  seconds_until_auto_pause = 300
-  #  timeout_action           = "ForceApplyCapacityChange"
-  #}
+  scaling_configuration {
+    auto_pause               = true
+    max_capacity             = 16
+    min_capacity             = 2
+    seconds_until_auto_pause = 300
+    timeout_action           = "ForceApplyCapacityChange"
+  }
   master_username         = local.secrets.mysql_username
   master_password         = local.secrets.mysql_password
   backup_retention_period = 5
