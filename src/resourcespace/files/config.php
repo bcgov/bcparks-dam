@@ -28,7 +28,7 @@ if (!isset($_SERVER['REQUEST_URI'])) {
 
 # Paths
 $imagemagick_path = '/usr/bin';
-$ghostscript_path = '/usr/bin/gs';
+$ghostscript_path = '/usr/bin';
 $ffmpeg_path = '/usr/bin';
 $exiftool_path = '/usr/bin';
 $homeanim_folder = 'filestore/system/slideshow_a383ab9e2f595db';
