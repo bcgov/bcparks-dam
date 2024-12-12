@@ -58,7 +58,7 @@ sudo git clone -b generic-ami ${git_url} /tmp/bcparks-dam
 # Copy ResourceSpace files
 echo '### Copying ResourceSpace files ###'
 sudo mkdir -p /var/www/resourcespace
-sudo cp -R /tmp/bcparks-dam/src/resourcespace/releases/10.4/* /var/www/resourcespace
+sudo cp -R /tmp/bcparks-dam/src/resourcespace/releases/10.5/* /var/www/resourcespace
 sudo chown -R www-data:www-data /var/www/resourcespace
 sudo chmod -R 755 /var/www/resourcespace
 
