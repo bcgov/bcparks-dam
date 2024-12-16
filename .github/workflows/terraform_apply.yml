@@ -1,4 +1,4 @@
-# This workflow will run terraform apply, which will deploy the infrstructure and the resourcespace instance
+# This workflow will run terraform apply, which will deploy the infrastructure and the resourcespace instance
 
 name: terraform apply
 
@@ -23,11 +23,11 @@ jobs:
     environment: ${{ inputs.env }}
     runs-on: ubuntu-latest
     steps:
-      - name: checkout the repo
+      - name: checkout the repository
         uses: actions/checkout@v3
 
       - name: print cloud_environment
-        run: echo the cloud env is ${{ env.environment }}
+        run: echo "The cloud environment is ${{ env.environment }}"
 
       - name: setting variables
         run: |
@@ -35,6 +35,11 @@ jobs:
           cat <<EOF > dev.auto.tfvars
           target_env = "${{ env.environment }}"
           EOF
+
+      - name: setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
 
       - name: configuring AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
