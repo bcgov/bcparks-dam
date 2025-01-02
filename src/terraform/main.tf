@@ -82,7 +82,14 @@ module "asg" {
   version = "5.0.0"
 
   name = "bcparks-dam-vm"
-  tags = var.common_tags
+  #tags = var.common_tags
+  tags = merge(
+    var.common_tags,
+    {
+      "ForceUpdate" = "20250102-1418" # Increment this value to force instance updates
+    }
+  )
+
 
   # Launch configuration creation
   lc_name                   = var.lc_name
