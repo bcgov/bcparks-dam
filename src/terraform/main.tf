@@ -86,7 +86,8 @@ module "asg" {
   tags = merge(
     var.common_tags,
     {
-      "ForceUpdate" = "20250102-1418" # Increment this value to force instance updates
+      #"ForceUpdate" = "20250103-1214" # Increment this value to force instance updates
+      "LastUpdated" = formatdate("YYYYMMDDhhmmss", timestamp())
     }
   )
 
@@ -97,7 +98,7 @@ module "asg" {
   security_groups           = [module.network.aws_security_groups.web.id]
 
   #instance_type             = (var.target_env != "prod" ? "t3a.micro" : "t3a.small")
-  instance_type             = "t3a.medium"
+  instance_type             = "t3a.small"
 
   iam_instance_profile_name = aws_iam_instance_profile.ec2_profile.name
   user_data                 = data.template_file.userdata_script.rendered
