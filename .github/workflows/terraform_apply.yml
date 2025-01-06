@@ -62,6 +62,12 @@ jobs:
           }
           EOF
 
+      - name: Run Terraform Apply
+        run: terraform apply -input=false -auto-approve
+        env:
+          TF_LOG: DEBUG
+        
+
           terraform init -input=false
           terraform apply -auto-approve -input=false
         env:
