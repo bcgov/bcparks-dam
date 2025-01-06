@@ -60,7 +60,7 @@ jobs:
               encrypt = true
             }
           }
-          EOF      
+          EOF
 
           terraform init -input=false
           terraform apply -auto-approve -input=false
