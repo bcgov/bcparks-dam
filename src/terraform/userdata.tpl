@@ -367,14 +367,14 @@ sudo chmod +x /tmp/update_slideshow.sh
 sudo /tmp/update_slideshow.sh
 sudo rm /tmp/update_slideshow.sh
 
-# Restart PHP-FPM and Nginx
-echo '### Restarting services ###'
-sudo systemctl restart php8.2-fpm
-sudo systemctl restart nginx
-#sudo /opt/bitnami/ctlscript.sh restart
-
 # Clean up temporary files
 echo '### Cleaning up ###'
 #rm -rf /tmp/bcparks-dam
 sudo rm -r /var/www/resourcespace/filestore/tmp/*
+
+# Restart PHP-FPM and Nginx
+echo '### Restarting services ###'
+sudo systemctl restart php8.2-fpm
+sudo systemctl restart nginx
+
 echo '### Userdata script completed successfully ###'
