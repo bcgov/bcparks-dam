@@ -92,7 +92,8 @@ module "asg" {
   tags = merge(
     var.common_tags,
     {
-      "ForceUpdate" = "20250103-1130" # Increment this value to force instance updates
+      #"ForceUpdate" = "20250103-1130" # Increment this value to force instance updates
+      "LastUpdated" = formatdate("YYYYMMDDhhmmss", timestamp())
     }
   )
 
