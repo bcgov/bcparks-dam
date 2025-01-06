@@ -378,7 +378,7 @@ sudo systemctl restart nginx
 # Clean up temporary files
 echo '### Cleaning up ###'
 #rm -rf /tmp/bcparks-dam
-sudo rm /var/www/resourcespace/filestore/tmp/*
+#sudo rm -r /var/www/resourcespace/filestore/tmp/*
 sudo rm /var/www/resourcespace/filestore/tmp/process_locks/*
 sudo rm /var/www/resourcespace/filestore/tmp/querycache/*
 echo '### Userdata script completed successfully ###'
