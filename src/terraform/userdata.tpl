@@ -181,7 +181,6 @@ cd /var/www/resourcespace
 sudo mkdir filestore
 sudo chown www-data:www-data filestore
 sudo chmod -R 775 filestore
-#sudo cp -R filestore filestore.bitnami
 wait_for_dpkg_lock
 if sudo mount -t efs -o iam -o tls ${efs_dns_name}:/ ./filestore; then
   echo "EFS mounted successfully."
@@ -208,7 +207,6 @@ sudo chmod -R 755 /var/www/resourcespace
 
 # CUSTOMIZE THE RESOURCESPACE CONFIG
 # Download all the files from our git repo to get our customized copy of config.php
-# Updated 2024-12-11 11:10
 echo '### Customizing the Resourcespace config ###'
 sudo mkdir /tmp/bcparks-dam/repos
 cd /tmp
@@ -378,7 +376,5 @@ sudo systemctl restart nginx
 # Clean up temporary files
 echo '### Cleaning up ###'
 #rm -rf /tmp/bcparks-dam
-#sudo rm -r /var/www/resourcespace/filestore/tmp/*
-sudo rm /var/www/resourcespace/filestore/tmp/process_locks/*
-#sudo rm /var/www/resourcespace/filestore/tmp/querycache/*
+sudo rm -r /var/www/resourcespace/filestore/tmp/*
 echo '### Userdata script completed successfully ###'
