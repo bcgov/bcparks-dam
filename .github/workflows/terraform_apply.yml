@@ -60,13 +60,7 @@ jobs:
               encrypt = true
             }
           }
-          EOF
-
-      - name: Run Terraform Apply
-        run: terraform apply -input=false -auto-approve
-        env:
-          TF_LOG: DEBUG
-        
+          EOF      
 
           terraform init -input=false
           terraform apply -auto-approve -input=false
