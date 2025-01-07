@@ -72,9 +72,13 @@ server {
     listen 80;
     server_name ${domain_name};
 
+    location / {
+        return 301 https://$host$request_uri;
+    }
+    
     root /var/www/resourcespace;
     index index.php index.html;
-    
+        
     location / {
         try_files \$uri \$uri/ /index.php?\$args;
     }
