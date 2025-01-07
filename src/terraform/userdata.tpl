@@ -79,10 +79,6 @@ server {
         root /var/www/html; # Adjust as needed
         try_files $uri =404;
     }
-
-    location / {
-        return 301 https://$host$request_uri;
-    }
    
     location / {
         try_files \$uri \$uri/ /index.php?\$args;
