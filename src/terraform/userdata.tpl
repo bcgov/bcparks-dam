@@ -75,7 +75,7 @@ server {
     index index.php index.html;
     
     location /health-check.php {
-        root /var/www/html; # Adjust as needed
+        root /var/www/resourcespace; # Adjust as needed
         try_files $uri =404;
     }
    
