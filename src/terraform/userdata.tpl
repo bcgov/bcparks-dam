@@ -25,7 +25,6 @@ wait_for_dpkg_lock() {
 
 # INSTALL NGINX AND PHP
 echo '### Installing Nginx and php'
-# Update package lists
 echo '### Updating package lists ###'
 wait_for_dpkg_lock
 sudo apt-get update -y
@@ -44,7 +43,7 @@ sudo apt-get install -y php-fpm php-mysqli php-curl php-dom php-gd php-intl php-
 echo '### Starting services ###'
 sudo systemctl enable nginx
 sudo systemctl start nginx
-sudo systemctl enable php8.2-fpm  # Adjust the PHP version as necessary
+sudo systemctl enable php8.2-fpm
 sudo systemctl start php8.2-fpm
 
 # INSTALL ResourceSpace
@@ -272,7 +271,6 @@ sudo cat bcparks-dam/src/resourcespace/files/simplesaml-metadata-4.php | tee -a 
 
 # copy the customized config.php file to overwrite the resourcespace config
 cd /var/www/resourcespace/include
-#sudo cp config.php config.php.bitnami
 sudo cp /tmp/bcparks-dam/src/resourcespace/files/config.php .
 sudo chown www-data:www-data config.php
 sudo chmod 664 config.php
@@ -342,7 +340,6 @@ sudo apt-get install php8.2-sqlite3
 # https://pecl.php.net/package/APCu
 # Install required build tools and PHP development packages
 sudo apt-get -y install build-essential autoconf php-dev php-pear
-# Download and extract the APCu source code
 cd /tmp
 sudo wget https://pecl.php.net/get/apcu-5.1.23.tgz  # Replace with the latest compatible version
 sudo tar -xf apcu-5.1.23.tgz
@@ -353,10 +350,10 @@ phpize
 make
 sudo make install
 # Enable the APCu extension
-echo "extension=apcu.so" | sudo tee /etc/php/8.2/mods-available/apcu.ini  # Adjust for PHP version
+echo "extension=apcu.so" | sudo tee /etc/php/8.2/mods-available/apcu.ini
 sudo phpenmod apcu
 # Restart PHP-FPM and Nginx to apply changes
-sudo systemctl restart php8.2-fpm  # Adjust for PHP version
+sudo systemctl restart php8.2-fpm
 sudo systemctl reload nginx
 # Cleanup
 cd /tmp
