@@ -69,14 +69,13 @@ echo '### Configuring Nginx ###'
 cat <<EOF | sudo tee /etc/nginx/sites-available/resourcespace
 server {
     listen 80;
-    server_name ${domain_name};
+    server_name \${domain_name};
 
     root /var/www/resourcespace;
     index index.php index.html;
     
     location /health-check.php {
-        root /var/www/resourcespace; # Adjust as needed
-        try_files $uri =404;
+        try_files \$uri =404;
     }
    
     location / {
