@@ -78,11 +78,8 @@ server {
     }
 
     location /health-check.php {
-        default_type text/html;
-        return 200 "OK";
-    }
-    location ~ /health-check.php {
-        return 200 "Debug: File found\n";
+        root /var/www/resourcespace;
+        try_files /health-check.php =404;
     }
 
     location /plugins/simplesaml/ {
@@ -264,8 +261,9 @@ sudo cp /tmp/bcparks-dam/src/resourcespace/files/config.php .
 sudo chown www-data:www-data config.php
 sudo chmod 664 config.php
 
-# copy the healh check
-sudo cp /tmp/bcparks-dam/src/resourcespace/files/health-check.php /var/www/resourcespace
+# copy the health check
+cd /var/www/resourcespace
+sudo cp /tmp/bcparks-dam/src/resourcespace/files/health-check.php .
 sudo chown www-data:www-data health-check.php
 sudo chmod 664 health-check.php
 
@@ -313,11 +311,12 @@ sudo sed -i 's|<policy domain="resource" name="area" value="[^"]*"/>|<policy dom
 sudo sed -i 's|<policy domain="resource" name="disk" value="[^"]*"/>|<policy domain="resource" name="disk" value="5GiB"/>|' /etc/ImageMagick-6/policy.xml
 sudo sed -i 's|<!-- <policy domain="resource" name="thread" value="[^"]*"/> -->|<policy domain="resource" name="thread" value="2"/>|' /etc/ImageMagick-6/policy.xml
 
-# Install Ghostscript, FFmpeg, ExifTool, and MariaDB client
+# Install Ghostscript, FFmpeg, ExifTool, MariaDB client, netstat
 sudo apt-get install -y ghostscript
 sudo apt-get install -y ffmpeg
 sudo apt-get install -y libimage-exiftool-perl
 sudo apt install -y mariadb-client
+sudo apt install -y net-tools
 
 # Add PHP to path
 export PATH=$PATH:/usr/bin/php
