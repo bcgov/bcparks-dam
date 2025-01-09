@@ -73,15 +73,15 @@ server {
 
     root /var/www/resourcespace;
     index index.php index.html;
-    
-    location /health-check.php {
-        try_files \$uri =404;
-    }
-   
+       
     location / {
         try_files \$uri \$uri/ /index.php?\$args;
     }
 
+    location /health-check.php {
+        try_files \$uri =404;
+    }
+    
     location /plugins/simplesaml/ {
         alias /var/www/resourcespace/plugins/simplesaml/;
         index index.php;
