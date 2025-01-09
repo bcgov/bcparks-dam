@@ -47,7 +47,6 @@ sudo systemctl enable php8.2-fpm
 sudo systemctl start php8.2-fpm
 
 # INSTALL ResourceSpace
-# Clone ResourceSpace repository from GitHub
 echo '### Cloning ResourceSpace repository ###'
 sudo apt-get install -y git
 sudo mkdir /tmp/bcparks-dam
@@ -137,7 +136,6 @@ sudo nginx -t
 sudo systemctl reload nginx
 
 # INSTALL AMAZON-EFS-UTILS
-# We need to build this from source for Debian Linux; it isn't available, otherwise.
 echo '### Installing amazon-efs-utils dependencies ###'
 wait_for_dpkg_lock
 sudo apt-get -y update
@@ -152,11 +150,9 @@ echo '. "$HOME/.cargo/env"' >> ~/.bashrc
 source $HOME/.cargo/env
 EOF
 
-# Install the build-essential packed, which includes C compiler that is required by Cargo #
+# Clone and build amazon-efs-utils
 echo '### Installing the build-essential package ###'
 sudo apt-get install -y build-essential
-
-# Clone and build amazon-efs-utils
 echo '### Building amazon-efs-utils ###'
 sudo bash <<'EOF'
 mkdir -p /tmp/bcparks-dam/repos
@@ -167,10 +163,8 @@ source $HOME/.cargo/env
 ./build-deb.sh
 EOF
 
-# Install the built package
 echo '### Installing amazon-efs-utils ###'
 wait_for_dpkg_lock
-# Find the built .deb package
 DEB_FILE=$(ls /tmp/bcparks-dam/repos/efs-utils/build/*.deb | head -n 1)
 if [ -n "$DEB_FILE" ]; then
     sudo apt-get -y install "$DEB_FILE"
@@ -181,8 +175,7 @@ fi
 
 # MOUNT THE EFS PERSISTENT FILESYSTEM
 # This volume contains the resourcespace filestore. We tried using S3, but it was slow and unreliable.
-# EBS wouldn't work either because the autoscaling group runs in 2 availability zones.  
-#
+# EBS wouldn't work either because the autoscaling group runs in 2 availability zones.
 echo '### Mounting the EFS filesystem ###'
 cd /var/www/resourcespace
 sudo mkdir filestore
@@ -195,9 +188,6 @@ else
   echo "Failed to mount EFS." >&2
   exit 1
 fi
-#sudo chown -R www-data:www-data filestore*
-#sudo chmod -R 775 filestore*
-#^^temporarily disabled. This causes the rebuild to take a very long time, with assigning ownership and permissions to 130+GB, and impacts users.
 
 # MOUNT THE S3 BUCKET
 # The S3 bucket /mnt/s3-backup is used for backups and file transfers. You can use
@@ -207,10 +197,6 @@ echo '### Mounting the S3 bucket ###'
 sudo apt-get -y install s3fs
 sudo mkdir /mnt/s3-backup
 sudo s3fs bcparks-dam-${target_env}-backup /mnt/s3-backup -o iam_role=BCParks-Dam-EC2-Role -o use_cache=/tmp -o allow_other -o uid=0 -o gid=1 -o mp_umask=002  -o multireq_max=5 -o use_path_request_style -o url=https://s3-${aws_region}.amazonaws.com
-
-# Copy the default filestore data
-#sudo chown -R www-data:www-data /var/www/resourcespace
-#sudo chmod -R 755 /var/www/resourcespace
 
 # CUSTOMIZE THE RESOURCESPACE CONFIG
 # Download all the files from our git repo to get our customized copy of config.php
