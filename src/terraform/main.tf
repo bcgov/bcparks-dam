@@ -41,7 +41,8 @@ resource "aws_alb_target_group" "app" {
   tags = merge(
     var.common_tags,
     {
-      "LastUpdated" = formatdate("YYYYMMDDhhmmss", timestamp())
+      #"LastUpdated" = formatdate("YYYYMMDDhhmmss", timestamp())
+      "LastUpdated" = timestamp()
     }
   )
 }
@@ -92,8 +93,8 @@ module "asg" {
   tags = merge(
     var.common_tags,
     {
-      #"ForceUpdate" = "20250106-1027" # Increment this value to force instance updates
-      "LastUpdated" = formatdate("YYYYMMDDhhmmss", timestamp())
+      "LastUpdated" = "20250109-1554" # Increment this value to force instance updates
+      #"LastUpdated" = formatdate("YYYYMMDDhhmmss", timestamp())
     }
   )
 
