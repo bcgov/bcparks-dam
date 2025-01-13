@@ -234,12 +234,12 @@ sudo sed -i 's|<!-- <policy domain="resource" name="thread" value="[^"]*"/> -->|
 
 
 # Add PHP to path
-export PATH=$PATH:/opt/bitnami/php
 export PATH=$PATH:/opt/bitnami
-
+export PATH=$PATH:/opt/bitnami/php
+export PATH=$PATH:/opt/bitnami/php/sbin
 
 # Set the cronjob for the offline job script, to generate previews in the background for improved performance
-(crontab -l -u bitnami 2>/dev/null; echo "*/2 * * * * cd /opt/bitnami/resourcespace/pages/tools && /opt/bitnami/php/bin/php offline_jobs.php --max-jobs 5") | sudo crontab -u bitnami -
+(crontab -l -u bitnami 2>/dev/null; echo "*/2 * * * * cd /opt/bitnami/resourcespace/pages/tools && /opt/bitnami/php/bin/php offline_jobs.php --max-jobs 2") | sudo crontab -u bitnami -
 
 
 # Install APC User Cache (APCu)
