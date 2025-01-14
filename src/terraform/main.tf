@@ -107,7 +107,7 @@ module "asg" {
   instance_type             = "t3a.small"
 
   iam_instance_profile_name = aws_iam_instance_profile.ec2_profile.name
-  user_data                 = data.template_file.userdata_script.rendered
+  user_data                 = base64encode(data.template_file.userdata_script.rendered)
   use_lc                    = true
   create_lc                 = true
 
