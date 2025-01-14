@@ -73,13 +73,31 @@ server {
 
     root /var/www/resourcespace;
     index index.php index.html;
-       
+    
     location / {
         try_files \$uri \$uri/ /index.php?\$args;
     }
 
     location /health-check.php {
         try_files /health-check.php =404;
+    }
+
+    location /pages/upload_batch.php/files/ {
+        # Allow TUS headers
+        add_header Access-Control-Allow-Origin *;
+        add_header Access-Control-Allow-Methods "POST, HEAD, OPTIONS, PATCH";
+        add_header Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept, Tus-Resumable, Upload-Offset, Upload-Metadata";
+
+        # Set large body size limits
+        client_max_body_size 1G;
+        client_body_timeout 600s;
+
+        # Pass requests to PHP for dynamic handling
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $document_root/pages/upload_batch.php;
+        fastcgi_param PATH_INFO $uri;
+        include fastcgi_params;
     }
 
     location /plugins/simplesaml/ {
@@ -295,11 +313,12 @@ sudo rm -rf /var/www/resourcespace/filestore/tmp/*
 sudo sed -i 's|^memory_limit = .*|memory_limit = 2048M|' /etc/php/8.2/fpm/php.ini
 sudo sed -i 's|^post_max_size = .*|post_max_size = 2048M|' /etc/php/8.2/fpm/php.ini
 sudo sed -i 's|^upload_max_filesize = .*|upload_max_filesize = 2048M|' /etc/php/8.2/fpm/php.ini
-sudo sed -i 's|^max_file_uploads = .*|max_file_uploads = 40|' /etc/php/8.2/fpm/php.ini
+sudo sed -i 's|^max_file_uploads = .*|max_file_uploads = 100|' /etc/php/8.2/fpm/php.ini
 sudo sed -i 's|^upload_tmp_dir = .*|upload_tmp_dir = /var/www/resourcespace/filestore/tmp|' /etc/php/8.2/fpm/php.ini
 sudo sed -i 's|^date.timezone = .*|date.timezone = "America/Vancouver"|' /etc/php/8.2/fpm/php.ini
-sudo sed -i 's|^max_execution_time = .*|max_execution_time = 150|' /etc/php/8.2/fpm/php.ini
+sudo sed -i 's|^max_execution_time = .*|max_execution_time = 300|' /etc/php/8.2/fpm/php.ini
 sudo sed -i 's|^max_input_time = .*|max_input_time = 180|' /etc/php/8.2/fpm/php.ini
+sudo sed -i 's|^max_input_vars = .*|max_input_vars = 2000|' /etc/php/8.2/fpm/php.ini
 
 # Install ImageMagick
 sudo apt-get install -y imagemagick php-imagick
