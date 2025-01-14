@@ -78,7 +78,6 @@ server {
     }
 
     location /health-check.php {
-        root /var/www/resourcespace;
         try_files /health-check.php =404;
     }
 
@@ -323,7 +322,7 @@ export PATH=$PATH:/usr/bin/php
 
 # Set the cronjob for the offline job script, to generate previews in the background for improved performance
 echo '### Setting up cronjob for offline jobs ###'
-(crontab -l -u www-data 2>/dev/null; echo "*/2 * * * * cd /var/www/resourcespace/pages/tools && /usr/bin/php offline_jobs.php --max-jobs 5") | sudo crontab -u www-data -
+(crontab -l -u www-data 2>/dev/null; echo "*/2 * * * * cd /var/www/resourcespace/pages/tools && /usr/bin/php offline_jobs.php --max-jobs 2") | sudo crontab -u www-data -
 
 # Install SQLite
 echo '### Installing sqlite3 ###'
