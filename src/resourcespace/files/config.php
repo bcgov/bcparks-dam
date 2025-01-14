@@ -49,6 +49,14 @@ The following configuration options are set for new installations only.
 This provides a mechanism for enabling new features for new installations without affecting existing installations (as would occur with changes to config.default.php)
 */
 
+$CSRF_whitelist = [
+    $baseurl
+];
+# TUS upload settings
+$tus_enabled = true;  // Enable TUS protocol
+$tus_chunk_size = 5000000;  // Set chunk size (in bytes), adjust as needed
+$tus_max_upload_size = 100000000;  // Maximum upload size (in bytes)
+
 $mysql_charset = 'utf8mb4';
 
 # Set imagemagick default for new installs to expect the newer version with the sRGB bug fixed.
