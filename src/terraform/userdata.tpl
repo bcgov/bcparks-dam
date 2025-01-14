@@ -69,7 +69,7 @@ sudo rm /etc/nginx/sites-enabled/default
 cat <<EOF | sudo tee /etc/nginx/sites-available/resourcespace
 server {
     listen 80 default_server;
-    server_name ${domain_name};
+    server_name _;
 
     root /var/www/resourcespace;
     index index.php index.html;
