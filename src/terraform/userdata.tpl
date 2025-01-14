@@ -60,9 +60,6 @@ sudo cp -R /tmp/bcparks-dam/src/resourcespace/releases/10.5/* /var/www/resources
 sudo chown -R www-data:www-data /var/www/resourcespace
 sudo chmod -R 755 /var/www/resourcespace
 
-echo '### Licence plate value: ' ${licence_plate}
-echo '### Domain name value: ' ${domain_name}
-
 # Set up Nginx server block
 echo '### Configuring Nginx ###'
 sudo rm /etc/nginx/sites-enabled/default
@@ -88,15 +85,13 @@ server {
         add_header Access-Control-Allow-Methods "POST, HEAD, OPTIONS, PATCH";
         add_header Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept, Tus-Resumable, Upload-Offset, Upload-Metadata";
 
-        # Set large body size limits
         client_max_body_size 1G;
         client_body_timeout 600s;
 
-        # Pass requests to PHP for dynamic handling
         include snippets/fastcgi-php.conf;
         fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
-        fastcgi_param SCRIPT_FILENAME $document_root/pages/upload_batch.php;
-        fastcgi_param PATH_INFO $uri;
+        fastcgi_param SCRIPT_FILENAME \$document_root/pages/upload_batch.php;
+        fastcgi_param PATH_INFO \$uri;
         include fastcgi_params;
     }
 
@@ -150,14 +145,12 @@ sudo ln -s /etc/nginx/sites-available/resourcespace /etc/nginx/sites-enabled/
 sudo nginx -t
 sudo systemctl reload nginx
 
-# INSTALL AMAZON-EFS-UTILS
 echo '### Installing amazon-efs-utils dependencies ###'
 wait_for_dpkg_lock
 sudo apt-get -y update
 wait_for_dpkg_lock
 sudo apt-get install -y git binutils pkg-config libssl-dev
 
-# Switch to the www-data user and install Rust and Cargo
 echo '### Installing Rust and Cargo ###'
 sudo bash <<'EOF'
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
@@ -165,8 +158,7 @@ echo '. "$HOME/.cargo/env"' >> ~/.bashrc
 source $HOME/.cargo/env
 EOF
 
-# Clone and build amazon-efs-utils
-echo '### Installing the build-essential package ###'
+echo '### Clone and build amazon-efs-utils ###'
 sudo apt-get install -y build-essential
 echo '### Building amazon-efs-utils ###'
 sudo bash <<'EOF'
@@ -207,14 +199,11 @@ fi
 # MOUNT THE S3 BUCKET
 # The S3 bucket /mnt/s3-backup is used for backups and file transfers. You can use
 # the AWS web console to upload and download data into this bucket from your computer.
-#
 echo '### Mounting the S3 bucket ###'
 sudo apt-get -y install s3fs
 sudo mkdir /mnt/s3-backup
 sudo s3fs bcparks-dam-${target_env}-backup /mnt/s3-backup -o iam_role=BCParks-Dam-EC2-Role -o use_cache=/tmp -o allow_other -o uid=0 -o gid=1 -o mp_umask=002  -o multireq_max=5 -o use_path_request_style -o url=https://s3-${aws_region}.amazonaws.com
 
-# CUSTOMIZE THE RESOURCESPACE CONFIG
-# Download all the files from our git repo to get our customized copy of config.php
 echo '### Customizing the Resourcespace config ###'
 sudo mkdir /tmp/bcparks-dam/repos
 cd /tmp
@@ -238,7 +227,6 @@ tee -a bcparks-dam/src/resourcespace/files/config.php << END
 \$api_scramble_key = '${api_scramble_key}';
 
 END
-# SimpleSAML config
 sudo cat bcparks-dam/src/resourcespace/files/simplesaml-config-1.php | tee -a bcparks-dam/src/resourcespace/files/config.php
 tee -a bcparks-dam/src/resourcespace/files/config.php << END
     'technicalcontact_name' => '${technical_contact_name}',
