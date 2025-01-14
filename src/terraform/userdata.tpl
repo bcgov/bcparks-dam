@@ -65,9 +65,10 @@ echo '### Domain name value: ' ${domain_name}
 
 # Set up Nginx server block
 echo '### Configuring Nginx ###'
+sudo rm /etc/nginx/sites-enabled/default
 cat <<EOF | sudo tee /etc/nginx/sites-available/resourcespace
 server {
-    listen 80;
+    listen 80 default_server;
     server_name ${domain_name};
 
     root /var/www/resourcespace;
