@@ -105,7 +105,7 @@ module "asg" {
   security_groups           = [module.network.aws_security_groups.web.id]
 
   #instance_type             = (var.target_env != "prod" ? "t3a.micro" : "t3a.medium")
-  instance_type             = "t3a.medium"
+  instance_type             = "t3a.large"
 
   iam_instance_profile_name = aws_iam_instance_profile.ec2_profile.name
   user_data                 = data.template_file.userdata_script.rendered
