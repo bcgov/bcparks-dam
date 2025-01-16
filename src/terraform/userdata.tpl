@@ -308,6 +308,11 @@ sudo sed -i 's|^max_execution_time = .*|max_execution_time = 300|' /etc/php/8.2/
 sudo sed -i 's|^max_input_time = .*|max_input_time = 180|' /etc/php/8.2/fpm/php.ini
 sudo sed -i 's|^max_input_vars = .*|max_input_vars = 2000|' /etc/php/8.2/fpm/php.ini
 
+sudo sed -i 's|^max_children = .*|max_children = 50|' /etc/php/8.2/fpm/pool.d/www.conf
+sudo sed -i 's|^start_servers = .*|start_servers = 10|' /etc/php/8.2/fpm/pool.d/www.conf
+sudo sed -i 's|^min_spare_servers = .*|min_spare_servers = 10|' /etc/php/8.2/fpm/pool.d/www.conf
+sudo sed -i 's|^max_spare_servers = .*|max_spare_servers = 20|' /etc/php/8.2/fpm/pool.d/www.conf
+
 # Install ImageMagick
 sudo apt-get install -y imagemagick php-imagick
 
