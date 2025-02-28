@@ -333,7 +333,11 @@ export PATH=$PATH:/opt/bitnami/php/sbin
 
 echo '### Setting up cronjob for offline jobs ###'
 sudo apt-get install -y cron
-(crontab -l -u www-data 2>/dev/null; echo "*/2 * * * * cd /var/www/resourcespace/pages/tools && /usr/bin/php offline_jobs.php --max-jobs 2") | sudo crontab -u www-data -
+(
+  crontab -l -u www-data 2>/dev/null
+  echo "*/2 * * * * cd /var/www/resourcespace/pages/tools && /usr/bin/php offline_jobs.php --max-jobs 2"
+  echo "*/10 * * * * cd /var/www/resourcespace/pages/tools && /usr/bin/php staticsync.php >> /var/www/resourcespace/filestore/staticsync.log 2>&1"
+) | sudo crontab -u www-data -
 
 # Install SQLite
 echo '### Installing sqlite3 ###'
