@@ -210,12 +210,10 @@ cd /tmp
 
 # use values from AWS secrets manager secrets to append settings to the file
 tee -a bcparks-dam/src/resourcespace/files/config.php << END
-
-# MySQL database settings
 \$mysql_server = '${rds_endpoint}:3306';
+\$mysql_db = 'resourcespace';
 \$mysql_username = '${mysql_username}';
 \$mysql_password = '${mysql_password}';
-\$mysql_db = 'resourcespace';
 
 # Email settings
 \$email_notify = '${email_notify}';
@@ -334,6 +332,7 @@ export PATH=$PATH:/opt/bitnami/php
 export PATH=$PATH:/opt/bitnami/php/sbin
 
 echo '### Setting up cronjob for offline jobs ###'
+sudo apt-get install -y cron
 (crontab -l -u www-data 2>/dev/null; echo "*/2 * * * * cd /var/www/resourcespace/pages/tools && /usr/bin/php offline_jobs.php --max-jobs 2") | sudo crontab -u www-data -
 
 # Install SQLite
