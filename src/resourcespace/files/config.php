@@ -58,6 +58,11 @@ $staticsync_file_minimum_age = 120;
 $staticsync_filepath_to_field = 148;
 $autorotate_ingest = true;
 $offline_job_queue = true; # Use offline job queue to generate previews in the background for improved performance
+$resource_type_extension_mapping = array (
+    27 => array('pdf', 'doc', 'docx', 'epub', 'ppt', 'pptx', 'odt', 'ods', 'tpl', 'ott' , 'rtf' , 'txt' , 'xml'), # RST Map
+    3 => array('mov', '33gp', 'avi', 'mpg', 'mp4', 'flv', 'wmv', 'webm'), # Video
+    99 => array('flac', 'mp3', '3ga', 'cda', 'rec', 'aa', 'au', 'mp4a', 'wav', 'aac', 'ogg', 'weba') # Audio
+);
 
 # Collections, downloads, and comments
 $collection_download = true;
