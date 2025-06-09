@@ -56,7 +56,7 @@ sudo git clone -b generic-ami ${git_url} /tmp/bcparks-dam
 # Copy ResourceSpace files
 echo '### Copying ResourceSpace files ###'
 sudo mkdir -p /var/www/resourcespace
-sudo cp -R /tmp/bcparks-dam/src/resourcespace/releases/10.5/* /var/www/resourcespace
+sudo cp -R /tmp/bcparks-dam/src/resourcespace/releases/10.6/* /var/www/resourcespace
 sudo chown -R www-data:www-data /var/www/resourcespace
 sudo chmod -R 755 /var/www/resourcespace
 
@@ -326,6 +326,11 @@ sudo apt-get install -y ffmpeg
 sudo apt-get install -y libimage-exiftool-perl
 sudo apt install -y mariadb-client
 sudo apt install -y net-tools
+sudo apt install clamav clamav-daemon
+sudo systemctl enable clamav-freshclam
+sudo systemctl enable clamav-daemon
+sudo systemctl start clamav-freshclam
+sudo systemctl start clamav-daemon
 
 export PATH=$PATH:/opt/bitnami
 export PATH=$PATH:/opt/bitnami/php

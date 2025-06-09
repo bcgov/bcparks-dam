@@ -42,6 +42,11 @@ $debug_log = false; # General debugging log
 $debug_log_location = '/var/www/resourcespace/logs/debug.txt';
 $show_detailed_errors = false;
 
+# Antivirus and security
+$antivirus_enabled = false; # Enable antivirus scanning of uploaded files
+$antivirus_path = '/usr/bin/clamscan';
+$antivirus_silent_options = '--suppress-ok-results -o --no-summary';
+
 # File uploads
 $api_upload_urls = []; # Whitelist for restricting API uploads by URL
 $upload_then_edit = true;
@@ -49,6 +54,7 @@ $enable_related_resources = true;
 $related_search_show_self = true; # Include the current resource in the related resources set
 $relate_on_upload = true;
 $relate_on_upload_default = true;
+$file_checksums = true;
 
 # Static sync and offline jobs
 $syncdir = '/var/www/resourcespace/filestore/static_sync';
@@ -59,10 +65,17 @@ $staticsync_filepath_to_field = 148;
 $autorotate_ingest = true;
 $offline_job_queue = true; # Use offline job queue to generate previews in the background for improved performance
 $resource_type_extension_mapping = array (
-    27 => array('pdf', 'doc', 'docx', 'epub', 'ppt', 'pptx', 'odt', 'ods', 'tpl', 'ott' , 'rtf' , 'txt' , 'xml'), # RST Map
-    3 => array('mov', '33gp', 'avi', 'mpg', 'mp4', 'flv', 'wmv', 'webm'), # Video
-    99 => array('flac', 'mp3', '3ga', 'cda', 'rec', 'aa', 'au', 'mp4a', 'wav', 'aac', 'ogg', 'weba') # Audio
+    27 => array('pdf', 'doc', 'docx', 'epub', 'ppt', 'pptx', 'odt', 'ods', 'tpl', 'ott', 'rtf', 'txt', 'xml'), # RST Map in PROD
+    3 => array('mov', '33gp', 'avi', 'mpg', 'mp4', 'flv', 'wmv', 'webm'), # Video in PROD
+    99 => array('flac', 'mp3', '3ga', 'cda', 'rec', 'aa', 'au', 'mp4a', 'wav', 'aac', 'ogg', 'weba'), # Audio in PROD
+    26 => array('webp') # RST Recreation Resource in PROD
+    
+    #24 => array('pdf', 'doc', 'docx', 'epub', 'ppt', 'pptx', 'odt', 'ods', 'tpl', 'ott', 'rtf', 'txt', 'xml'), # RST Map in TEST
+    #23 => array('webp') # RST Photo in TEST
 );
+unset($resource_type_extension_mapping[2]; # This default resource type was removed
+unset($resource_type_extension_mapping[4]; # This default resource type was removed
+
 
 # Collections, downloads, and comments
 $collection_download = true;
