@@ -326,7 +326,7 @@ sudo apt-get install -y ffmpeg
 sudo apt-get install -y libimage-exiftool-perl
 sudo apt install -y mariadb-client
 sudo apt install -y net-tools
-sudo apt install clamav clamav-daemon
+sudo apt install -y clamav clamav-daemon
 sudo systemctl enable clamav-freshclam
 sudo systemctl enable clamav-daemon
 sudo systemctl start clamav-freshclam
@@ -345,10 +345,11 @@ echo '### Installing sqlite3 ###'
 sudo apt-get install php8.2-sqlite3
 
 # Install APC User Cache (APCu)
+echo '### Installing APCu ###'
 sudo cp /tmp/bcparks-dam/src/resourcespace/files/install_apcu.sh /tmp/
 sudo chmod +x /tmp/install_apcu.sh
 sudo /tmp/install_apcu.sh
-sudo rm /tmp/install_apcu.sh
+#sudo rm /tmp/install_apcu.sh
 
 # Install performance monitor utility
 sudo apt-get install -y htop
