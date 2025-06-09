@@ -1,5 +1,5 @@
 # main.tf
-# update 20241212
+# update 20250609
 
 provider "aws" {
   region = var.aws_region
@@ -93,7 +93,7 @@ module "asg" {
   tags = merge(
     var.common_tags,
     {
-      "LastUpdated" = "20250116-1423" # Increment this value to force instance updates
+      "LastUpdated" = "20250609-1500" # Increment this value to force instance updates
       #"LastUpdated" = formatdate("YYYYMMDDhhmmss", timestamp())
       #"LastUpdated" = timestamp()
     }
@@ -105,7 +105,7 @@ module "asg" {
   security_groups           = [module.network.aws_security_groups.web.id]
 
   #instance_type             = (var.target_env != "prod" ? "t3a.micro" : "t3a.medium")
-  instance_type             = "t3a.large"
+  instance_type             = "t3a.small"
 
   iam_instance_profile_name = aws_iam_instance_profile.ec2_profile.name
   user_data                 = data.template_file.userdata_script.rendered
