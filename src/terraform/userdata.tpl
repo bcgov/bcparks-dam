@@ -332,10 +332,6 @@ sudo systemctl enable clamav-daemon
 sudo systemctl start clamav-freshclam
 sudo systemctl start clamav-daemon
 
-export PATH=$PATH:/opt/bitnami
-export PATH=$PATH:/opt/bitnami/php
-export PATH=$PATH:/opt/bitnami/php/sbin
-
 echo '### Setting up cronjob for offline jobs ###'
 sudo apt-get install -y cron
 (
