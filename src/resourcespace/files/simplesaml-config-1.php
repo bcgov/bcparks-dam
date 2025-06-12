@@ -1,7 +1,7 @@
 $plugins[] = 'simplesaml';
 
 $simplesamlconfig['config'] = [
-    'baseurlpath' => $baseurl . '/plugins/simplesaml/lib/www/',
+    'baseurlpath' => $baseurl . '/plugins/simplesaml/lib/public/',
     'certdir' => 'cert/',
     'loggingdir' => 'log/',
     'datadir' => 'data/',

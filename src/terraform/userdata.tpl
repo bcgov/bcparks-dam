@@ -110,10 +110,10 @@ server {
         }
 
         # Pass additional path info to PHP
-        location ~ ^/plugins/simplesaml/lib/www/module\.php(/.*)?$ {
+        location ~ ^/plugins/simplesaml/lib/public/module\.php(/.*)?$ {
             include snippets/fastcgi-php.conf;
             fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
-            fastcgi_param SCRIPT_FILENAME /var/www/resourcespace/plugins/simplesaml/lib/www/module.php;
+            fastcgi_param SCRIPT_FILENAME /var/www/resourcespace/plugins/simplesaml/lib/public/module.php;
             fastcgi_param PATH_INFO \$1;
             include fastcgi_params;
 

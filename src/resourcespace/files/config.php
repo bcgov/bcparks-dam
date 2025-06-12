@@ -43,7 +43,7 @@ $debug_log_location = '/var/www/resourcespace/logs/debug.txt';
 $show_detailed_errors = false;
 
 # Antivirus and security
-$antivirus_enabled = false; # Enable antivirus scanning of uploaded files
+$antivirus_enabled = true; # Enable antivirus scanning of uploaded files
 $antivirus_path = '/usr/bin/clamscan';
 $antivirus_silent_options = '--suppress-ok-results -o --no-summary';
 
@@ -73,8 +73,8 @@ $resource_type_extension_mapping = array (
     #24 => array('pdf', 'doc', 'docx', 'epub', 'ppt', 'pptx', 'odt', 'ods', 'tpl', 'ott', 'rtf', 'txt', 'xml'), # RST Map in TEST
     #23 => array('webp') # RST Photo in TEST
 );
-unset($resource_type_extension_mapping[2]; # This default resource type was removed
-unset($resource_type_extension_mapping[4]; # This default resource type was removed
+#unset($resource_type_extension_mapping[2]; # This default resource type was removed
+#unset($resource_type_extension_mapping[4]; # This default resource type was removed
 
 
 # Collections, downloads, and comments
