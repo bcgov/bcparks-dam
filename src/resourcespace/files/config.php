@@ -36,7 +36,7 @@ $CSRF_whitelist = [$baseurl]; # Whitelist URLs to be exempt from CSRF (Cross-Sit
 # Logging and debugging
 $log_resource_access = false;
 $log_search_performance = false;
-$log_php_errors = true;
+$log_php_errors = false;
 $log_all_php_errors = false; # Including E_NOTICE and E_WARNING level errors, recommended for debugging only
 $debug_log = false; # General debugging log
 $debug_log_location = '/var/www/resourcespace/logs/debug.txt';
@@ -54,7 +54,7 @@ $enable_related_resources = true;
 $related_search_show_self = true; # Include the current resource in the related resources set
 $relate_on_upload = true;
 $relate_on_upload_default = true;
-$file_checksums = false;
+$file_checksums = true;
 
 # Static sync and offline jobs
 $syncdir = '/var/www/resourcespace/filestore/static_sync';
@@ -70,11 +70,11 @@ $resource_type_extension_mapping = array (
     #99 => array('flac', 'mp3', '3ga', 'cda', 'rec', 'aa', 'au', 'mp4a', 'wav', 'aac', 'ogg', 'weba'), # Audio in PROD
     #26 => array('webp') # RST Recreation Resource in PROD
     
-    #24 => array('pdf', 'doc', 'docx', 'epub', 'ppt', 'pptx', 'odt', 'ods', 'tpl', 'ott', 'rtf', 'txt', 'xml'), # RST Map in TEST
-    #23 => array('webp') # RST Photo in TEST
+    24 => array('pdf', 'doc', 'docx', 'epub', 'ppt', 'pptx', 'odt', 'ods', 'tpl', 'ott', 'rtf', 'txt', 'xml'), # RST Map in TEST
+    23 => array('webp') # RST Photo in TEST
 );
-#unset($resource_type_extension_mapping[2]); # This default resource type was removed
-#unset($resource_type_extension_mapping[4]); # This default resource type was removed
+unset($resource_type_extension_mapping[2]); # This default resource type was removed
+unset($resource_type_extension_mapping[4]); # This default resource type was removed
 
 
 # Collections, downloads, and comments
