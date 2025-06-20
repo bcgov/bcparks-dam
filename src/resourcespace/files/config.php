@@ -36,7 +36,7 @@ $CSRF_whitelist = [$baseurl]; # Whitelist URLs to be exempt from CSRF (Cross-Sit
 # Logging and debugging
 $log_resource_access = false;
 $log_search_performance = false;
-$log_php_errors = false;
+$log_php_errors = true;
 $log_all_php_errors = false; # Including E_NOTICE and E_WARNING level errors, recommended for debugging only
 $debug_log = false; # General debugging log
 $debug_log_location = '/var/www/resourcespace/logs/debug.txt';
@@ -54,7 +54,10 @@ $enable_related_resources = true;
 $related_search_show_self = true; # Include the current resource in the related resources set
 $relate_on_upload = true;
 $relate_on_upload_default = true;
-$file_checksums = true;
+$file_checksums = true; # Enable file checksum verification on upload
+$checksum_algorithm = 'sha256'; # Algorithm used for file checksums
+$checksum_verify_on_upload = true; # Verify checksums of uploaded files
+$checksum_verify_on_download = true; # Verify checksums of downloaded files
 
 # Static sync and offline jobs
 $syncdir = '/var/www/resourcespace/filestore/static_sync';
