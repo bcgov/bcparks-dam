@@ -301,6 +301,8 @@ sudo rm -rf /var/www/resourcespace/filestore/tmp/*
 
 sudo mkdir -p /var/www/resourcespace/filestore/simplesaml/data
 sudo mkdir /var/www/resourcespace/filestore/simplesaml/log
+sudo chown www-data:www-data -R /var/www/resourcespace/filestore/simplesaml
+sudo chmod 775 -R /var/www/resourcespace/filestore/simplesaml
 
 # Set the PHP memory_limit and other configurations
 sudo sed -i 's|^memory_limit = .*|memory_limit = 2048M|' /etc/php/8.2/fpm/php.ini
