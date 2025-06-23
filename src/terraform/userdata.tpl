@@ -299,6 +299,9 @@ sudo rm /var/www/resourcespace/filestore/tmp/querycache/*
 echo '### Clear the tmp folder ###'
 sudo rm -rf /var/www/resourcespace/filestore/tmp/*
 
+sudo mkdir -p /var/www/resourcespace/filestore/simplesaml/data
+sudo mkdir /var/www/resourcespace/filestore/simplesaml/log
+
 # Set the PHP memory_limit and other configurations
 sudo sed -i 's|^memory_limit = .*|memory_limit = 2048M|' /etc/php/8.2/fpm/php.ini
 sudo sed -i 's|^post_max_size = .*|post_max_size = 2048M|' /etc/php/8.2/fpm/php.ini

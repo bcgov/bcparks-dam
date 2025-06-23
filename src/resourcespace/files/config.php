@@ -55,9 +55,6 @@ $related_search_show_self = true; # Include the current resource in the related 
 $relate_on_upload = true;
 $relate_on_upload_default = true;
 $file_checksums = true; # Enable file checksum verification on upload
-$checksum_algorithm = 'sha256'; # Algorithm used for file checksums
-$checksum_verify_on_upload = true; # Verify checksums of uploaded files
-$checksum_verify_on_download = true; # Verify checksums of downloaded files
 
 # Static sync and offline jobs
 $syncdir = '/var/www/resourcespace/filestore/static_sync';
