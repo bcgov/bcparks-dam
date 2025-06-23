@@ -292,17 +292,20 @@ sudo unzip /tmp/bcparks-dam/src/resourcespace/files/montala_support.zip
 sudo chown -R www-data:www-data plugins
 sudo chmod -R 775 plugins
 
+cd ..
+
 # Delete cache files
-sudo rm /var/www/resourcespace/filestore/tmp/querycache/*
+sudo rm tmp/querycache/*
 
 # Clear the tmp folder
 echo '### Clear the tmp folder ###'
-sudo rm -rf /var/www/resourcespace/filestore/tmp/*
+sudo rm -rf tmp/*
 
-sudo mkdir -p /var/www/resourcespace/filestore/simplesaml/data
-sudo mkdir /var/www/resourcespace/filestore/simplesaml/log
-sudo chown www-data:www-data -R /var/www/resourcespace/filestore/simplesaml
-sudo chmod 775 -R /var/www/resourcespace/filestore/simplesaml
+# SimpleSAML setup
+sudo mkdir -p simplesaml/data
+sudo mkdir simplesaml/log
+sudo chown www-data:www-data -R simplesaml
+sudo chmod 775 -R simplesaml
 
 # Set the PHP memory_limit and other configurations
 sudo sed -i 's|^memory_limit = .*|memory_limit = 2048M|' /etc/php/8.2/fpm/php.ini
