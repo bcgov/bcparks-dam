@@ -93,7 +93,7 @@ server {
         client_body_timeout 600s;
 
         include snippets/fastcgi-php.conf;
-        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+        fastcgi_pass unix:/run/php/php8.2-fpm.sock;
         fastcgi_param SCRIPT_FILENAME \$document_root/pages/upload_batch.php;
         fastcgi_param PATH_INFO \$uri;
         include fastcgi_params;
@@ -105,7 +105,7 @@ server {
 
         location ~ \.php$ {
             include snippets/fastcgi-php.conf;
-            fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+            fastcgi_pass unix:/run/php/php8.2-fpm.sock;
             fastcgi_param SCRIPT_FILENAME \$request_filename;
             include fastcgi_params;
 
@@ -116,7 +116,7 @@ server {
         # Pass additional path info to PHP
         location ~ ^/plugins/simplesaml/lib/public/module\.php(/.*)?$ {
             include snippets/fastcgi-php.conf;
-            fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+            fastcgi_pass unix:/run/php/php8.2-fpm.sock;
             fastcgi_param SCRIPT_FILENAME /var/www/resourcespace/plugins/simplesaml/lib/public/module.php;
             fastcgi_param PATH_INFO \$1;
             include fastcgi_params;
@@ -129,10 +129,13 @@ server {
     # PHP processing
     location ~ \.php$ {
         include snippets/fastcgi-php.conf;
-        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+        fastcgi_pass unix:/run/php/php8.2-fpm.sock;
         fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
         include fastcgi_params;
-        
+        fastcgi_read_timeout 1200;
+        fastcgi_connect_timeout 1200;
+        fastcgi_send_timeout 1200;
+
         # Pass X-Forwarded-Proto to PHP
         fastcgi_param HTTPS \$http_x_forwarded_proto;
     }
@@ -308,20 +311,21 @@ sudo chown www-data:www-data -R simplesaml
 sudo chmod 775 -R simplesaml
 
 # Set the PHP memory_limit and other configurations
-sudo sed -i 's|^memory_limit = .*|memory_limit = 2048M|' /etc/php/8.2/fpm/php.ini
+sudo sed -i 's|^memory_limit = .*|memory_limit = 4096M|' /etc/php/8.2/fpm/php.ini
 sudo sed -i 's|^post_max_size = .*|post_max_size = 2048M|' /etc/php/8.2/fpm/php.ini
 sudo sed -i 's|^upload_max_filesize = .*|upload_max_filesize = 2048M|' /etc/php/8.2/fpm/php.ini
 sudo sed -i 's|^max_file_uploads = .*|max_file_uploads = 100|' /etc/php/8.2/fpm/php.ini
 sudo sed -i 's|^upload_tmp_dir = .*|upload_tmp_dir = /var/www/resourcespace/filestore/tmp|' /etc/php/8.2/fpm/php.ini
 sudo sed -i 's|^date.timezone = .*|date.timezone = "America/Vancouver"|' /etc/php/8.2/fpm/php.ini
-sudo sed -i 's|^max_execution_time = .*|max_execution_time = 300|' /etc/php/8.2/fpm/php.ini
-sudo sed -i 's|^max_input_time = .*|max_input_time = 180|' /etc/php/8.2/fpm/php.ini
+sudo sed -i 's|^max_execution_time = .*|max_execution_time = 1200|' /etc/php/8.2/fpm/php.ini
+sudo sed -i 's|^max_input_time = .*|max_input_time = 1200|' /etc/php/8.2/fpm/php.ini
 sudo sed -i 's|^max_input_vars = .*|max_input_vars = 2000|' /etc/php/8.2/fpm/php.ini
 
-sudo sed -i 's|^max_children = .*|max_children = 50|' /etc/php/8.2/fpm/pool.d/www.conf
-sudo sed -i 's|^start_servers = .*|start_servers = 10|' /etc/php/8.2/fpm/pool.d/www.conf
-sudo sed -i 's|^min_spare_servers = .*|min_spare_servers = 10|' /etc/php/8.2/fpm/pool.d/www.conf
-sudo sed -i 's|^max_spare_servers = .*|max_spare_servers = 20|' /etc/php/8.2/fpm/pool.d/www.conf
+sudo sed -i 's|^[;[:space:]]*pm.max_children\s*=.*|pm.max_children = 50|' /etc/php/8.2/fpm/pool.d/www.conf
+sudo sed -i 's|^[;[:space:]]*pm.start_servers\s*=.*|pm.start_servers = 15|' /etc/php/8.2/fpm/pool.d/www.conf
+sudo sed -i 's|^[;[:space:]]*pm.min_spare_servers\s*=.*|pm.min_spare_servers = 10|' /etc/php/8.2/fpm/pool.d/www.conf
+sudo sed -i 's|^[;[:space:]]*pm.max_spare_servers\s*=.*|pm.max_spare_servers = 25|' /etc/php/8.2/fpm/pool.d/www.conf
+sudo sed -i 's|^[;[:space:]]*pm.max_requests\s*=.*|pm.max_requests = 500|' /etc/php/8.2/fpm/pool.d/www.conf
 
 # Install ImageMagick
 sudo apt-get install -y imagemagick php-imagick
