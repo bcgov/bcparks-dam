@@ -204,8 +204,7 @@ else
 fi
 
 # MOUNT THE S3 BUCKET
-# The S3 bucket /mnt/s3-backup is used for backups and file transfers. You can use
-# the AWS web console to upload and download data into this bucket from your computer.
+# The S3 bucket /mnt/s3-backup is used for backups and file transfers.
 echo '### Mounting the S3 bucket ###'
 sudo apt-get -y install s3fs
 sudo mkdir /mnt/s3-backup
@@ -329,8 +328,6 @@ sudo sed -i 's|^[;[:space:]]*pm.max_requests\s*=.*|pm.max_requests = 500|' /etc/
 
 # Install ImageMagick
 sudo apt-get install -y imagemagick php-imagick
-
-# Update ImageMagick policy to handle large images (over 128MP)
 sudo sed -i 's|<policy domain="resource" name="memory" value="[^"]*"/>|<policy domain="resource" name="memory" value="2GiB"/>|' /etc/ImageMagick-6/policy.xml
 sudo sed -i 's|<policy domain="resource" name="map" value="[^"]*"/>|<policy domain="resource" name="map" value="4GiB"/>|' /etc/ImageMagick-6/policy.xml
 sudo sed -i 's|<policy domain="resource" name="area" value="[^"]*"/>|<policy domain="resource" name="area" value="200MP"/>|' /etc/ImageMagick-6/policy.xml
