@@ -68,6 +68,9 @@ server {
     listen 80 default_server;
     server_name _;
 
+    client_max_body_size 1G;
+    client_body_timeout 1200s;
+
     root /var/www/resourcespace;
     index index.php index.html;
     
@@ -108,6 +111,10 @@ server {
             fastcgi_pass unix:/run/php/php8.2-fpm.sock;
             fastcgi_param SCRIPT_FILENAME \$request_filename;
             include fastcgi_params;
+
+            fastcgi_read_timeout 1200s;
+            fastcgi_connect_timeout 600s;
+            fastcgi_send_timeout 600s;
 
             # Pass X-Forwarded-Proto to PHP
             fastcgi_param HTTPS \$http_x_forwarded_proto;
