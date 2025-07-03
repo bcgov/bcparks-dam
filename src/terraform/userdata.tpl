@@ -92,9 +92,6 @@ server {
         add_header Access-Control-Allow-Methods "POST, HEAD, OPTIONS, PATCH";
         add_header Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept, Tus-Resumable, Upload-Offset, Upload-Metadata";
 
-        client_max_body_size 1G;
-        client_body_timeout 600s;
-
         include snippets/fastcgi-php.conf;
         fastcgi_pass unix:/run/php/php8.2-fpm.sock;
         fastcgi_param SCRIPT_FILENAME \$document_root/pages/upload_batch.php;
