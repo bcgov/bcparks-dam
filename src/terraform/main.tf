@@ -1,5 +1,5 @@
 # main.tf
-# update 20250609
+# update 20250723
 
 provider "aws" {
   region = var.aws_region
@@ -93,8 +93,8 @@ module "asg" {
   tags = merge(
     var.common_tags,
     {
-      "LastUpdated" = "20250704-1618" # Increment this value to force instance updates
-      #"LastUpdated" = formatdate("YYYYMMDDhhmmss", timestamp())
+      #"LastUpdated" = "20250723" # Increment this value to force instance updates
+      "LastUpdated" = formatdate("YYYYMMDDhhmmss", timestamp())
       #"LastUpdated" = timestamp()
     }
   )
