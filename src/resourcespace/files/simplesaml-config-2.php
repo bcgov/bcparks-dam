@@ -302,9 +302,9 @@
      * Languages available, RTL languages, and what language is the default.
     */
     'language.available' => [
-        'en', 'no', 'nn', 'se', 'da', 'de', 'sv', 'fi', 'es', 'fr', 'it', 'nl', 'lb', 'cs',
-        'sl', 'lt', 'hr', 'hu', 'pl', 'pt', 'pt-br', 'tr', 'ja', 'zh', 'zh-tw', 'ru', 'et',
-        'he', 'id', 'sr', 'lv', 'ro', 'eu', 'el', 'af'
+        'en', 'no', 'nn', 'se', 'da', 'de', 'sv', 'fi', 'es', 'ca', 'fr', 'it', 'nl', 'lb',
+        'cs', 'sk', 'sl', 'lt', 'hr', 'hu', 'pl', 'pt', 'pt_BR', 'tr', 'ja', 'zh', 'zh_TW',
+        'ru', 'et', 'he', 'id', 'sr', 'lv', 'ro', 'eu', 'el', 'af', 'zu', 'xh', 'st'
     ],
     'language.rtl' => ['ar', 'dv', 'fa', 'ur', 'he'],
     'language.default' => 'en',
@@ -658,7 +658,7 @@
      * syntaxes.
     */
     #'store.sql.dsn'                 => 'sqlite:/path/to/sqlitedatabase.sq3',
-    'store.sql.dsn'                 => 'sqlite:/opt/bitnami/resourcespace/filestore/tmp/simplesamldb.sq3',
+    'store.sql.dsn'                 => 'sqlite:/var/www/resourcespace/filestore/tmp/simplesamldb.sq3',
 
     /*
      * The username and password to use when connecting to the database.

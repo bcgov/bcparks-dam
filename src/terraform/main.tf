@@ -1,5 +1,5 @@
 # main.tf
-# update 20250102
+# update 20250723
 
 provider "aws" {
   region = var.aws_region
@@ -29,10 +29,10 @@ resource "aws_alb_target_group" "app" {
 
   health_check {
     healthy_threshold   = "2"
-    interval            = "5"
+    interval            = "10"
     protocol            = "HTTP"
     matcher             = "200"
-    timeout             = "3"
+    timeout             = "5"
     path                = var.health_check_path
     unhealthy_threshold = "10"
   }
@@ -41,9 +41,14 @@ resource "aws_alb_target_group" "app" {
   tags = merge(
     var.common_tags,
     {
-      "LastUpdated" = formatdate("YYYYMMDDhhmmss", timestamp())
+      #"LastUpdated" = formatdate("YYYYMMDDhhmmss", timestamp())
+      "LastUpdated" = timestamp()
     }
   )
+}
+
+locals {
+  domain_name = "${var.service_names[0]}.[LICENCEPLATE]-${var.target_env}.nimbus.cloud.gov.bc.ca"
 }
 
 data "template_file" "userdata_script" {
@@ -51,6 +56,8 @@ data "template_file" "userdata_script" {
   vars = {
     git_url                   = var.git_url
     target_env                = var.target_env
+    domain_name               = var.domain_name
+    licence_plate             = var.licence_plate
     branch_name               = var.branch_name
     aws_region                = var.aws_region
     rds_endpoint              = aws_rds_cluster.mysql.endpoint
@@ -86,18 +93,18 @@ module "asg" {
   tags = merge(
     var.common_tags,
     {
-      #"ForceUpdate" = "20250103-1214" # Increment this value to force instance updates
+      #"LastUpdated" = "20250723" # Increment this value to force instance updates
       "LastUpdated" = formatdate("YYYYMMDDhhmmss", timestamp())
+      #"LastUpdated" = timestamp()
     }
   )
-
 
   # Launch configuration creation
   lc_name                   = var.lc_name
   image_id                  = var.image_id
   security_groups           = [module.network.aws_security_groups.web.id]
 
-  #instance_type             = (var.target_env != "prod" ? "t3a.micro" : "t3a.small")
+  #instance_type             = (var.target_env != "prod" ? "t3a.micro" : "t3a.medium")
   instance_type             = "t3a.large"
 
   iam_instance_profile_name = aws_iam_instance_profile.ec2_profile.name

@@ -8,13 +8,15 @@ variable "app_name" {
 
 variable "image_id" {
   description = "id of the AWS Marketplace AMI (Amazon Machine Image) for Bitnami ResourceSpace"
-  default     = "ami-0023310960cb82ef6" 
+  default     = "ami-0adad14dcb2ca073f" 
   type        = string
 }
-#ami-0e3cecd2b3d50ee5f  10.3.0-1-r02 on Debian 11 | current version on prod
-#ami-05ffc9127116f1111  10.3.0-4-r164 on Debian 12
-#ami-0e591624006f49399  10.3.0-5-r165 on Debian 12
-#ami-0023310960cb82ef6  10.3.0-5-r166 on Debian 12 | current version on test
+#ami-0adad14dcb2ca073f  Debian 12
+# Bitnami AMIs:
+  #ami-0e3cecd2b3d50ee5f  10.3.0-1-r02 on Debian 11 | current version on prod
+  #ami-05ffc9127116f1111  10.3.0-4-r164 on Debian 12
+  #ami-0e591624006f49399  10.3.0-5-r165 on Debian 12
+  #ami-0023310960cb82ef6  10.3.0-5-r166 on Debian 12 | current version on test
 
 variable "target_env" {
   description = "AWS workload account env (e.g. dev, test, prod, sandbox, unclass)"
@@ -49,7 +51,7 @@ variable "app_port" {
 }
 
 variable "health_check_path" {
-  default = "/login.php"
+  default = "/health-check.php"
 }
 
 variable "common_tags" {
@@ -74,5 +76,17 @@ variable "service_names" {
 variable "alb_name" {
   description = "Name of the internal alb"
   default     = "default"
+  type        = string
+}
+
+variable "domain_name" {
+  description = "The domain name for the application"
+  default     = "dam.lqc63d-dev.nimbus.cloud.gov.bc.ca"
+  type        = string
+}
+
+variable "licence_plate" {
+  description = "The licence plate for the application"
+  default     = "[LICENCEPLATE]"
   type        = string
 }

@@ -1,0 +1,8 @@
+name: propose_changes
+title: Propose Changes
+desc: Adds option to allow users to propose metadata changes without edit access
+icon: fa fa-lightbulb
+version: 1.0
+config_url: /plugins/propose_changes/pages/setup.php
+category: Workflow and access
+info_url: https://www.resourcespace.com/knowledge-base/plugins/propose-changes

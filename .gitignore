@@ -14,6 +14,11 @@ yarn-error.log*
 .vscode
 .eslintcache
 
+# Sample certificates and keys bundled with the SimpleSAML plugin
+# /plugins/simplesaml/lib/vendor/simplesamlphp/xml-security/resources/keys/
+*.pem
+*.key
+
 # Local .terraform directories
 **/.terraform/*
 
