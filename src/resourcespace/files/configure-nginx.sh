@@ -6,7 +6,7 @@ server {
     listen 80 default_server;
     server_name _;
 
-    client_max_body_size 1G;
+    client_max_body_size 2G;
     client_body_timeout 1200s;
 
     root /var/www/resourcespace;
