@@ -47,9 +47,9 @@ server {
             fastcgi_param SCRIPT_FILENAME \$request_filename;
             include fastcgi_params;
 
-            fastcgi_read_timeout 1200s;
-            fastcgi_connect_timeout 600s;
-            fastcgi_send_timeout 600s;
+            fastcgi_read_timeout 1200;
+            fastcgi_connect_timeout 1200;
+            fastcgi_send_timeout 1200;
 
             # Pass X-Forwarded-Proto to PHP
             fastcgi_param HTTPS \$http_x_forwarded_proto;

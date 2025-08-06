@@ -240,6 +240,7 @@ sudo sed -i 's|^[;[:space:]]*pm.start_servers\s*=.*|pm.start_servers = 15|' /etc
 sudo sed -i 's|^[;[:space:]]*pm.min_spare_servers\s*=.*|pm.min_spare_servers = 10|' /etc/php/8.2/fpm/pool.d/www.conf
 sudo sed -i 's|^[;[:space:]]*pm.max_spare_servers\s*=.*|pm.max_spare_servers = 25|' /etc/php/8.2/fpm/pool.d/www.conf
 sudo sed -i 's|^[;[:space:]]*pm.max_requests\s*=.*|pm.max_requests = 500|' /etc/php/8.2/fpm/pool.d/www.conf
+sudo sed -i 's|^[;[:space:]]*request_terminate_timeout\s*=.*|request_terminate_timeout = 1200|' /etc/php/8.2/fpm/pool.d/www.conf
 
 # Install ImageMagick
 sudo apt-get install -y imagemagick php-imagick
