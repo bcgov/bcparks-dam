@@ -1342,7 +1342,7 @@ function search_special($search, $sql_join, $fetchrows, $sql_prefix, $sql_suffix
         }
 
         $select->sql = "DISTINCT c.date_added,c.comment,r.hit_count score,length(c.comment) commentset, {$select->sql}";
-        $sql->sql = $sql_prefix . "SELECT [SELECT_SQL] FROM resource r JOIN collection_resource c ON r.ref=c.resource " . $colcustperm->sql . " WHERE c.collection = ? AND (" . $sql_filter->sql . ") [ORDER_BY_SQL] {$sql_suffix}";
+        $sql->sql = $sql_prefix . "SELECT [SELECT_SQL] FROM resource r JOIN collection_resource c ON r.ref=c.resource " . $colcustperm->sql . " WHERE c.collection = ? AND (" . $sql_filter->sql . ") [GROUP_BY_SQL] [ORDER_BY_SQL] {$sql_suffix}";
         $sql->parameters = array_merge($select->parameters, $colcustperm->parameters, ["i",$collection], $sql_filter->parameters);
 
         $collectionsearchsql = hook('modifycollectionsearchsql', '', array($sql));
@@ -1815,10 +1815,14 @@ function search_special($search, $sql_join, $fetchrows, $sql_prefix, $sql_suffix
         ];
 
         $reducedselect = $select->sql;
-        foreach ($removecolumns as $removecolumn) {
-            $reducedselect = preg_replace("/(,\s?" . $removecolumn . ")/", "", $reducedselect);
+
+        // Only reduce columns if an sql prefix is not set, this is to ensure compatibility with any encapsulating query that might be present. I.e. disk usage
+        if (trim((string) $sql_prefix) == "") {
+            foreach ($removecolumns as $removecolumn) {
+                $reducedselect = preg_replace("/(,\s?" . $removecolumn . ")/", "", $reducedselect);
+            }
+            $reducedselect = preg_replace("/(,\s?r\\.field\\d+)/", "", $reducedselect); // remove any fieldXX columns from select
         }
-        $reducedselect = preg_replace("/(,\s?r\\.field\\d+)/", "", $reducedselect); // remove any fieldXX columns from select
 
         $reduced_sql = clone $sql;
         $reduced_sql->sql = str_replace(

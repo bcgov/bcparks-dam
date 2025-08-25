@@ -3635,17 +3635,18 @@ function copy_resource($from, $resource_type = -1, $origin = '')
  * @param   mixed      $fromvalue - original value (int or string)         -- resource_log.previous_value
  * @param   mixed      $tovalue - new value (int or string)
  * @param   int        $usage                                              -- resource_log.usageoption
+ * @param   int        $alt_ref - ref of alt file                          -- resource_log.alt_ref
  *
  * @return int (or false)
  */
 
-function resource_log($resource, $type, $field, $notes = "", $fromvalue = "", $tovalue = "", $usage = -1)
+function resource_log($resource, $type, $field, $notes = "", $fromvalue = "", $tovalue = "", $usage = -1, $alt_ref = -1)
 {
     global $userref,$k,$lang,$resource_log_previous_ref, $internal_share_access;
 
     // Param type checks
     $param_str = array($type,$notes);
-    $param_num = array($resource,$usage);
+    $param_num = array($resource,$usage,$alt_ref);
 
     foreach ($param_str as $par) {
         if (!is_string($par)) {
@@ -3718,10 +3719,11 @@ function resource_log($resource, $type, $field, $notes = "", $fromvalue = "", $t
         return $resource_log_previous_ref;
     } else {
         ps_query(
-            "INSERT INTO `resource_log` (`date`, `user`, `resource`, `type`, `resource_type_field`, `notes`, `diff`, `usageoption`, `access_key`, `previous_value`) VALUES (NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO `resource_log` (`date`, `user`, `resource`, `alt_ref`, `type`, `resource_type_field`, `notes`, `diff`, `usageoption`, `access_key`, `previous_value`) VALUES (NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             [
             'i', (($userref != "" && $type !== LOG_CODE_SYSTEM) ? $userref : null),
             'i', $resource,
+            'i', $alt_ref > 0 ? $alt_ref : null,
             's', $type,
             'i', (($field == "" || !is_numeric($field)) ? null : $field),
             's', $notes,
@@ -3780,6 +3782,7 @@ function get_resource_log($resource, $fetchrows = -1, array $filters = array())
     $sql_query = new PreparedStatementQuery(
         "SELECT r.ref,
                         r.resource,
+                        r.alt_ref,
                         r.date,
                         u.username,
                         u.fullname,
@@ -4385,6 +4388,7 @@ function update_resource($r, $path, $type, $title, $ingest = false, $createPrevi
 
         # Store extension/data in the database
         ps_query("UPDATE resource SET archive=0,file_path=?,file_extension=?,preview_extension=?,file_modified=NOW(),no_file=0 WHERE ref=?", array("s",$file_path,"s",$extension,"s",$extension,"i",$r));
+        unset($GLOBALS['get_resource_data_cache'][$r]);
 
         # Store original filename in field, if set
         if (!$ingest) {
@@ -4545,6 +4549,7 @@ function import_resource($path, $type, $title, $ingest = false, $extension = '')
     if ($r === false) {
         return false;
     }
+    debug("Created resource #{$r}");
 
     // Log this in case the original location is not stored anywhere else
     resource_log(
@@ -5772,7 +5777,7 @@ function get_page_count($resource, $alternative = -1)
 function update_disk_usage($resource)
 {
     # we're also going to record the size of the primary resource here before we do the entire folder
-    $ext = ps_value("SELECT file_extension value FROM resource where ref = ? AND file_path IS NULL", array("i",$resource), 'jpg');
+    $ext = ps_value("SELECT file_extension `value` FROM `resource` WHERE ref = ?", array("i", $resource), 'jpg');
     $path = get_resource_path($resource, true, '', false, $ext);
     if (file_exists($path)) {
         $rsize = filesize_unlimited($path);
@@ -6190,7 +6195,10 @@ function update_archive_status($resource, $archive, $existingstates = array(), $
         return;
     }
 
-    ps_query("UPDATE resource SET archive = ? WHERE ref IN (" . ps_param_insert(count($resource)) . ")", array_merge(["i",$archive], ps_param_fill($resource, "i")));
+    $resource_chunks = array_chunk($resource, SYSTEM_DATABASE_IDS_CHUNK_SIZE);
+    foreach ($resource_chunks as $chunk) {
+        ps_query("UPDATE resource SET archive = ? WHERE ref IN (" . ps_param_insert(count($chunk)) . ")", array_merge(["i", $archive], ps_param_fill($chunk, "i")));
+    }
 
     # Resources should be removed from collections when being moved into the deletion state as specified in config.default.php
     if ($remove_deleted_resources_from_collections && $resource_deletion_state == $archive) {

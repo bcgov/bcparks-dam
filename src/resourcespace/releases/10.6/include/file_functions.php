@@ -381,13 +381,16 @@ function is_valid_rs_path(string $path, array $override_paths = []): bool
     }
 
     foreach ($path_parts as $path_part) {
-        $checkpath .=  $path_part . "/";
-        if (is_link($checkpath) || ($GLOBALS["config_windows"] && stat($checkpath) != lstat($checkpath))) {
-            // is_link() returns false for junction links on Windows so check if stat and lstat return identical info
+        $checkpath .=  $path_part;
+        if (!file_exists($checkpath)) {
+            break;
+        }
+        if (check_symlink($checkpath)) {
             debug("{$checkpath} is a symlink");
             $symlink = true;
             break;
         }
+        $checkpath .= "/";
     }
     $path_to_validate = ($source_path_not_real || $symlink) ? $path : $sourcerealpath;
     debug("path_to_validate = {$path_to_validate}");
@@ -448,6 +451,7 @@ enum ProcessFileUploadErrorCondition
     case InvalidUploadPath;
     case SpecialFile;
     case InvalidExtension;
+    case InvalidMimeType;
     case MimeTypeMismatch;
     case FileMoveFailure;
 
@@ -560,10 +564,23 @@ function process_file_upload(SplFileInfo|array $source, SplFileInfo $destination
 
     if (
         $mime_file_based_detection
-        && array_intersect($mime_type_by_ext, get_mime_type($source_file_path, $source_file_ext, true)) === []
+        && ($mime_type_from_file = get_mime_type($source_file_path, $source_file_ext, true))
+        && array_intersect($mime_type_by_ext, $mime_type_from_file) === []
     ) {
         debug("MIME type mismatch for file '{$source_file_name}'");
-        return $fail_due_to(ProcessFileUploadErrorCondition::MimeTypeMismatch);
+
+        if (in_array('application/octet-stream', $mime_type_from_file)) {
+            return $fail_due_to(ProcessFileUploadErrorCondition::InvalidMimeType);
+        } elseif (array_intersect($mime_type_from_file, get_unsafe_mime_types()) !== []) {
+            return $fail_due_to(ProcessFileUploadErrorCondition::MimeTypeMismatch);
+        } else {
+            log_activity(
+                "MIME type mismatch for file '{$source_file_name}' "
+                . '(by ext: ' . implode(', ', $mime_type_by_ext)
+                . '; by content: ' . implode(', ', $mime_type_from_file) . ')',
+                LOG_CODE_SYSTEM
+            );
+        }        
     }
 
     // Destination processing
@@ -742,3 +759,19 @@ function permitted_archiver_arguments($string): bool
     return preg_match('/[^\@\-\w]/', $string) === 0;
 }
 
+/**
+ * Check if a given path is absolute or contains a symlink or junction
+ * is_link() does not accurately detect junction links on Windows systems
+ * instead we check if the output from stat() and lstat() differ.
+ *
+ * @param  string $checkpath
+ * @return bool
+ */
+function check_symlink(string $checkpath): bool
+{
+    if ($GLOBALS["config_windows"]) {
+        return stat($checkpath) != lstat($checkpath);
+    } else {
+        return is_link($checkpath);
+    }
+}

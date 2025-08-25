@@ -64,7 +64,7 @@ if (file_exists(__DIR__ . "/config.deprecated.php")) {
 }
 
 # Load the real config
-if (!file_exists(__DIR__ . "/config.php")) {
+if (!(file_exists(__DIR__ . "/config.php") && filesize(__DIR__ . "/config.php") > 0)) {
     header("Location: pages/setup.php");
     die(0);
 }
@@ -75,6 +75,9 @@ include __DIR__ . "/config.php";
 ini_set("zend.exception_ignore_args", "Off");
 
 error_reporting($config_error_reporting);
+
+// Check this is a real browser.
+if ($browser_check) {browser_check();}
 
 # -------------------------------------------------------------------------------------------
 # Remote config support - possibility to load the configuration from a remote system.
@@ -120,6 +123,11 @@ if (isset($remote_config_url, $remote_config_key) && (isset($_SERVER["HTTP_HOST"
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_TIMEOUT, $checktimeout);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $checktimeout);
+        curl_setopt(
+            $ch,
+            CURLOPT_USERAGENT,
+            sprintf('ResourceSpace/%s Remote config for %s', mb_strcut($productversion, 4), $host)
+        );
         $r = curl_exec($ch);
 
         if (!curl_errno($ch)) {

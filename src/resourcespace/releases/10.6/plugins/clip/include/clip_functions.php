@@ -91,10 +91,9 @@ function vector_visualise(array $vector): string
  *
  * @param int $ref The resource ID for which to generate the vector.
  *
- * @return array|false Returns the ID of the stored vector row on success,
- *                     or false on failure (e.g., file missing or vector generation error).
+ * @return bool        Returns the true on success, or false on failure (e.g., file missing or vector generation error).
  */
-function clip_generate_vector($ref)
+function clip_generate_vector($ref) : bool
 {
     $resource = get_resource_data($ref);
     $ext = "jpg";
@@ -199,10 +198,13 @@ function clip_tag(int $resource)
                 'top_k' => $clip_keyword_count,
         ]);
         $response = curl_exec($ch);
+        $response_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         logScript ("CLIP service response: " . $response);
         curl_close($ch);
 
-        if (strlen($response)==0) { return false; } // CLIP server unresponsive
+        if (strlen($response) == 0 || $response_status !== 200) { 
+            return false; // CLIP server unresponsive
+        }
 
         foreach (json_decode($response) as $result) {
             # Create new or fetch existing node
@@ -236,4 +238,91 @@ function clip_tag(int $resource)
     }
 
     return true;
+}
+
+function clip_generate_missing_vectors($limit)
+{
+    // Get resources needing vector generation or update - look at the modified date vs. the creation date on the text vector, and also the image checksum on the vector vs the one on the resource record. This catches both metadata and image updates.
+    global $clip_resource_types;
+
+    // Ensure only one instance of this.
+    if (is_process_lock(__FUNCTION__) || count($clip_resource_types) === 0) {
+        return false;
+    }
+    set_process_lock(__FUNCTION__);
+
+    $sql = "
+        SELECT r.ref value
+        FROM resource r
+        LEFT JOIN resource_clip_vector v_image ON v_image.is_text=0 and r.ref = v_image.resource
+
+        WHERE r.has_image = 1
+        AND r.resource_type in (" . ps_param_insert(count($clip_resource_types)) . ")
+        AND r.file_checksum IS NOT NULL
+        AND 
+            (v_image.checksum IS NULL OR v_image.checksum != r.file_checksum)
+        ORDER BY r.ref ASC
+        LIMIT ?";
+
+    $resources = ps_array($sql, array_merge(ps_param_fill($clip_resource_types, "i"),array('i', (int) $limit)));
+
+    foreach ($resources as $resource) {
+        clip_generate_vector($resource);
+    }
+
+    clear_process_lock(__FUNCTION__);
+    return count($resources);
+}
+
+
+/**
+ * Returns a count of vectors in the system 
+ * 
+ * @return int The total
+ */
+function clip_count_vectors() {
+    return ps_value("SELECT count(*) value from resource_clip_vector ", [],0);
+}
+
+
+/**
+ * Returns a count of vectors missing
+ * 
+ * @return int The total
+ */
+function clip_missing_vectors() {
+    global $clip_resource_types;
+
+    if (count($clip_resource_types) === 0) {
+        return 0;
+    }
+
+    $sql = "
+    SELECT count(*) value
+    FROM resource r
+    LEFT JOIN resource_clip_vector v_image ON v_image.is_text=0 and r.ref = v_image.resource
+
+    WHERE r.has_image = 1
+    AND r.resource_type in (" . ps_param_insert(count($clip_resource_types)) . ")
+    AND r.file_checksum IS NOT NULL
+    AND 
+        (v_image.checksum IS NULL OR v_image.checksum != r.file_checksum)";
+
+    return ps_value($sql, ps_param_fill($clip_resource_types, "i"),0);
+}
+
+
+/**
+ * Removes orphaned vectors - those that do not have a valid resource specified either because the resource has been removed or because
+ * the list of resource types for which vectors are created has been changed.
+ * 
+ * @return void
+ */
+function clip_vector_cleanup() {
+    global $clip_resource_types;
+    $sql = "DELETE FROM resource_clip_vector";
+    if (count($clip_resource_types) > 0) {
+        $sql .= " WHERE resource not in (select ref from resource where resource_type in (" . ps_param_insert(count($clip_resource_types)) . "))";
+    }
+    ps_query($sql, ps_param_fill($clip_resource_types, "i"));
 }
