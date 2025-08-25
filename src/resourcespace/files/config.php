@@ -66,7 +66,7 @@ $autorotate_ingest = true;
 $offline_job_queue = true; # Use offline job queue to generate previews in the background for improved performance
 $resource_type_extension_mapping = array (
     #27 => array('pdf', 'doc', 'docx', 'epub', 'ppt', 'pptx', 'odt', 'ods', 'tpl', 'ott', 'rtf', 'txt', 'xml'), # RST Map in PROD
-    3 => array('mov', '33gp', 'avi', 'mpg', 'mp4', 'flv', 'wmv', 'webm'), # Video in PROD
+    3 => array('mov', '33gp', 'avi', 'mpg', 'mp4', 'flv', 'wmv', 'webm'), # Video in PROD, DEV
     99 => array('flac', 'mp3', '3ga', 'cda', 'rec', 'aa', 'au', 'mp4a', 'wav', 'aac', 'ogg', 'weba'), # Audio in PROD
     26 => array('webp') # RST Recreation Resource in PROD
     
