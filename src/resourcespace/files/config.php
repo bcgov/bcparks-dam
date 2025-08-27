@@ -24,8 +24,13 @@ if (!isset($_SERVER['REQUEST_URI'])) {
     $_SERVER['REQUEST_URI'] = '/';
 }
 
-# Get version from version.txt if it exists, otherwise use hardcoded value
-$productversion = file_exists(__DIR__ . '/../version.txt') ? trim(file_get_contents(__DIR__ . '/../version.txt')) : '10.6';
+# Auto-detect version from version.txt if available
+$version_file = dirname(__FILE__) . '/../version.txt';
+if (file_exists($version_file)) {
+    $productversion = trim(file_get_contents($version_file));
+} else {
+    $productversion = '10.6 r27322'; # fallback if file missing
+}
 
 # Paths
 $imagemagick_path = '/usr/bin';
