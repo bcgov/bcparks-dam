@@ -24,6 +24,9 @@ if (!isset($_SERVER['REQUEST_URI'])) {
     $_SERVER['REQUEST_URI'] = '/';
 }
 
+# Get version from version.txt if it exists, otherwise use hardcoded value
+$productversion = file_exists(__DIR__ . '/../version.txt') ? trim(file_get_contents(__DIR__ . '/../version.txt')) : '10.6';
+
 # Paths
 $imagemagick_path = '/usr/bin';
 $ghostscript_path = '/usr/bin';
