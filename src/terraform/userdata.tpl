@@ -267,6 +267,7 @@ sudo apt-get install -y cron
   crontab -l -u www-data 2>/dev/null
   echo "*/2 * * * * cd /var/www/resourcespace/pages/tools && /usr/bin/php offline_jobs.php --max-jobs 2"
   echo "*/10 * * * * cd /var/www/resourcespace/pages/tools && /usr/bin/php staticsync.php >> /var/www/resourcespace/filestore/staticsync.log 2>&1"
+  echo "0 10 * * * find /var/www/resourcespace/filestore/tmp/querycache -type f -delete"
 ) | sudo crontab -u www-data -
 
 # Install SQLite
