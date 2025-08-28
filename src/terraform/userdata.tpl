@@ -50,8 +50,8 @@ sudo systemctl start php8.2-fpm
 echo '### Cloning ResourceSpace repository ###'
 sudo apt-get install -y git
 sudo mkdir /tmp/bcparks-dam
-#sudo git clone -b generic-ami ${git_url} /tmp/bcparks-dam
 sudo git clone ${git_url} /tmp/bcparks-dam
+#sudo git clone -b generic-ami ${git_url} /tmp/bcparks-dam
 
 # Copy ResourceSpace files
 echo '### Copying ResourceSpace files ###'
