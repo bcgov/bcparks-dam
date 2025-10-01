@@ -29,7 +29,7 @@ $version_file = dirname(__FILE__) . '/../version.txt';
 if (file_exists($version_file)) {
     $productversion = trim(file_get_contents($version_file));
 } else {
-    $productversion = '10.6 r27322'; # fallback if file missing
+    $productversion = '10.6 27545'; # fallback if file missing
 }
 
 # Paths
