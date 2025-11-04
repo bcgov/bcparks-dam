@@ -56,7 +56,7 @@ sudo git clone ${git_url} /tmp/bcparks-dam
 # Copy ResourceSpace files
 echo '### Copying ResourceSpace files ###'
 sudo mkdir -p /var/www/resourcespace
-sudo cp -R /tmp/bcparks-dam/src/resourcespace/releases/10.6/* /var/www/resourcespace
+sudo cp -R /tmp/bcparks-dam/src/resourcespace/releases/10.7/* /var/www/resourcespace
 sudo chown -R www-data:www-data /var/www/resourcespace
 sudo chmod -R 755 /var/www/resourcespace
 
@@ -265,7 +265,7 @@ echo '### Setting up cronjob for offline jobs ###'
 sudo apt-get install -y cron
 (
   crontab -l -u www-data 2>/dev/null
-  echo "*/2 * * * * cd /var/www/resourcespace/pages/tools && /usr/bin/php offline_jobs.php --max-jobs 2"
+  echo "*/4 * * * * cd /var/www/resourcespace/pages/tools && /usr/bin/php offline_jobs.php --max-jobs 2"
   echo "*/10 * * * * cd /var/www/resourcespace/pages/tools && /usr/bin/php staticsync.php >> /var/www/resourcespace/filestore/staticsync.log 2>&1"
   echo "0 10 * * * rm -r /var/www/resourcespace/filestore/tmp/*"
 ) | sudo crontab -u www-data -
