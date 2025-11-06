@@ -10,9 +10,9 @@ resource "aws_db_subnet_group" "data_subnet" {
 resource "aws_rds_cluster" "mysql" {
   cluster_identifier      = "bcparks-dam-mysql-cluster"
   engine                  = "aurora-mysql"
-  #engine_version          = "8.0.mysql_aurora.3.08.0"  # Specify Aurora MySQL 3.x version
-  engine_mode             = "serverless"
-  #engine_mode = "provisioned" # Remove the scaling_configuration block as it's not applicable for provisioned clusters
+  engine_version          = "8.0.mysql_aurora.3.08.2"  # Specify Aurora MySQL 3.x version
+  #engine_mode             = "serverless"
+  engine_mode = "provisioned" # Remove the scaling_configuration block as it's not applicable for provisioned clusters
   database_name           = "resourcespace"
   scaling_configuration {
     auto_pause               = true
