@@ -71,11 +71,17 @@ echo '### Installing amazon-efs-utils dependencies ###'
 wait_for_dpkg_lock
 sudo apt-get -y update
 wait_for_dpkg_lock
-sudo apt-get install -y git binutils pkg-config libssl-dev
+sudo apt-get install -y \
+  git binutils pkg-config libssl-dev \
+  build-essential cmake golang-go
 
 echo '### Installing Rust and Cargo ###'
 sudo bash <<'EOF'
+set -euxo pipefail
+
+# Install Rust non-interactively
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+# Ensure Rust is available for future shells
 echo '. "$HOME/.cargo/env"' >> ~/.bashrc
 source $HOME/.cargo/env
 EOF
