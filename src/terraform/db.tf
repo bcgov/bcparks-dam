@@ -10,17 +10,13 @@ resource "aws_db_subnet_group" "data_subnet" {
 resource "aws_rds_cluster" "mysql" {
   cluster_identifier      = "bcparks-dam-mysql-cluster"
   engine                  = "aurora-mysql"
-  engine_version          = "8.0.mysql_aurora.3.08.2"  # Specify Aurora MySQL 3.x version
-  engine_mode             = "serverless"
-  #engine_mode = "provisioned" # Remove the scaling_configuration block as it's not applicable for provisioned clusters
-  database_name           = "resourcespace"
-  scaling_configuration {
-    auto_pause               = true
-    max_capacity             = 16
-    min_capacity             = 2
-    seconds_until_auto_pause = 300
-    timeout_action           = "ForceApplyCapacityChange"
+  engine_version          = "8.0.mysql_aurora.3.08.2"
+  serverlessv2_scaling_configuration {
+    min_capacity = 2
+    max_capacity = 16
   }
+  
+  database_name           = "resourcespace"
   master_username         = local.secrets.mysql_username
   master_password         = local.secrets.mysql_password
   backup_retention_period = 5
@@ -31,6 +27,20 @@ resource "aws_rds_cluster" "mysql" {
   skip_final_snapshot     = true
   enable_http_endpoint    = true
   final_snapshot_identifier = "resourcespace-finalsnapshot"
+
+  tags = var.common_tags
+}
+
+resource "aws_rds_cluster_instance" "mysql" {
+  identifier         = "bcparks-dam-mysql-cluster-instance-1"
+  cluster_identifier = aws_rds_cluster.mysql.id
+
+  engine         = "aurora-mysql"
+  instance_class = "db.serverless"
+
+  publicly_accessible   = false
+  db_subnet_group_name  = aws_db_subnet_group.data_subnet.name
+  performance_insights_enabled = false
 
   tags = var.common_tags
 }
