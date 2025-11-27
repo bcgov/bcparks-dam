@@ -3,7 +3,7 @@ terraform {
 }
 
 include {
-  path = find_in_parent_folders()
+  path = find_in_parent_folders("root.hcl")
 }
 
 generate "dev_tfvars" {
@@ -12,5 +12,6 @@ generate "dev_tfvars" {
   disable_signature = true
   contents          = <<-EOF
 target_env="prod"
+branch_name="main"
 EOF
 }
