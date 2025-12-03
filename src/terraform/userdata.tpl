@@ -271,7 +271,7 @@ echo '### Setting up cronjob for offline jobs ###'
 sudo apt-get install -y cron
 (
   crontab -l -u www-data 2>/dev/null
-  echo "*/4 * * * * cd /var/www/resourcespace/pages/tools && /usr/bin/php offline_jobs.php --max-jobs 2"
+  echo "*/4 * * * * cd /var/www/resourcespace/pages/tools && /usr/bin/php offline_jobs.php --max-jobs 1"
   echo "*/10 * * * * cd /var/www/resourcespace/pages/tools && /usr/bin/php staticsync.php >> /var/www/resourcespace/filestore/staticsync.log 2>&1"
   echo "0 10 * * * rm -r /var/www/resourcespace/filestore/tmp/*"
 ) | sudo crontab -u www-data -
