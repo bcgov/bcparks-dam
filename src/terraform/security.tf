@@ -142,7 +142,7 @@ POLICY
 resource "aws_iam_policy" "s3_policy" {
 	name        = "BCParks-Dam-S3-Access"
 	path        = "/"
-  description = "Allow access S3 bucket bcparks-dam-${var.target_env}-backup"
+  description = "Allow access S3 bucket bcparks-dam-backup-${var.target_env}"
   tags        = var.common_tags
 	policy      = jsonencode(
     {
@@ -151,12 +151,12 @@ resource "aws_iam_policy" "s3_policy" {
         {
           "Effect": "Allow",
           "Action": ["s3:ListBucket"],
-          "Resource": ["arn:aws:s3:::bcparks-dam-${var.target_env}-backup"]
+          "Resource": ["arn:aws:s3:::bcparks-dam-backup-${var.target_env}"]
         },
         {
           "Effect": "Allow",
           "Action": ["s3:*"],
-          "Resource": ["arn:aws:s3:::bcparks-dam-${var.target_env}-backup/*"]
+          "Resource": ["arn:aws:s3:::bcparks-dam-backup-${var.target_env}/*"]
         }
       ]
     }
