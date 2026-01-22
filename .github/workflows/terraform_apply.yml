@@ -41,30 +41,6 @@ jobs:
         with:
           terraform_version: ${{ env.TF_VERSION }}
 
-      - name: Debug OIDC claims (iss/aud/sub)
-        run: |
-          python - << 'PY'
-          import os, json, base64, urllib.request
-
-          url = os.environ["ACTIONS_ID_TOKEN_REQUEST_URL"]
-          token = os.environ["ACTIONS_ID_TOKEN_REQUEST_TOKEN"]
-
-          req = urllib.request.Request(url + "&audience=sts.amazonaws.com",
-                                      headers={"Authorization": f"Bearer {token}"})
-          resp = urllib.request.urlopen(req).read()
-          data = json.loads(resp)
-          jwt = data["value"]
-          payload = jwt.split(".")[1] + "=="
-          payload = base64.urlsafe_b64decode(payload).decode("utf-8")
-          claims = json.loads(payload)
-
-          print("iss:", claims.get("iss"))
-          print("aud:", claims.get("aud"))
-          print("sub:", claims.get("sub"))
-          PY
-        env:
-          ACTIONS_STEP_DEBUG: true
-
       - name: configuring AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
