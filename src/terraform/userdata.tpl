@@ -43,8 +43,17 @@ sudo apt-get install -y php-fpm php-mysqli php-curl php-dom php-gd php-intl php-
 echo '### Starting services ###'
 sudo systemctl enable nginx
 sudo systemctl start nginx
-sudo systemctl enable php8.2-fpm
-sudo systemctl start php8.2-fpm
+
+# Detect PHP-FPM version and enable it
+PHP_FPM_SERVICE=$(systemctl list-units --type=service --all | grep -oP 'php[0-9.]*-fpm' | head -1)
+if [ -n "$PHP_FPM_SERVICE" ]; then
+  echo "### Enabling $PHP_FPM_SERVICE ###"
+  sudo systemctl enable $PHP_FPM_SERVICE
+  sudo systemctl start $PHP_FPM_SERVICE
+else
+  echo "ERROR: Could not find PHP-FPM service"
+  exit 1
+fi
 
 # INSTALL ResourceSpace
 echo '### Cloning ResourceSpace repository ###'
