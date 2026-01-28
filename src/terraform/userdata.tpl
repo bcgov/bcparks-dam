@@ -2,7 +2,7 @@
 
 # Save all output to a log file
 exec > /var/log/userdata.log 2>&1
-set -x
+set -ex  # Changed from -x to -ex to exit on any error
 
 # INSTALL SSM AGENT
 # This allows SSH access into the VM from the Session Manager web interface.
