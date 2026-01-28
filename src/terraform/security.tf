@@ -1,7 +1,7 @@
 # security.tf
 
 resource "aws_iam_role" "ec2_role" {
-  name               = "BCParks-Dam-EC2-Role"
+  name               = "BCParks-DAM-EC2-Role"
   tags               = var.common_tags
   assume_role_policy = <<EOF
 {
@@ -22,13 +22,13 @@ EOF
 resource "aws_security_group" "rds_security_group" {
   name        = "BCParks_RDS_sg"
   description = "allow inbound access from the web VMs"
-  vpc_id      = module.network.aws_vpc.id
+  vpc_id      = local.network_resources.aws_vpc.id
 
   ingress {
     protocol        = "tcp"
     from_port       = 3306
     to_port         = 3306
-    security_groups = [module.network.aws_security_groups.web.id]
+    security_groups = [local.network_resources.aws_security_groups.web.id]
     description     = "For enabling RDS access"
   }
 
@@ -36,7 +36,7 @@ resource "aws_security_group" "rds_security_group" {
     protocol        = "tcp"
     from_port       = 3306
     to_port         = 3306
-    security_groups = [module.network.aws_security_groups.web.id]
+    security_groups = [local.network_resources.aws_security_groups.web.id]
     description     = "For enabling RDS access"
   }
 
@@ -46,13 +46,13 @@ resource "aws_security_group" "rds_security_group" {
 resource "aws_security_group" "efs_security_group" {
   name        = "BCParks_EFS_sg"
   description = "allow inbound access from the web VMs"
-  vpc_id      = module.network.aws_vpc.id
+  vpc_id      = local.network_resources.aws_vpc.id
 
   ingress {
     protocol        = "tcp"
     from_port       = 2049
     to_port         = 2049
-    security_groups = [module.network.aws_security_groups.web.id]
+    security_groups = [local.network_resources.aws_security_groups.web.id]
     description     = "For enabling EFS access"
   }
 
@@ -60,7 +60,7 @@ resource "aws_security_group" "efs_security_group" {
     protocol        = "tcp"
     from_port       = 2049
     to_port         = 2049
-    security_groups = [module.network.aws_security_groups.web.id]
+    security_groups = [local.network_resources.aws_security_groups.web.id]
     description     = "For enabling EFS access"
   }
 
@@ -68,19 +68,19 @@ resource "aws_security_group" "efs_security_group" {
 }
 
 resource "aws_iam_instance_profile" "ec2_profile" {
-  name = "BCParks-Dam-EC2-ip"
+  name = "BCParks-DAM-EC2-ip"
   role = aws_iam_role.ec2_role.name
   tags = var.common_tags
 }
 
-# Attachment for BCParks-Dam-S3-Access
+# Attachment for BCParks-DAM-S3-Access
 resource "aws_iam_policy_attachment" "ec2_s3_attach" {
   name       = "dam-s3-policy-attachment"
   roles      = [aws_iam_role.ec2_role.name]
   policy_arn = aws_iam_policy.s3_policy.arn
 }
 
-# Attachment for BCParks-Dam-EFS-Access
+# Attachment for BCParks-DAM-EFS-Access
 resource "aws_iam_policy_attachment" "ec2_efs_attach" {
   name       = "dam-efs-policy-attachment"
   roles      = [aws_iam_role.ec2_role.name]
@@ -140,7 +140,7 @@ POLICY
 }
 
 resource "aws_iam_policy" "s3_policy" {
-	name        = "BCParks-Dam-S3-Access"
+	name        = "BCParks-DAM-S3-Access"
 	path        = "/"
   description = "Allow access S3 bucket bcparks-dam-backup-${var.target_env}"
   tags        = var.common_tags

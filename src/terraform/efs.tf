@@ -13,9 +13,9 @@ resource "aws_efs_file_system" "efs_filestore" {
 }
 
 resource "aws_iam_policy" "efs_policy" {
-  name = "BCParks-Dam-EFS-Access"
+  name = "BCParks-DAM-EFS-Access"
   path        = "/"
-  description = "Allow access EFS"
+  description = "Allow access to EFS"
   tags        = var.common_tags
 	policy      = jsonencode(
     {
@@ -42,13 +42,13 @@ resource "aws_iam_policy" "efs_policy" {
 
 resource "aws_efs_mount_target" "data_azA" {
   file_system_id  = aws_efs_file_system.efs_filestore.id
-  subnet_id       = sort(module.network.aws_subnet_ids.data.ids)[0]
+  subnet_id       = sort(local.network_resources.aws_subnet_ids.data.ids)[0]
   security_groups = [aws_security_group.efs_security_group.id]
 }
 
 resource "aws_efs_mount_target" "data_azB" {
   file_system_id  = aws_efs_file_system.efs_filestore.id
-  subnet_id       = sort(module.network.aws_subnet_ids.data.ids)[1]
+  subnet_id       = sort(local.network_resources.aws_subnet_ids.data.ids)[1]
   security_groups = [aws_security_group.efs_security_group.id]
 }
 

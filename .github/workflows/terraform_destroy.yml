@@ -68,6 +68,6 @@ jobs:
           EOF
 
           terraform init -input=false
-          terraform destroy -auto-approve -input=false
+          terraform destroy -auto-approve -input=false -var="certificate_arn=${{ vars.CERTIFICATE_ARN }}"
         env:
           TF_VAR_branch_name: ${{ env.BRANCH_NAME }}

@@ -8,9 +8,11 @@ variable "app_name" {
 
 variable "image_id" {
   description = "id of the AWS Marketplace AMI (Amazon Machine Image) for Bitnami ResourceSpace"
-  default     = "ami-0adad14dcb2ca073f" #Debian 12
+  default     = "ami-0614020a2c066706c" #Debian 12
   type        = string
 }
+#previous: ami-0adad14dcb2ca073f
+#ami-02c17467e982e368f  Debian 13
 
 variable "target_env" {
   description = "AWS workload account env (e.g. dev, test, prod, sandbox, unclass)"
@@ -75,12 +77,50 @@ variable "alb_name" {
 
 variable "domain_name" {
   description = "The domain name for the application"
-  default     = "dam.e0806e-dev.nimbus.cloud.gov.bc.ca"
+  default     = "dam.e0806e-dev.internal.stratus.cloud.gov.bc.ca"
+  type        = string
+}
+
+variable "certificate_arn" {
+  description = "The ARN of the SSL/TLS certificate for the ALB HTTPS listener"
   type        = string
 }
 
 variable "licence_plate" {
   description = "The licence plate for the application"
-  default     = "[LICENCEPLATE]"
   type        = string
+}
+
+variable "web_security_group_name" {
+  description = "Name of the pre-provisioned web security group"
+  type        = string
+  default     = "Web"
+}
+
+variable "app_security_group_name" {
+  description = "Name of the pre-provisioned app security group"
+  type        = string
+  default     = "App"
+}
+
+variable "data_security_group_name" {
+  description = "Name of the pre-provisioned data security group"
+  type        = string
+  default     = "Data"
+}
+
+variable "vpc_filter_key" {
+  description = "The tag key to filter VPC by"
+  type        = string
+  default     = "Environment"
+}
+
+variable "vpc_name_tag_map" {
+  description = "Map of environment names to VPC name tags"
+  type        = map(string)
+  default = {
+    dev  = "Dev"
+    test = "Test"
+    prod = "Prod"
+  }
 }

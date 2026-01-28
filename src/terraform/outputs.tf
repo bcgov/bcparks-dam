@@ -5,5 +5,5 @@ output "db" {
 
 output "url" {
   description = "Base URL for Resourcespace"
-  value       = "https://${var.service_names[0]}.[LICENCEPLATE]-${var.target_env}.nimbus.cloud.gov.bc.ca/"
+  value       = "https://${var.service_names[0]}.${var.licence_plate}-${var.target_env}.internal.stratus.cloud.gov.bc.ca/"
 }

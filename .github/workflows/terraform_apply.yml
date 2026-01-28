@@ -63,6 +63,7 @@ jobs:
           EOF
 
           terraform init -input=false
-          terraform apply -auto-approve -input=false
+          terraform apply -auto-approve -input=false -var="certificate_arn=${{ vars.CERTIFICATE_ARN }}"
         env:
           TF_VAR_branch_name: ${{ env.BRANCH_NAME }}
+          TF_VAR_licence_plate: ${{ vars.LICENCE_PLATE }}

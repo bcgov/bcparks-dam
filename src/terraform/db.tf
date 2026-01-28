@@ -2,7 +2,7 @@
 
 resource "aws_db_subnet_group" "data_subnet" {
   name                   = "data-subnet"
-  subnet_ids             = module.network.aws_subnet_ids.data.ids
+  subnet_ids             = local.network_resources.aws_subnet_ids.data.ids
 
   tags = var.common_tags
 }
