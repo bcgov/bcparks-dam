@@ -7,12 +7,12 @@ variable "app_name" {
 }
 
 variable "image_id" {
-  description = "id of the AWS Marketplace AMI (Amazon Machine Image) for Bitnami ResourceSpace"
-  default     = "ami-0614020a2c066706c" #Debian 12
+  description = "id of the AWS AMI (Amazon Machine Image) for Bitnami ResourceSpace"
+  default     = "ami-02c17467e982e368f" #Debian 13
   type        = string
 }
+#previous: ami-0614020a2c066706c (Debian 12)
 #previous: ami-0adad14dcb2ca073f
-#ami-02c17467e982e368f  Debian 13
 
 variable "target_env" {
   description = "AWS workload account env (e.g. dev, test, prod, sandbox, unclass)"
