@@ -190,7 +190,7 @@ sudo chmod -R 775 plugins
 cd ..
 
 # Delete cache files
-sudo rm tmp/querycache/*
+sudo rm -f tmp/querycache/* 2>/dev/null || true
 
 # Clear the tmp folder
 echo '### Clear the tmp folder ###'
