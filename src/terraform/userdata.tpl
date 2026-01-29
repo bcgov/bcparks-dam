@@ -183,7 +183,7 @@ sudo chmod 664 *.*
 
 # extract the Montala Support plugin
 cd /var/www/resourcespace/filestore/system
-sudo unzip /tmp/bcparks-dam/src/resourcespace/files/montala-support.zip
+sudo unzip -o /tmp/bcparks-dam/src/resourcespace/files/montala-support.zip
 sudo chown -R www-data:www-data plugins
 sudo chmod -R 775 plugins
 
