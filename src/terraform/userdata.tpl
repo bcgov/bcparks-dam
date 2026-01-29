@@ -37,7 +37,7 @@ sudo apt-get install -y nginx
 # Install PHP and required extensions
 echo '### Installing PHP and extensions ###'
 wait_for_dpkg_lock
-sudo apt-get install -y php-fpm php-mysqli php-curl php-dom php-gd php-intl php-mbstring php-xml php-zip php-ldap php-imap php-json php-apcu php-cli unzip
+sudo apt-get install -y php-fpm php-mysqli php-curl php-dom php-gd php-intl php-mbstring php-xml php-zip php-ldap php-json php-apcu php-cli unzip
 
 # Start and enable Nginx and PHP-FPM services
 echo '### Starting services ###'
@@ -204,22 +204,31 @@ sudo chown www-data:www-data -R simplesaml
 sudo chmod 775 -R simplesaml
 
 # Set the PHP memory_limit and other configurations
-sudo sed -i 's|^memory_limit = .*|memory_limit = 4096M|' /etc/php/8.2/fpm/php.ini
-sudo sed -i 's|^post_max_size = .*|post_max_size = 2048M|' /etc/php/8.2/fpm/php.ini
-sudo sed -i 's|^upload_max_filesize = .*|upload_max_filesize = 2048M|' /etc/php/8.2/fpm/php.ini
-sudo sed -i 's|^max_file_uploads = .*|max_file_uploads = 100|' /etc/php/8.2/fpm/php.ini
-sudo sed -i 's|^upload_tmp_dir = .*|upload_tmp_dir = /var/www/resourcespace/filestore/tmp|' /etc/php/8.2/fpm/php.ini
-sudo sed -i 's|^date.timezone = .*|date.timezone = "America/Vancouver"|' /etc/php/8.2/fpm/php.ini
-sudo sed -i 's|^max_execution_time = .*|max_execution_time = 1200|' /etc/php/8.2/fpm/php.ini
-sudo sed -i 's|^max_input_time = .*|max_input_time = 1200|' /etc/php/8.2/fpm/php.ini
-sudo sed -i 's|^max_input_vars = .*|max_input_vars = 2000|' /etc/php/8.2/fpm/php.ini
+# Detect PHP version
+PHP_VERSION=$(php -r 'echo implode(".", array_slice(explode(".", phpversion()), 0, 2));')
+PHP_INI="/etc/php/$PHP_VERSION/fpm/php.ini"
+PHP_POOL="/etc/php/$PHP_VERSION/fpm/pool.d/www.conf"
 
-sudo sed -i 's|^[;[:space:]]*pm.max_children\s*=.*|pm.max_children = 50|' /etc/php/8.2/fpm/pool.d/www.conf
-sudo sed -i 's|^[;[:space:]]*pm.start_servers\s*=.*|pm.start_servers = 15|' /etc/php/8.2/fpm/pool.d/www.conf
-sudo sed -i 's|^[;[:space:]]*pm.min_spare_servers\s*=.*|pm.min_spare_servers = 10|' /etc/php/8.2/fpm/pool.d/www.conf
-sudo sed -i 's|^[;[:space:]]*pm.max_spare_servers\s*=.*|pm.max_spare_servers = 25|' /etc/php/8.2/fpm/pool.d/www.conf
-sudo sed -i 's|^[;[:space:]]*pm.max_requests\s*=.*|pm.max_requests = 500|' /etc/php/8.2/fpm/pool.d/www.conf
-sudo sed -i 's|^[;[:space:]]*request_terminate_timeout\s*=.*|request_terminate_timeout = 1200|' /etc/php/8.2/fpm/pool.d/www.conf
+if [ -f "$PHP_INI" ]; then
+  sudo sed -i 's|^memory_limit = .*|memory_limit = 4096M|' "$PHP_INI"
+  sudo sed -i 's|^post_max_size = .*|post_max_size = 2048M|' "$PHP_INI"
+  sudo sed -i 's|^upload_max_filesize = .*|upload_max_filesize = 2048M|' "$PHP_INI"
+  sudo sed -i 's|^max_file_uploads = .*|max_file_uploads = 100|' "$PHP_INI"
+  sudo sed -i 's|^upload_tmp_dir = .*|upload_tmp_dir = /var/www/resourcespace/filestore/tmp|' "$PHP_INI"
+  sudo sed -i 's|^date.timezone = .*|date.timezone = "America/Vancouver"|' "$PHP_INI"
+  sudo sed -i 's|^max_execution_time = .*|max_execution_time = 1200|' "$PHP_INI"
+  sudo sed -i 's|^max_input_time = .*|max_input_time = 1200|' "$PHP_INI"
+  sudo sed -i 's|^max_input_vars = .*|max_input_vars = 2000|' "$PHP_INI"
+fi
+
+if [ -f "$PHP_POOL" ]; then
+  sudo sed -i 's|^[;[:space:]]*pm.max_children\s*=.*|pm.max_children = 50|' "$PHP_POOL"
+  sudo sed -i 's|^[;[:space:]]*pm.start_servers\s*=.*|pm.start_servers = 15|' "$PHP_POOL"
+  sudo sed -i 's|^[;[:space:]]*pm.min_spare_servers\s*=.*|pm.min_spare_servers = 10|' "$PHP_POOL"
+  sudo sed -i 's|^[;[:space:]]*pm.max_spare_servers\s*=.*|pm.max_spare_servers = 25|' "$PHP_POOL"
+  sudo sed -i 's|^[;[:space:]]*pm.max_requests\s*=.*|pm.max_requests = 500|' "$PHP_POOL"
+  sudo sed -i 's|^[;[:space:]]*request_terminate_timeout\s*=.*|request_terminate_timeout = 1200|' "$PHP_POOL"
+fi
 
 # Install ImageMagick
 sudo apt-get install -y imagemagick php-imagick
