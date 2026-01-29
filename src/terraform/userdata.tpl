@@ -171,7 +171,7 @@ sudo chown www-data:www-data health-check.php
 sudo chmod 664 health-check.php
 
 # copy the favicon, header image, and custom font (BC Sans)
-sudo mkdir /var/www/resourcespace/filestore/system/config
+sudo mkdir -p /var/www/resourcespace/filestore/system/config
 sudo chown www-data:www-data /var/www/resourcespace/filestore/system/config
 sudo chmod 775 /var/www/resourcespace/filestore/system/config
 cd /var/www/resourcespace/filestore/system/config
