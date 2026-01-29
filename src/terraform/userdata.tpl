@@ -89,8 +89,8 @@ sudo mkdir filestore
 sudo chown www-data:www-data filestore
 sudo chmod -R 775 filestore
 wait_for_dpkg_lock
-if sudo mount -t efs -o iam -o tls ${efs_dns_name}:/ ./filestore; then
-  echo "EFS mounted successfully."
+if sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport ${efs_dns_name}:/ ./filestore; then
+  echo "EFS mounted successfully as NFS4."
 else
   echo "Failed to mount EFS." >&2
   exit 1
