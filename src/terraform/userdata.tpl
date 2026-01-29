@@ -79,7 +79,6 @@ sudo /tmp/configure-nginx.sh
 echo '### Installing amazon-efs-utils ###'
 wait_for_dpkg_lock
 sudo apt-get install -y nfs-common
-sudo apt-get install -y amazon-efs-utils
 
 # MOUNT THE EFS PERSISTENT FILESYSTEM
 # This volume contains the resourcespace filestore. We tried using S3, but it was slow and unreliable.
