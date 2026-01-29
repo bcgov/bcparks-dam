@@ -79,6 +79,8 @@ sudo /tmp/configure-nginx.sh
 
 echo '### Installing amazon-efs-utils ###'
 wait_for_dpkg_lock
+sudo apt-get update
+wait_for_dpkg_lock
 sudo apt-get install -y nfs-common
 
 # MOUNT THE EFS PERSISTENT FILESYSTEM
