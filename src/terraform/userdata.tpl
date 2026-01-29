@@ -57,6 +57,7 @@ fi
 
 # INSTALL ResourceSpace
 echo '### Cloning ResourceSpace repository ###'
+wait_for_dpkg_lock
 sudo apt-get install -y git
 sudo mkdir /tmp/bcparks-dam
 sudo git clone ${git_url} /tmp/bcparks-dam
@@ -290,7 +291,7 @@ sudo rm /tmp/update-slideshow.sh
 # Clean up temporary files
 echo '### Cleaning up ###'
 #rm -rf /tmp/bcparks-dam
-sudo rm -r /var/www/resourcespace/filestore/tmp/*
+sudo rm -rf /var/www/resourcespace/filestore/tmp/* 2>/dev/null || true
 
 echo '### Restarting services ###'
 # Detect and restart the PHP-FPM service
