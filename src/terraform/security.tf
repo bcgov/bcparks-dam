@@ -105,7 +105,7 @@ resource "aws_iam_role_policy_attachment" "ec2_cloudwatch_attach" {
   policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
 }
 
-resource "aws_efs_file_system_policy" "efs_policy" {
+resource "aws_efs_file_system_policy" "efs_filestore_policy" {
   file_system_id = aws_efs_file_system.efs_filestore.id
   bypass_policy_lockout_safety_check = true
   policy = <<POLICY
@@ -116,19 +116,14 @@ resource "aws_efs_file_system_policy" "efs_policy" {
         {            
             "Effect": "Allow",
             "Principal": {
-                "AWS": "${aws_iam_role.ec2_role.arn}"
+                "AWS": "*"
             },
             "Resource": "${aws_efs_file_system.efs_filestore.arn}",
             "Action": [
                 "elasticfilesystem:ClientMount",
                 "elasticfilesystem:ClientWrite",
                 "elasticfilesystem:ClientRootAccess"
-            ],
-            "Condition": {
-                "Bool": {
-                    "aws:SecureTransport": "true"
-                }
-            }
+            ]
         }
     ]
 }
