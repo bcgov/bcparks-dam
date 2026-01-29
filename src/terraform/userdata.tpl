@@ -76,46 +76,10 @@ sudo chmod +x /tmp/configure-nginx.sh
 sudo /tmp/configure-nginx.sh
 #sudo rm /tmp/configure-nginx.sh
 
-echo '### Installing amazon-efs-utils dependencies ###'
-wait_for_dpkg_lock
-sudo apt-get -y update
-wait_for_dpkg_lock
-sudo apt-get install -y \
-  git binutils pkg-config libssl-dev \
-  build-essential cmake golang-go
-
-echo '### Installing Rust and Cargo ###'
-sudo bash <<'EOF'
-set -euxo pipefail
-
-# Install Rust non-interactively
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-# Ensure Rust is available for future shells
-echo '. "$HOME/.cargo/env"' >> ~/.bashrc
-source $HOME/.cargo/env
-EOF
-
-echo '### Clone and build amazon-efs-utils ###'
-sudo apt-get install -y build-essential
-echo '### Building amazon-efs-utils ###'
-sudo bash <<'EOF'
-mkdir -p /tmp/bcparks-dam/repos
-cd /tmp/bcparks-dam/repos
-git clone https://github.com/aws/efs-utils efs-utils
-cd efs-utils
-source $HOME/.cargo/env
-./build-deb.sh
-EOF
-
 echo '### Installing amazon-efs-utils ###'
 wait_for_dpkg_lock
-DEB_FILE=$(ls /tmp/bcparks-dam/repos/efs-utils/build/*.deb | head -n 1)
-if [ -n "$DEB_FILE" ]; then
-    sudo apt-get -y install "$DEB_FILE"
-else
-    echo "No .deb file found to install."
-    exit 1
-fi
+sudo apt-get install -y nfs-common
+sudo apt-get install -y amazon-efs-utils
 
 # MOUNT THE EFS PERSISTENT FILESYSTEM
 # This volume contains the resourcespace filestore. We tried using S3, but it was slow and unreliable.
@@ -287,7 +251,7 @@ sudo apt-get install -y cron
 
 # Install SQLite
 echo '### Installing sqlite3 ###'
-sudo apt-get install php8.2-sqlite3
+sudo apt-get install -y php-sqlite3
 
 # Install APC User Cache (APCu)
 echo '### Installing APCu ###'
@@ -311,7 +275,11 @@ echo '### Cleaning up ###'
 sudo rm -r /var/www/resourcespace/filestore/tmp/*
 
 echo '### Restarting services ###'
-sudo systemctl restart php8.2-fpm
+# Detect and restart the PHP-FPM service
+PHP_FPM_SERVICE=$(systemctl list-units --type=service --all | grep -oP 'php[0-9.]*-fpm' | head -1)
+if [ -n "$PHP_FPM_SERVICE" ]; then
+  sudo systemctl restart $PHP_FPM_SERVICE
+fi
 sudo systemctl restart nginx
 
 echo '### Userdata script completed successfully ###'
