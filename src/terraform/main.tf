@@ -5,6 +5,13 @@ provider "aws" {
   region = var.aws_region
 }
 
+# Look up the ACM certificate by domain name
+data "aws_acm_certificate" "alb" {
+  domain      = "internal.stratus.cloud.gov.bc.ca"
+  statuses    = ["ISSUED"]
+  most_recent = true
+}
+
 # Internal ALB 
 
 # Create the Application Load Balancer
@@ -31,7 +38,7 @@ resource "aws_lb_listener" "web" {
   port              = "443"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
-  certificate_arn   = var.certificate_arn  # You'll need to add this variable or reference an ACM certificate
+  certificate_arn   = data.aws_acm_certificate.alb.arn
 
   default_action {
     type             = "forward"

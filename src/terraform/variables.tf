@@ -81,11 +81,6 @@ variable "domain_name" {
   type        = string
 }
 
-variable "certificate_arn" {
-  description = "The ARN of the SSL/TLS certificate for the ALB HTTPS listener"
-  type        = string
-}
-
 variable "licence_plate" {
   description = "The licence plate for the application"
   type        = string
