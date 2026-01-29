@@ -96,6 +96,11 @@ else
   exit 1
 fi
 
+# Fix EFS ownership after mounting
+echo '### Fixing EFS ownership ###'
+sudo chown -R www-data:www-data /var/www/resourcespace/filestore
+sudo chmod -R 775 /var/www/resourcespace/filestore
+
 # MOUNT THE S3 BUCKET
 # The S3 bucket /mnt/s3-backup is used for backups and file transfers.
 echo '### Mounting the S3 bucket ###'
@@ -198,7 +203,7 @@ sudo rm -rf tmp/*
 
 # SimpleSAML setup
 sudo mkdir -p simplesaml/data
-sudo mkdir simplesaml/log
+sudo mkdir -p simplesaml/log
 sudo chown www-data:www-data -R simplesaml
 sudo chmod 775 -R simplesaml
 
