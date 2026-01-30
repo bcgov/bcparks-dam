@@ -47,7 +47,8 @@ variable "app_port" {
 }
 
 variable "health_check_path" {
-  default = "/health-check.php"
+  #default = "/health-check.php"
+  default = "/bcgovhealthcheck"
 }
 
 variable "common_tags" {
@@ -85,6 +86,12 @@ variable "custom_domain_name" {
   description = "Custom domain name for CloudFront (e.g., dev-images.bcparks.ca)"
   type        = string
   default     = ""
+}
+
+variable "enable_cloudfront" {
+  description = "Whether to create CloudFront resources"
+  type        = bool
+  default     = false
 }
 
 variable "licence_plate" {

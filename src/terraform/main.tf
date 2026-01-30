@@ -28,6 +28,7 @@ resource "aws_lb" "main" {
     var.common_tags,
     {
       Name = "bcparks-dam-alb"
+      Public = "True"
     }
   )
 }

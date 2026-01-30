@@ -25,6 +25,11 @@ server {
         try_files /health-check.php =404;
     }
 
+    location = /bcgovhealthcheck {
+        return 200 "ok";
+        add_header Content-Type text/plain;
+    }
+
     location /filestore/ {
         add_header Access-Control-Allow-Origin *;
     }

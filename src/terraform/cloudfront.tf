@@ -1,20 +1,39 @@
 # cloudfront.tf
 # CloudFront distribution with VPC Origin for custom domain
 
+# Create Internet Gateway (required for VPC Origin)
+resource "aws_internet_gateway" "main" {
+  count  = var.enable_cloudfront ? 1 : 0
+  vpc_id = local.network_resources.aws_vpc.id
+
+  tags = merge(
+    var.common_tags,
+    {
+      Name = "bcparks-dam-igw-${var.target_env}"
+    }
+  )
+}
+
 # VPC Origin configuration
 resource "aws_cloudfront_vpc_origin" "alb" {
+  count = var.enable_cloudfront ? 1 : 0
   vpc_origin_endpoint_config {
     name                   = "bcparks-dam-alb-origin"
     arn                    = aws_lb.main.arn
     http_port              = 80
     https_port             = 443
     origin_protocol_policy = "https-only"
-    origin_ssl_protocols   = ["TLSv1.2"]
+    
+    origin_ssl_protocols {
+      items    = ["TLSv1.2"]
+      quantity = 1
+    }
   }
 }
 
 # CloudFront distribution
 resource "aws_cloudfront_distribution" "main" {
+  count               = var.enable_cloudfront ? 1 : 0
   enabled             = true
   is_ipv6_enabled     = true
   comment             = "BC Parks DAM - ${var.target_env}"
@@ -25,7 +44,7 @@ resource "aws_cloudfront_distribution" "main" {
 
   origin {
     origin_id   = "alb-vpc-origin"
-    domain_name = aws_cloudfront_vpc_origin.alb.id
+    domain_name = aws_cloudfront_vpc_origin.alb[0].id
     
     custom_origin_config {
       http_port              = 80
