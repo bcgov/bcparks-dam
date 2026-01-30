@@ -77,7 +77,7 @@ sudo chmod +x /tmp/configure-nginx.sh
 sudo /tmp/configure-nginx.sh
 #sudo rm /tmp/configure-nginx.sh
 
-echo '### Installing amazon-efs-utils ###'
+echo '### Installing nfs-common for EFS support ###'
 wait_for_dpkg_lock
 sudo apt-get update
 wait_for_dpkg_lock

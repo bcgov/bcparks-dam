@@ -34,6 +34,7 @@ jobs:
           cd src/terraform/
           cat <<EOF > dev.auto.tfvars
           target_env = "${{ env.environment }}"
+          custom_domain_name = "${{ vars.CUSTOM_DOMAIN_NAME }}"
           EOF
 
       - name: setup Terraform

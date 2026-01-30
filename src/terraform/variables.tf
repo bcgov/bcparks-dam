@@ -81,6 +81,12 @@ variable "domain_name" {
   type        = string
 }
 
+variable "custom_domain_name" {
+  description = "Custom domain name for CloudFront (e.g., dev-images.bcparks.ca)"
+  type        = string
+  default     = ""
+}
+
 variable "licence_plate" {
   description = "The licence plate for the application"
   type        = string
