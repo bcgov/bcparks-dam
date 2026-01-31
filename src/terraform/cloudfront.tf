@@ -1,35 +1,5 @@
 # cloudfront.tf
-# CloudFront distribution with VPC Origin for custom domain
-
-# Create Internet Gateway (required for VPC Origin)
-resource "aws_internet_gateway" "main" {
-  count  = var.enable_cloudfront ? 1 : 0
-  vpc_id = local.network_resources.aws_vpc.id
-
-  tags = merge(
-    var.common_tags,
-    {
-      Name = "bcparks-dam-igw-${var.target_env}"
-    }
-  )
-}
-
-# VPC Origin configuration
-resource "aws_cloudfront_vpc_origin" "alb" {
-  count = var.enable_cloudfront ? 1 : 0
-  vpc_origin_endpoint_config {
-    name                   = "bcparks-dam-alb-origin"
-    arn                    = aws_lb.main.arn
-    http_port              = 80
-    https_port             = 443
-    origin_protocol_policy = "https-only"
-    
-    origin_ssl_protocols {
-      items    = ["TLSv1.2"]
-      quantity = 1
-    }
-  }
-}
+# CloudFront distribution for custom domain pointing to public ALB
 
 # CloudFront distribution
 resource "aws_cloudfront_distribution" "main" {
@@ -43,8 +13,8 @@ resource "aws_cloudfront_distribution" "main" {
   aliases = [var.custom_domain_name]
 
   origin {
-    origin_id   = "alb-vpc-origin"
-    domain_name = aws_cloudfront_vpc_origin.alb[0].id
+    origin_id   = "public-alb-origin"
+    domain_name = "${var.service_names[0]}.${var.licence_plate}-${var.target_env}.stratus.cloud.gov.bc.ca"
     
     custom_origin_config {
       http_port              = 80
@@ -57,7 +27,7 @@ resource "aws_cloudfront_distribution" "main" {
   default_cache_behavior {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
     cached_methods   = ["GET", "HEAD", "OPTIONS"]
-    target_origin_id = "alb-vpc-origin"
+    target_origin_id = "public-alb-origin"
 
     forwarded_values {
       query_string = true
@@ -80,7 +50,7 @@ resource "aws_cloudfront_distribution" "main" {
     path_pattern     = "/filestore/*"
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
     cached_methods   = ["GET", "HEAD", "OPTIONS"]
-    target_origin_id = "alb-vpc-origin"
+    target_origin_id = "public-alb-origin"
 
     forwarded_values {
       query_string = false
@@ -102,7 +72,7 @@ resource "aws_cloudfront_distribution" "main" {
     path_pattern     = "/gfx/*"
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
     cached_methods   = ["GET", "HEAD", "OPTIONS"]
-    target_origin_id = "alb-vpc-origin"
+    target_origin_id = "public-alb-origin"
 
     forwarded_values {
       query_string = false
@@ -124,7 +94,7 @@ resource "aws_cloudfront_distribution" "main" {
     path_pattern     = "/css/*"
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
     cached_methods   = ["GET", "HEAD", "OPTIONS"]
-    target_origin_id = "alb-vpc-origin"
+    target_origin_id = "public-alb-origin"
 
     forwarded_values {
       query_string = false
@@ -145,7 +115,7 @@ resource "aws_cloudfront_distribution" "main" {
     path_pattern     = "/js/*"
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
     cached_methods   = ["GET", "HEAD", "OPTIONS"]
-    target_origin_id = "alb-vpc-origin"
+    target_origin_id = "public-alb-origin"
 
     forwarded_values {
       query_string = false

@@ -45,6 +45,11 @@ server {
         fastcgi_param SCRIPT_FILENAME \$document_root/pages/upload_batch.php;
         fastcgi_param PATH_INFO \$uri;
         include fastcgi_params;
+        
+        # Pass X-Forwarded headers from ALB to PHP
+        fastcgi_param HTTP_X_FORWARDED_PROTO \$http_x_forwarded_proto;
+        fastcgi_param HTTP_X_FORWARDED_FOR \$proxy_add_x_forwarded_for;
+        fastcgi_param HTTP_X_FORWARDED_HOST \$http_x_forwarded_host;
     }
 
     location /plugins/simplesaml/ {
@@ -88,8 +93,10 @@ server {
         fastcgi_connect_timeout 1200;
         fastcgi_send_timeout 1200;
 
-        # Pass X-Forwarded-Proto to PHP
-        fastcgi_param HTTPS \$http_x_forwarded_proto;
+        # Pass X-Forwarded headers from ALB to PHP
+        fastcgi_param HTTP_X_FORWARDED_PROTO \$http_x_forwarded_proto;
+        fastcgi_param HTTP_X_FORWARDED_FOR \$proxy_add_x_forwarded_for;
+        fastcgi_param HTTP_X_FORWARDED_HOST \$http_x_forwarded_host;
     }
 
     # Restrict access to hidden files

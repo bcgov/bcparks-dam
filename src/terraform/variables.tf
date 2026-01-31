@@ -91,7 +91,7 @@ variable "custom_domain_name" {
 variable "enable_cloudfront" {
   description = "Whether to create CloudFront resources"
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "licence_plate" {
