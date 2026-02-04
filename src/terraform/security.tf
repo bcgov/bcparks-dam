@@ -152,6 +152,35 @@ resource "aws_iam_policy" "s3_policy" {
           "Effect": "Allow",
           "Action": ["s3:*"],
           "Resource": ["arn:aws:s3:::bcparks-dam-backup-${var.target_env}/*"]
+        },
+        {
+            "Action": [
+                "kms:DescribeKey",
+                "kms:GenerateDataKey*",
+                "kms:Decrypt",
+                "kms:Encrypt",
+                "kms:ReEncrypt*"
+            ],
+            "Resource": "arn:aws:kms:ca-central-1:052508220063:key/b6a97488-138a-4fe5-98af-b82197400440",
+            "Effect": "Allow"
+        },
+        {
+            "Action": "kms:Decrypt",
+            "Resource": "*",
+            "Effect": "Allow"
+        },
+        {
+            "Action": "s3:GetEncryptionConfiguration",
+            "Resource": "arn:aws:s3:::pbmmaccel-logarchive-phase0-cacentral1-1tsjee4wol463",
+            "Effect": "Allow"
+        },
+        {
+            "Action": [
+                "s3:PutObject",
+                "s3:PutObjectAcl"
+            ],
+            "Resource": "arn:aws:s3:::pbmmaccel-logarchive-phase0-cacentral1-1tsjee4wol463/*",
+            "Effect": "Allow"
         }
       ]
     }
