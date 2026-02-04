@@ -109,7 +109,7 @@ sudo chmod -R 775 /var/www/resourcespace/filestore
 echo '### Mounting the S3 bucket ###'
 sudo apt-get -y install s3fs
 sudo mkdir /mnt/s3-backup
-sudo s3fs bcparks-dam-backup-${target_env} /mnt/s3-backup -o iam_role=BCParks-DAM-EC2-Role -o use_cache=/tmp -o allow_other -o uid=0 -o gid=1 -o mp_umask=002 -o multireq_max=5 -o use_path_request_style -o url=https://s3-${aws_region}.amazonaws.com
+sudo s3fs bcparks-dam-backup-${target_env} /mnt/s3-backup -o iam_role=BCParks-DAM-EC2-Role -o use_cache=/tmp -o allow_other -o uid=0 -o gid=1 -o mp_umask=002 -o multireq_max=5 -o use_path_request_style -o url=https://s3-${aws_region}.amazonaws.com -o endpoint=ca-central-1
 
 echo '### Customizing the Resourcespace config ###'
 sudo mkdir /tmp/bcparks-dam/repos

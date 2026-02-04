@@ -23,7 +23,7 @@ resource "aws_cloudfront_distribution" "main" {
   price_class         = "PriceClass_100" # North America only
   http_version        = "http2and3"
   
-  aliases = [var.custom_domain_name]
+  aliases = var.custom_domain_name != "" ? [var.custom_domain_name] : []
 
   origin {
     origin_id   = "alb-origin"
@@ -109,9 +109,10 @@ resource "aws_cloudfront_distribution" "main" {
   }
 
   viewer_certificate {
-    acm_certificate_arn      = local.secrets["cf_certificate_arn"]
-    ssl_support_method       = "sni-only"
-    minimum_protocol_version = "TLSv1.2_2021"
+    acm_certificate_arn      = var.custom_domain_name != "" ? local.secrets["cf_certificate_arn"] : null
+    cloudfront_default_certificate = var.custom_domain_name == ""
+    ssl_support_method       = var.custom_domain_name != "" ? "sni-only" : null
+    minimum_protocol_version = var.custom_domain_name != "" ? "TLSv1.2_2021" : "TLSv1"
   }
 
   tags = merge(

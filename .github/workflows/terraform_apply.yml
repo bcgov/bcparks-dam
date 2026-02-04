@@ -32,9 +32,26 @@ jobs:
       - name: setting variables
         run: |
           cd src/terraform/
+          
+          # Set custom domain based on environment
+          case "${{ env.environment }}" in
+            dev)
+              CUSTOM_DOMAIN="dev-images.bcparks.ca"
+              ;;
+            test)
+              CUSTOM_DOMAIN="test-images.bcparks.ca"
+              ;;
+            prod)
+              CUSTOM_DOMAIN="images.bcparks.ca"
+              ;;
+            *)
+              CUSTOM_DOMAIN=""
+              ;;
+          esac
+          
           cat <<EOF > dev.auto.tfvars
           target_env = "${{ env.environment }}"
-          custom_domain_name = "${{ vars.CUSTOM_DOMAIN_NAME }}"
+          custom_domain_name = "$CUSTOM_DOMAIN"
           EOF
 
       - name: setup Terraform
