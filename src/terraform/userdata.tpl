@@ -109,7 +109,9 @@ sudo chmod -R 775 /var/www/resourcespace/filestore
 echo '### Mounting the S3 bucket ###'
 sudo apt-get -y install s3fs
 sudo mkdir /mnt/s3-backup
-sudo s3fs bcparks-dam-backup-${target_env} /mnt/s3-backup -o iam_role=BCParks-DAM-EC2-Role -o use_cache=/tmp -o allow_other -o uid=0 -o gid=1 -o mp_umask=002 -o multireq_max=5 -o use_path_request_style -o url=https://s3-${aws_region}.amazonaws.com -o endpoint=ca-central-1
+sudo sed -i 's/^#\s*user_allow_other/user_allow_other/' /etc/fuse.conf
+sudo s3fs bcparks-dam-backup-${target_env} /mnt/s3-backup -o iam_role=BCParks-DAM-EC2-Role -o use_cache=/tmp -o allow_other -o uid=33 -o gid=33 -o mp_umask=002 -o multireq_max=5 -o use_path_request_style -o url=https://s3-${aws_region}.amazonaws.com -o endpoint=ca-central-1
+sudo usermod -aG www-data ssm-user
 
 echo '### Customizing the Resourcespace config ###'
 sudo mkdir /tmp/bcparks-dam/repos
@@ -194,6 +196,11 @@ cd /var/www/resourcespace/filestore/system
 sudo unzip -o /tmp/bcparks-dam/src/resourcespace/files/montala-support.zip
 sudo chown -R www-data:www-data plugins
 sudo chmod -R 775 plugins
+
+# Create the slideshow directory if it doesn't exist
+sudo mkdir -p /var/www/resourcespace/filestore/system/slideshow_a383ab9e2f595db
+sudo chown www-data:www-data /var/www/resourcespace/filestore/system/slideshow_a383ab9e2f595db
+sudo chmod 775 /var/www/resourcespace/filestore/system/slideshow_a383ab9e2f595db
 
 cd ..
 
