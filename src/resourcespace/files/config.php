@@ -77,7 +77,7 @@ $resource_type_extension_mapping = array (
     3 => array('mov', '33gp', 'avi', 'mpg', 'mp4', 'flv', 'wmv', 'webm'), # Video in PROD, DEV
     99 => array('flac', 'mp3', '3ga', 'cda', 'rec', 'aa', 'au', 'mp4a', 'wav', 'aac', 'ogg', 'weba'), # Audio in PROD
     26 => array('webp') # RST Recreation Resource in PROD
-    
+
     #24 => array('pdf', 'doc', 'docx', 'epub', 'ppt', 'pptx', 'odt', 'ods', 'tpl', 'ott', 'rtf', 'txt', 'xml'), # RST Map in TEST
     #23 => array('webp') # RST Photo in TEST
 );

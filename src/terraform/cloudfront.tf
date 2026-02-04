@@ -1,34 +1,17 @@
 # cloudfront.tf
-# CloudFront distribution with VPC Origin for custom domain
+# CloudFront distribution with public ALB origin for custom domain
 
-# Create Internet Gateway (required for VPC Origin)
-resource "aws_internet_gateway" "main" {
-  count  = var.enable_cloudfront ? 1 : 0
-  vpc_id = local.network_resources.aws_vpc.id
-
-  tags = merge(
-    var.common_tags,
-    {
-      Name = "bcparks-dam-igw-${var.target_env}"
-    }
-  )
+# Reference CloudFront managed policies
+data "aws_cloudfront_cache_policy" "caching_disabled" {
+  name = "Managed-CachingDisabled"
 }
 
-# VPC Origin configuration
-resource "aws_cloudfront_vpc_origin" "alb" {
-  count = var.enable_cloudfront ? 1 : 0
-  vpc_origin_endpoint_config {
-    name                   = "bcparks-dam-alb-origin"
-    arn                    = aws_lb.main.arn
-    http_port              = 80
-    https_port             = 443
-    origin_protocol_policy = "https-only"
-    
-    origin_ssl_protocols {
-      items    = ["TLSv1.2"]
-      quantity = 1
-    }
-  }
+data "aws_cloudfront_origin_request_policy" "all_viewer_except_host_header" {
+  name = "Managed-AllViewerExceptHostHeader"
+}
+
+data "aws_cloudfront_cache_policy" "caching_optimized" {
+  name = "Managed-CachingOptimized"
 }
 
 # CloudFront distribution
@@ -43,8 +26,8 @@ resource "aws_cloudfront_distribution" "main" {
   aliases = [var.custom_domain_name]
 
   origin {
-    origin_id   = "alb-vpc-origin"
-    domain_name = aws_cloudfront_vpc_origin.alb[0].id
+    origin_id   = "alb-origin"
+    domain_name = aws_lb.main.dns_name
     
     custom_origin_config {
       http_port              = 80
@@ -57,21 +40,12 @@ resource "aws_cloudfront_distribution" "main" {
   default_cache_behavior {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
     cached_methods   = ["GET", "HEAD", "OPTIONS"]
-    target_origin_id = "alb-vpc-origin"
+    target_origin_id = "alb-origin"
 
-    forwarded_values {
-      query_string = true
-      headers      = ["Host", "Origin", "Authorization", "Accept", "Accept-Language"]
-
-      cookies {
-        forward = "all"
-      }
-    }
+    cache_policy_id            = data.aws_cloudfront_cache_policy.caching_disabled.id
+    origin_request_policy_id   = data.aws_cloudfront_origin_request_policy.all_viewer_except_host_header.id
 
     viewer_protocol_policy = "redirect-to-https"
-    min_ttl                = 0
-    default_ttl            = 0      # No caching for dynamic content
-    max_ttl                = 0
     compress               = true
   }
 
@@ -80,21 +54,12 @@ resource "aws_cloudfront_distribution" "main" {
     path_pattern     = "/filestore/*"
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
     cached_methods   = ["GET", "HEAD", "OPTIONS"]
-    target_origin_id = "alb-vpc-origin"
+    target_origin_id = "alb-origin"
 
-    forwarded_values {
-      query_string = false
-      headers      = ["Origin"]
-
-      cookies {
-        forward = "none"
-      }
-    }
+    cache_policy_id          = data.aws_cloudfront_cache_policy.caching_optimized.id
+    origin_request_policy_id = data.aws_cloudfront_origin_request_policy.all_viewer_except_host_header.id
 
     viewer_protocol_policy = "redirect-to-https"
-    min_ttl                = 0
-    default_ttl            = 86400    # 1 day
-    max_ttl                = 31536000 # 1 year
     compress               = true
   }
 
@@ -102,21 +67,12 @@ resource "aws_cloudfront_distribution" "main" {
     path_pattern     = "/gfx/*"
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
     cached_methods   = ["GET", "HEAD", "OPTIONS"]
-    target_origin_id = "alb-vpc-origin"
+    target_origin_id = "alb-origin"
 
-    forwarded_values {
-      query_string = false
-      headers      = ["Origin"]
-
-      cookies {
-        forward = "none"
-      }
-    }
+    cache_policy_id          = data.aws_cloudfront_cache_policy.caching_optimized.id
+    origin_request_policy_id = data.aws_cloudfront_origin_request_policy.all_viewer_except_host_header.id
 
     viewer_protocol_policy = "redirect-to-https"
-    min_ttl                = 0
-    default_ttl            = 86400
-    max_ttl                = 31536000
     compress               = true
   }
 
@@ -124,20 +80,12 @@ resource "aws_cloudfront_distribution" "main" {
     path_pattern     = "/css/*"
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
     cached_methods   = ["GET", "HEAD", "OPTIONS"]
-    target_origin_id = "alb-vpc-origin"
+    target_origin_id = "alb-origin"
 
-    forwarded_values {
-      query_string = false
-
-      cookies {
-        forward = "none"
-      }
-    }
+    cache_policy_id          = data.aws_cloudfront_cache_policy.caching_optimized.id
+    origin_request_policy_id = data.aws_cloudfront_origin_request_policy.all_viewer_except_host_header.id
 
     viewer_protocol_policy = "redirect-to-https"
-    min_ttl                = 0
-    default_ttl            = 86400
-    max_ttl                = 31536000
     compress               = true
   }
 
@@ -145,20 +93,12 @@ resource "aws_cloudfront_distribution" "main" {
     path_pattern     = "/js/*"
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
     cached_methods   = ["GET", "HEAD", "OPTIONS"]
-    target_origin_id = "alb-vpc-origin"
+    target_origin_id = "alb-origin"
 
-    forwarded_values {
-      query_string = false
-
-      cookies {
-        forward = "none"
-      }
-    }
+    cache_policy_id          = data.aws_cloudfront_cache_policy.caching_optimized.id
+    origin_request_policy_id = data.aws_cloudfront_origin_request_policy.all_viewer_except_host_header.id
 
     viewer_protocol_policy = "redirect-to-https"
-    min_ttl                = 0
-    default_ttl            = 86400
-    max_ttl                = 31536000
     compress               = true
   }
 
