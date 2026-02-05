@@ -97,6 +97,7 @@ variable "enable_cloudfront" {
 variable "licence_plate" {
   description = "The licence plate for the application"
   type        = string
+  default     = "e0806e"
 }
 
 variable "web_security_group_name" {

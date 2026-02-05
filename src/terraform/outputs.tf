@@ -20,5 +20,5 @@ output "cloudfront_distribution_id" {
 
 output "url" {
   description = "Base URL for Resourcespace"
-  value       = "https://${var.service_names[0]}.${var.licence_plate}-${var.target_env}.stratus.cloud.gov.bc.ca/"
+  value       = var.enable_cloudfront && var.custom_domain_name != "" ? "https://${var.custom_domain_name}/" : "https://${var.service_names[0]}.${var.licence_plate}-${var.target_env}.stratus.cloud.gov.bc.ca/"
 }
