@@ -296,6 +296,9 @@ sudo chmod +x /tmp/update-slideshow.sh
 sudo /tmp/update-slideshow.sh
 sudo rm /tmp/update-slideshow.sh
 
+sudo cp /tmp/bcparks-dam/src/resourcespace/tools/efs-to-s3-export-setup.sh /mnt/s3-backup/
+sudo cp /tmp/bcparks-dam/src/resourcespace/tools/s3-to-efs-import-setup.sh /mnt/s3-backup/
+
 # Clean up temporary files
 echo '### Cleaning up ###'
 #rm -rf /tmp/bcparks-dam
