@@ -1,11 +1,3 @@
-locals {
-  effective_custom_domain = var.custom_domain_name != "" ? var.custom_domain_name : (
-    var.target_env == "dev"  ? "dev-images.bcparks.ca" :
-    var.target_env == "test" ? "test-images.bcparks.ca" :
-    var.target_env == "prod" ? "images.bcparks.ca" : ""
-  )
-}
-
 output "db" {
   description = "Aurora database endpoint"
   value       = aws_rds_cluster.mysql.endpoint

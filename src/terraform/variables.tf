@@ -83,9 +83,13 @@ variable "domain_name" {
 }
 
 variable "custom_domain_name" {
-  description = "Custom domain name for CloudFront (e.g., dev-images.bcparks.ca)"
-  type        = string
-  default     = ""
+  description = "Custom domain name per environment"
+  type        = map(string)
+  default = {
+    dev  = "dev-images.bcparks.ca"
+    test = "test-images.bcparks.ca"
+    prod = "images.bcparks.ca"
+  }
 }
 
 variable "enable_cloudfront" {
@@ -98,6 +102,10 @@ variable "licence_plate" {
   description = "The licence plate for the application"
   type        = string
   default     = "e0806e"
+}
+
+locals {
+  effective_custom_domain = lookup(var.custom_domain_name, var.target_env, "")
 }
 
 variable "web_security_group_name" {
