@@ -14,7 +14,8 @@ on:
         required: true
 
 env:
-  TF_VERSION: 1.5.7
+  TF_VERSION: 1.14.3
+  TERRAGRUNT_VERSION: 0.55.16
   environment: ${{ inputs.env }}
 
 permissions:
@@ -33,41 +34,33 @@ jobs:
             exit 1
           fi
 
-      - name: checkout the repo and building the Backend
-        uses: actions/checkout@v3
+      - name: checkout the repository
+        uses: actions/checkout@v4
 
       - name: print cloud_environment
         run: echo the cloud env is ${{ env.environment }}
 
-      - name: setting variables
+      - name: setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: install Terragrunt
         run: |
-          cd src/terraform/
-          cat <<EOF > dev.auto.tfvars
-          target_env = "${{ env.environment }}"
-          EOF
+          curl -sSL -o /usr/local/bin/terragrunt "https://github.com/gruntwork-io/terragrunt/releases/download/v${{ env.TERRAGRUNT_VERSION }}/terragrunt_linux_amd64"
+          chmod +x /usr/local/bin/terragrunt
+          terragrunt --version
 
       - name: configuring AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ vars.TERRAFORM_DEPLOY_ROLE_ARN }}
           aws-region: ca-central-1
 
-      - name: destroying bcparks-dam using terraform
+      - name: destroying bcparks-dam using terragrunt
         run: |
-          cd src/terraform/
-          cat <<EOF > backend.tf
-          terraform {
-            backend "s3" {
-              bucket = "${{ vars.S3_BACKEND_NAME }}"
-              key = "remote.tfstate-admin"
-              region = "ca-central-1"
-              dynamodb_table = "${{ vars.S3_BACKEND_NAME }}-lock"
-              encrypt = true
-            }
-          }
-          EOF
-
-          terraform init -input=false
-          terraform destroy -auto-approve -input=false -var="certificate_arn=${{ vars.CERTIFICATE_ARN }}"
+          cd src/terraform/terragrunt/${{ env.environment }}
+          terragrunt init -input=false
+          terragrunt destroy -auto-approve -input=false
         env:
-          TF_VAR_branch_name: ${{ env.BRANCH_NAME }}
+          licenceplate: ${{ vars.LICENCE_PLATE }}

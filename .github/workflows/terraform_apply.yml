@@ -12,6 +12,7 @@ on:
 
 env:
   TF_VERSION: 1.14.3
+  TERRAGRUNT_VERSION: 0.55.16
   environment: ${{ inputs.env }}
 
 permissions:
@@ -29,35 +30,16 @@ jobs:
       - name: print cloud_environment
         run: echo "The cloud environment is ${{ env.environment }}"
 
-      - name: setting variables
-        run: |
-          cd src/terraform/
-          
-          # Set custom domain based on environment
-          case "${{ env.environment }}" in
-            dev)
-              CUSTOM_DOMAIN="dev-images.bcparks.ca"
-              ;;
-            test)
-              CUSTOM_DOMAIN="test-images.bcparks.ca"
-              ;;
-            prod)
-              CUSTOM_DOMAIN="images.bcparks.ca"
-              ;;
-            *)
-              CUSTOM_DOMAIN=""
-              ;;
-          esac
-          
-          cat <<EOF > dev.auto.tfvars
-          target_env = "${{ env.environment }}"
-          custom_domain_name = "$CUSTOM_DOMAIN"
-          EOF
-
       - name: setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ${{ env.TF_VERSION }}
+
+      - name: install Terragrunt
+        run: |
+          curl -sSL -o /usr/local/bin/terragrunt "https://github.com/gruntwork-io/terragrunt/releases/download/v${{ env.TERRAGRUNT_VERSION }}/terragrunt_linux_amd64"
+          chmod +x /usr/local/bin/terragrunt
+          terragrunt --version
 
       - name: configuring AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -65,23 +47,10 @@ jobs:
           role-to-assume: ${{ vars.TERRAFORM_DEPLOY_ROLE_ARN }}
           aws-region: ca-central-1
 
-      - name: deploying bcparks-dam using terraform
+      - name: deploying bcparks-dam using terragrunt
         run: |
-          cd src/terraform/
-          cat <<EOF > backend.tf
-          terraform {
-            backend "s3" {
-              bucket = "${{ vars.S3_BACKEND_NAME }}"
-              key = "remote.tfstate-admin"
-              region = "ca-central-1"
-              dynamodb_table = "${{ vars.S3_BACKEND_NAME }}-lock"
-              encrypt = true
-            }
-          }
-          EOF
-
-          terraform init -input=false
-          terraform apply -auto-approve -input=false
+          cd src/terraform/terragrunt/${{ env.environment }}
+          terragrunt init -input=false
+          terragrunt apply -auto-approve -input=false
         env:
-          TF_VAR_branch_name: ${{ env.BRANCH_NAME }}
-          TF_VAR_licence_plate: ${{ vars.LICENCE_PLATE }}
+          licenceplate: ${{ vars.LICENCE_PLATE }}
