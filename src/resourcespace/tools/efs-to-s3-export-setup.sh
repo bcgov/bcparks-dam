@@ -135,7 +135,7 @@ LOCK="/var/lock/efs-to-s3-export-${ENV_NAME}.lock"
 SERVICE="efs-to-s3-export-${ENV_NAME}.service"
 
 # ---- exclude volatile paths (ResourceSpace) ----
-EXCLUDES=( '--exclude "tmp/*"' )
+EXCLUDES=( '--exclude "tmp/*"' --exclude "staticsync.log" )
 
 write_runner() {
   sudo tee "$RUNNER" >/dev/null <<RUNEOF

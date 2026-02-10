@@ -144,7 +144,7 @@ LOCK="/var/lock/s3-to-efs-import-${ENV_NAME}.lock"
 SERVICE="s3-to-efs-import-${ENV_NAME}.service"
 
 # ---- exclude volatile paths (ResourceSpace) ----
-EXCLUDES=( '--exclude "tmp/*"' )
+EXCLUDES=( '--exclude "tmp/*" --exclude "staticsync.log"' )
 
 write_runner() {
   sudo tee "$RUNNER" >/dev/null <<RUNEOF
@@ -230,7 +230,7 @@ main() {
 
   log "--- Verifying (dry-run): aws s3 sync --dryrun ---"
   #DRYRUN_OUT="\$(aws s3 sync "\$SRC/" "\$DEST_PATH/" --exact-timestamps --dryrun "\${EXCLUDES[@]}" || true)"
-  DRYRUN_OUT="\$(aws s3 sync "\$SRC/" "\$DEST_PATH/" --exact-timestamps --dryrun --exclude 'tmp/*' || true)"
+  DRYRUN_OUT="\$(aws s3 sync "\$SRC/" "\$DEST_PATH/" --exact-timestamps --dryrun --exclude 'tmp/*' --exclude "staticsync.log" || true)"
   if [[ -n "\$DRYRUN_OUT" ]]; then
     log "VERIFY FAILED: dry-run found differences:"
     echo "\$DRYRUN_OUT"
