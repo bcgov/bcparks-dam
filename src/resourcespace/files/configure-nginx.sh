@@ -16,7 +16,7 @@ map \$http_cloudfront_forwarded_proto \$rs_proto {
 server {
     set \$public_host "dev-images.bcparks.ca";
     set \$public_proto "https";
-    set \$public_port "443";
+    set \$public_port 443;
 
     listen 80 default_server;
     server_name _;
@@ -82,7 +82,7 @@ server {
             fastcgi_param SERVER_PORT            \$public_port;
             fastcgi_param HTTPS                  "on";
 
-            fastcgi_param HTTP_X_FORWARDED_PROTO "\$public_proto";
+            fastcgi_param HTTP_X_FORWARDED_PROTO \$public_proto;
             fastcgi_param HTTP_X_FORWARDED_HOST  \$public_host;
             fastcgi_param HTTP_X_FORWARDED_PORT  \$public_port;
             fastcgi_param REQUEST_SCHEME \$public_proto;
@@ -107,7 +107,7 @@ server {
             fastcgi_param HTTPS                  "on";
 
             fastcgi_param HTTP_X_FORWARDED_HOST  \$public_host;
-            fastcgi_param HTTP_X_FORWARDED_PROTO "\$public_proto";
+            fastcgi_param HTTP_X_FORWARDED_PROTO \$public_proto;
             fastcgi_param HTTP_X_FORWARDED_PORT  \$public_port;
             fastcgi_param REQUEST_SCHEME \$public_proto;
         }
