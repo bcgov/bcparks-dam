@@ -8,6 +8,7 @@
 # Options may be copied from config.default.php and configured here.
 
 # Base URL of the installation
+/*
 $baseurl = 'http://127.0.0.1'; # Fallback for cron job execution
 # When running cli php scripts, HTTP_HOST is not set
 if (isset($_SERVER['HTTP_HOST'])) {
@@ -20,7 +21,9 @@ if (isset($_SERVER['HTTP_HOST'])) {
         $baseurl = 'http://' . $_SERVER['HTTP_HOST'];
     }
 }
-if (!isset($_SERVER['REQUEST_URI'])) {
+*/
+$baseurl = 'https://dev-images.bcparks.ca/';
+if (!isset($_SERVER['REQUEST_URI'])) { # Set a default REQUEST_URI for CLI execution to prevent errors in scripts that expect it
     $_SERVER['REQUEST_URI'] = '/';
 }
 
