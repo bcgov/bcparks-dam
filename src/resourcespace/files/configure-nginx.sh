@@ -51,7 +51,7 @@ server {
         add_header Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept, Tus-Resumable, Upload-Offset, Upload-Metadata";
 
         include snippets/fastcgi-php.conf;
-        fastcgi_pass unix:\${PHP_FPM_SOCK};
+        fastcgi_pass unix:${PHP_FPM_SOCK};
         fastcgi_param SCRIPT_FILENAME \$document_root/pages/upload_batch.php;
         fastcgi_param PATH_INFO \$uri;
         include fastcgi_params;
@@ -68,7 +68,7 @@ server {
 
         location ~ \.php$ {
             include snippets/fastcgi-php.conf;
-            fastcgi_pass unix:\${PHP_FPM_SOCK};
+            fastcgi_pass unix:${PHP_FPM_SOCK};
             fastcgi_param SCRIPT_FILENAME \$request_filename;
             include fastcgi_params;
 
@@ -91,7 +91,7 @@ server {
         # Pass additional path info to PHP
         location ~ ^/plugins/simplesaml/lib/public/module\.php(/.*)?$ {
             include snippets/fastcgi-php.conf;
-            fastcgi_pass unix:\${PHP_FPM_SOCK};
+            fastcgi_pass unix:${PHP_FPM_SOCK};
             fastcgi_param SCRIPT_FILENAME /var/www/resourcespace/plugins/simplesaml/lib/public/module.php;
             fastcgi_param PATH_INFO \$1;
             include fastcgi_params;
@@ -116,7 +116,7 @@ server {
     # PHP processing
     location ~ \.php$ {
         include snippets/fastcgi-php.conf;
-        fastcgi_pass unix:\${PHP_FPM_SOCK};
+        fastcgi_pass unix:${PHP_FPM_SOCK};
         fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name;
         include fastcgi_params;
         fastcgi_read_timeout 1200;
