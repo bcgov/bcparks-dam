@@ -84,7 +84,7 @@ data "template_file" "userdata_script" {
   vars = {
     git_url                   = var.git_url
     target_env                = var.target_env
-    domain_name               = var.domain_name
+    domain_name               = length(var.domain_name) > 0 ? var.domain_name : local.domain_name
     licence_plate             = var.licence_plate
     branch_name               = var.branch_name
     aws_region                = var.aws_region
