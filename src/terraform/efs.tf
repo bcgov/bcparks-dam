@@ -4,6 +4,10 @@ resource "aws_efs_file_system" "efs_filestore" {
   performance_mode                = "generalPurpose"
   throughput_mode                 = "bursting"
 
+  lifecycle {
+    prevent_destroy = true
+  }
+
   tags = merge(
     {
         Name        = "ResourceSpace filestore"
