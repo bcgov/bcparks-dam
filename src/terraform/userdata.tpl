@@ -170,8 +170,8 @@ sudo cat bcparks-dam/src/resourcespace/files/simplesaml-metadata-4.php | tee -a 
 # copy the customized config.php file to overwrite the resourcespace config
 cd /var/www/resourcespace/include
 sudo cp /tmp/bcparks-dam/src/resourcespace/files/config.php .
-# Set the baseurl to the custom domain
-sudo sed -i "s/\$baseurl = '';/\$baseurl = 'https:\/\/${custom_domain}\/';/g" config.php
+# Set the baseurl to the custom domain (no trailing slash - ResourceSpace requirement)
+sudo sed -i "s/\$baseurl = '';/\$baseurl = 'https:\/\/${custom_domain}';/g" config.php
 sudo chown www-data:www-data config.php
 sudo chmod 664 config.php
 
