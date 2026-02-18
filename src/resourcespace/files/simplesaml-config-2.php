@@ -10,7 +10,7 @@
     'admin.checkforupdates' => true,
 
     'trusted.url.domains' => [],
-    'trusted.url.regex' => '#^https://dev-images\.bcparks\.ca(/|$)#',
+    'trusted.url.regex' => '',
     'enable.http_post' => true,
 
     'debug' => [

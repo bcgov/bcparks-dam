@@ -14,7 +14,7 @@ map \$http_cloudfront_forwarded_proto \$rs_proto {
     http    http;
 }
 server {
-    set \$public_host "dev-images.bcparks.ca";
+    set \$public_host "${CUSTOM_DOMAIN}";
     set \$public_proto "https";
     set \$public_port 443;
 

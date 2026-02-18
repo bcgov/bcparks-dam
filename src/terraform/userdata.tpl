@@ -74,7 +74,7 @@ sudo chmod -R 755 /var/www/resourcespace
 echo '### Configuring Nginx ###'
 sudo cp /tmp/bcparks-dam/src/resourcespace/files/configure-nginx.sh /tmp/
 sudo chmod +x /tmp/configure-nginx.sh
-sudo /tmp/configure-nginx.sh
+CUSTOM_DOMAIN=${custom_domain} sudo /tmp/configure-nginx.sh
 #sudo rm /tmp/configure-nginx.sh
 
 echo '### Installing nfs-common for EFS support ###'
@@ -101,8 +101,8 @@ fi
 
 # Fix EFS ownership after mounting
 echo '### Fixing EFS ownership ###'
-sudo chown -R www-data:www-data /var/www/resourcespace/filestore
-sudo chmod -R 775 /var/www/resourcespace/filestore
+#sudo chown -R www-data:www-data /var/www/resourcespace/filestore
+#sudo chmod -R 775 /var/www/resourcespace/filestore
 
 # MOUNT THE S3 BUCKET
 # The S3 bucket /mnt/s3-backup is used for backups and file transfers.
@@ -142,7 +142,7 @@ tee -a bcparks-dam/src/resourcespace/files/config.php << END
     'database.username' => '${saml_database_username}',
     'database.password' => '${saml_database_password}',
 END
-sudo cat bcparks-dam/src/resourcespace/files/simplesaml-config-2.php | tee -a bcparks-dam/src/resourcespace/files/config.php
+sudo sed "s/'trusted\.url\.domains' => \[\],/'trusted.url.domains' => ['${custom_domain}'],/g" bcparks-dam/src/resourcespace/files/simplesaml-config-2.php | tee -a bcparks-dam/src/resourcespace/files/config.php
 sudo cat bcparks-dam/src/resourcespace/files/simplesaml-authsources-1.php | tee -a bcparks-dam/src/resourcespace/files/config.php
 tee -a bcparks-dam/src/resourcespace/files/config.php << END
         'entityID' => '${sp_entity_id}',
@@ -170,6 +170,8 @@ sudo cat bcparks-dam/src/resourcespace/files/simplesaml-metadata-4.php | tee -a 
 # copy the customized config.php file to overwrite the resourcespace config
 cd /var/www/resourcespace/include
 sudo cp /tmp/bcparks-dam/src/resourcespace/files/config.php .
+# Set the baseurl to the custom domain
+sudo sed -i "s/\$baseurl = '';/\$baseurl = 'https:\/\/${custom_domain}\/';/g" config.php
 sudo chown www-data:www-data config.php
 sudo chmod 664 config.php
 
