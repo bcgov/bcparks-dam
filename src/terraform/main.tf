@@ -85,6 +85,7 @@ data "template_file" "userdata_script" {
     git_url                   = var.git_url
     target_env                = var.target_env
     domain_name               = length(var.domain_name) > 0 ? var.domain_name : local.domain_name
+    custom_domain             = local.effective_custom_domain
     licence_plate             = var.licence_plate
     branch_name               = var.branch_name
     aws_region                = var.aws_region
@@ -123,7 +124,7 @@ module "asg" {
   launch_template_description = "Launch template for BCParks DAM"
   
   image_id                    = var.image_id
-  instance_type               = "t3a.large"
+  instance_type               = lookup(var.instance_type_by_env, var.target_env, "t3a.large")
   
   security_groups             = [local.network_resources.aws_security_groups.web.id]
   iam_instance_profile_arn    = aws_iam_instance_profile.ec2_profile.arn

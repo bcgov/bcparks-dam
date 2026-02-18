@@ -14,6 +14,16 @@ variable "image_id" {
 #previous: ami-0614020a2c066706c (Debian 12)
 #previous: ami-0adad14dcb2ca073f
 
+variable "instance_type_by_env" {
+  description = "EC2 instance type per environment"
+  type        = map(string)
+  default = {
+    dev  = "t3a.small"
+    test = "t3a.small"
+    prod = "t3a.large"
+  }
+}
+
 variable "target_env" {
   description = "AWS workload account env (e.g. dev, test, prod, sandbox, unclass)"
 }
