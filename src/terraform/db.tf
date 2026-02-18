@@ -7,6 +7,20 @@ resource "aws_db_subnet_group" "data_subnet" {
   tags = var.common_tags
 }
 
+resource "aws_rds_cluster_parameter_group" "mysql" {
+  name        = "bcparks-dam-mysql-cluster-params"
+  family      = "aurora-mysql8.0"
+  description = "BCParks DAM Aurora MySQL cluster parameters"
+
+  parameter {
+    name         = "time_zone"
+    value        = "America/Vancouver"
+    apply_method = "pending-reboot"
+  }
+
+  tags = var.common_tags
+}
+
 resource "aws_rds_cluster" "mysql" {
   cluster_identifier      = "bcparks-dam-mysql-cluster"
   engine                  = "aurora-mysql"
@@ -19,6 +33,7 @@ resource "aws_rds_cluster" "mysql" {
   database_name           = "resourcespace"
   master_username         = local.secrets.mysql_username
   master_password         = local.secrets.mysql_password
+  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.mysql.name
   backup_retention_period = 5
   preferred_backup_window = "07:00-09:00"
   db_subnet_group_name    = aws_db_subnet_group.data_subnet.name
