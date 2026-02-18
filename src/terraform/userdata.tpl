@@ -74,7 +74,7 @@ sudo chmod -R 755 /var/www/resourcespace
 echo '### Configuring Nginx ###'
 sudo cp /tmp/bcparks-dam/src/resourcespace/files/configure-nginx.sh /tmp/
 sudo chmod +x /tmp/configure-nginx.sh
-CUSTOM_DOMAIN=${custom_domain} sudo /tmp/configure-nginx.sh
+sudo env CUSTOM_DOMAIN=${custom_domain} /tmp/configure-nginx.sh
 #sudo rm /tmp/configure-nginx.sh
 
 echo '### Installing nfs-common for EFS support ###'
