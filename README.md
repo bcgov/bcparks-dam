@@ -13,9 +13,33 @@ Terraform code is heavily based on the *[startup-sample-project-aws-drupal-conta
 
 ## Updating dev/test/prod
 
+### Local environment (.env)
+
+Create a local .env file at the repo root and set the licence plate used by Terragrunt:
+
+```
+cp .env.example .env
+```
+
+Edit .env and set:
+
+```
+licenceplate=YOUR_LICENCE_PLATE
+```
+
 * Connect to the BC Government AWS login application and get your credentials to paste into a terminal
 * `cd src/terraform/terragrunt/<ENVIRONMENT>`
 * `terragrunt apply`
+
+Or use the helper script (loads .env automatically):
+
+```
+# PowerShell
+./scripts/run-terragrunt.ps1 -Environment dev
+
+# Bash
+./scripts/run-terragrunt.sh dev
+```
 
 ## Tearing down an environment
 
