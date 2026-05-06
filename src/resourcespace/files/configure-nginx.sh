@@ -7,7 +7,17 @@ PHP_FPM_SOCK="/run/php/php${PHP_VERSION}-fpm.sock"
 
 sudo rm /etc/nginx/sites-enabled/default
 cat <<EOF | sudo tee /etc/nginx/sites-available/resourcespace
+# Public hostname as seen by users (CloudFront alias)
+map \$http_cloudfront_forwarded_proto \$rs_proto {
+    default \$http_x_forwarded_proto;  # fallback if ALB sets it
+    https   https;
+    http    http;
+}
 server {
+    set \$public_host "${CUSTOM_DOMAIN}";
+    set \$public_proto "https";
+    set \$public_port 443;
+
     listen 80 default_server;
     server_name _;
 
@@ -66,8 +76,16 @@ server {
             fastcgi_connect_timeout 1200;
             fastcgi_send_timeout 1200;
 
-            # Pass X-Forwarded-Proto to PHP
-            fastcgi_param HTTPS \$http_x_forwarded_proto;
+            # Force PHP to see the public URL (because CloudFront can't forward Host)
+            fastcgi_param HTTP_HOST              \$public_host;
+            fastcgi_param SERVER_NAME            \$public_host;
+            fastcgi_param SERVER_PORT            \$public_port;
+            fastcgi_param HTTPS                  "on";
+
+            fastcgi_param HTTP_X_FORWARDED_PROTO \$public_proto;
+            fastcgi_param HTTP_X_FORWARDED_HOST  \$public_host;
+            fastcgi_param HTTP_X_FORWARDED_PORT  \$public_port;
+            fastcgi_param REQUEST_SCHEME \$public_proto;
         }
 
         # Pass additional path info to PHP
@@ -78,8 +96,20 @@ server {
             fastcgi_param PATH_INFO \$1;
             include fastcgi_params;
 
-            # Pass X-Forwarded-Proto to PHP
-            fastcgi_param HTTPS \$http_x_forwarded_proto;
+            fastcgi_read_timeout 1200;
+            fastcgi_connect_timeout 1200;
+            fastcgi_send_timeout 1200;
+
+            # --- Force public URL identity for SimpleSAML ---
+            fastcgi_param HTTP_HOST              \$public_host;
+            fastcgi_param SERVER_NAME            \$public_host;
+            fastcgi_param SERVER_PORT            \$public_port;
+            fastcgi_param HTTPS                  "on";
+
+            fastcgi_param HTTP_X_FORWARDED_HOST  \$public_host;
+            fastcgi_param HTTP_X_FORWARDED_PROTO \$public_proto;
+            fastcgi_param HTTP_X_FORWARDED_PORT  \$public_port;
+            fastcgi_param REQUEST_SCHEME \$public_proto;
         }
     }
 
@@ -93,10 +123,15 @@ server {
         fastcgi_connect_timeout 1200;
         fastcgi_send_timeout 1200;
 
-        # Pass X-Forwarded headers from ALB to PHP
-        fastcgi_param HTTP_X_FORWARDED_PROTO \$http_x_forwarded_proto;
-        fastcgi_param HTTP_X_FORWARDED_FOR \$proxy_add_x_forwarded_for;
-        fastcgi_param HTTP_X_FORWARDED_HOST \$http_x_forwarded_host;
+        # Force PHP to see the public URL everywhere (workaround for non-forwarded Host)
+        fastcgi_param HTTP_HOST              \$public_host;
+        fastcgi_param SERVER_NAME            \$public_host;
+        fastcgi_param SERVER_PORT            \$public_port;
+        fastcgi_param HTTPS                  "on";
+
+        fastcgi_param HTTP_X_FORWARDED_HOST  \$public_host;
+        fastcgi_param HTTP_X_FORWARDED_PROTO \$public_proto;
+        fastcgi_param HTTP_X_FORWARDED_PORT  \$public_port;
     }
 
     # Restrict access to hidden files

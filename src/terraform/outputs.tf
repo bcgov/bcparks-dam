@@ -18,7 +18,12 @@ output "cloudfront_distribution_id" {
   value       = length(aws_cloudfront_distribution.main) > 0 ? aws_cloudfront_distribution.main[0].id : ""
 }
 
+output "cloudfront_origin_domain" {
+  description = "Origin hostname used by CloudFront"
+  value       = local.cloudfront_origin_domain
+}
+
 output "url" {
   description = "Base URL for Resourcespace"
-  value       = var.enable_cloudfront && local.effective_custom_domain != "" ? "https://${local.effective_custom_domain}/" : "https://${var.service_names[0]}.${var.licence_plate}-${var.target_env}.stratus.cloud.gov.bc.ca/"
+  value       = var.enable_cloudfront && local.effective_custom_domain != "" ? "https://${local.effective_custom_domain}/" : "https://${local.cloudfront_origin_domain}/"
 }

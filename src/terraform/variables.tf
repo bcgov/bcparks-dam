@@ -14,6 +14,16 @@ variable "image_id" {
 #previous: ami-0614020a2c066706c (Debian 12)
 #previous: ami-0adad14dcb2ca073f
 
+variable "instance_type_by_env" {
+  description = "EC2 instance type per environment"
+  type        = map(string)
+  default = {
+    dev  = "t3a.small"
+    test = "t3a.small"
+    prod = "t3a.large"
+  }
+}
+
 variable "target_env" {
   description = "AWS workload account env (e.g. dev, test, prod, sandbox, unclass)"
 }
@@ -77,9 +87,15 @@ variable "alb_name" {
 }
 
 variable "domain_name" {
-  description = "The domain name for the application"
-  default     = "dam.e0806e-dev.internal.stratus.cloud.gov.bc.ca"
+  description = "Internal ALB domain name override (leave empty to use the computed internal domain)"
+  default     = ""
   type        = string
+}
+
+variable "cloudfront_origin_domain" {
+  description = "Public origin hostname for CloudFront (leave empty to use the computed public ALB domain)"
+  type        = string
+  default     = ""
 }
 
 variable "custom_domain_name" {
@@ -106,6 +122,7 @@ variable "licence_plate" {
 
 locals {
   effective_custom_domain = lookup(var.custom_domain_name, var.target_env, "")
+  cloudfront_origin_domain = var.cloudfront_origin_domain != "" ? var.cloudfront_origin_domain : "${var.service_names[0]}.${var.licence_plate}-${var.target_env}.stratus.cloud.gov.bc.ca"
 }
 
 variable "web_security_group_name" {

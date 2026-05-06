@@ -15,7 +15,7 @@ terraform {
     bucket          = "${local.app_name}-terraform-remote-state-${local.target_env}"
     key             = "remote.tfstate-admin"                # Path and name of the state file within the bucket
     region          = "ca-central-1"                        # AWS region where the bucket is located
-    use_lockfile    = true
+    use_lockfile    = true                                  # Use S3 backend state lock
     encrypt         = true                                  # Enable encryption for the state file
   }
 }

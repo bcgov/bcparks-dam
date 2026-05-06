@@ -10,8 +10,8 @@
     'admin.checkforupdates' => true,
 
     'trusted.url.domains' => [],
-    'trusted.url.regex' => false,
-    'enable.http_post' => false,
+    'trusted.url.regex' => '',
+    'enable.http_post' => true,
 
     'debug' => [
         'saml' => true,
@@ -153,7 +153,7 @@
      * Example:
      *  'session.cookie.domain' => '.example.org',
      */
-    'session.cookie.domain' => '.gov.bc.ca',
+    'session.cookie.domain' => '.bcparks.ca',
 
     /*
      * Set the secure flag in the cookie
