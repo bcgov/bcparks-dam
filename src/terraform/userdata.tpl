@@ -66,7 +66,7 @@ sudo git clone ${git_url} /tmp/bcparks-dam
 # Copy ResourceSpace files
 echo '### Copying ResourceSpace files ###'
 sudo mkdir -p /var/www/resourcespace
-sudo cp -R /tmp/bcparks-dam/src/resourcespace/releases/10.7-r28265/* /var/www/resourcespace
+sudo cp -R /tmp/bcparks-dam/src/resourcespace/releases/10.7-r28789/* /var/www/resourcespace
 sudo chown -R www-data:www-data /var/www/resourcespace
 sudo chmod -R 755 /var/www/resourcespace
 
@@ -271,12 +271,18 @@ sudo systemctl start clamav-daemon
 
 echo '### Setting up cronjob for offline jobs ###'
 sudo apt-get install -y cron
-(
-  crontab -l -u www-data 2>/dev/null
-  echo "*/4 * * * * cd /var/www/resourcespace/pages/tools && /usr/bin/php offline_jobs.php --max-jobs 1"
-  echo "*/10 * * * * cd /var/www/resourcespace/pages/tools && /usr/bin/php staticsync.php >> /var/www/resourcespace/filestore/staticsync.log 2>&1"
-  echo "0 10 * * * rm -r /var/www/resourcespace/filestore/tmp/*"
-) | sudo crontab -u www-data -
+sudo tee /etc/cron.d/resourcespace >/dev/null << 'EOF'
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+*/4 * * * * www-data cd /var/www/resourcespace/pages/tools && /usr/bin/php offline_jobs.php --max-jobs 1
+*/10 * * * * www-data cd /var/www/resourcespace/pages/tools && /usr/bin/php staticsync.php >> /var/www/resourcespace/filestore/staticsync.log 2>&1
+0 10 * * * root rm -rf /var/www/resourcespace/filestore/tmp/*
+EOF
+sudo chown root:root /etc/cron.d/resourcespace
+sudo chmod 0644 /etc/cron.d/resourcespace
+sudo systemctl enable cron
+sudo systemctl restart cron
 
 # Install SQLite
 echo '### Installing sqlite3 ###'
