@@ -162,8 +162,9 @@
      * through https. If the user can access the service through
      * both http and https, this must be set to FALSE
      */
-    'session.cookie.secure' => false,
-    'session.cookie.samesite' => 'Lax',
+    # SAML POST responses are cross-site requests; Lax can drop session cookies and cause login loops.
+    'session.cookie.secure' => true,
+    'session.cookie.samesite' => 'None',
 
     /*
      * Options to override the default settings for php sessions
@@ -648,8 +649,11 @@
      *
      * (This option replaces the old 'session.handler'-option.)
     */
-    #'store.type'                    => 'phpsession',
-    'store.type'                    => 'sql',
+    # Using phpsession instead of sql/sqlite: the SQL store used a SQLite DB in
+    # filestore/tmp/ which is wiped daily by the ResourceSpace cron job, destroying
+    # all in-flight SAML state and causing "Could not load state: NOSTATE" errors.
+    #'store.type'                    => 'sql',
+    'store.type'                    => 'phpsession',
 
     /*
      * The DSN the sql datastore should connect to.
@@ -658,7 +662,7 @@
      * syntaxes.
     */
     #'store.sql.dsn'                 => 'sqlite:/path/to/sqlitedatabase.sq3',
-    'store.sql.dsn'                 => 'sqlite:/var/www/resourcespace/filestore/tmp/simplesamldb.sq3',
+    #'store.sql.dsn'                 => 'sqlite:/var/www/resourcespace/filestore/tmp/simplesamldb.sq3',
 
     /*
      * The username and password to use when connecting to the database.

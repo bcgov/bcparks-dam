@@ -59,14 +59,27 @@ fi
 echo '### Cloning ResourceSpace repository ###'
 wait_for_dpkg_lock
 sudo apt-get install -y git
-sudo mkdir /tmp/bcparks-dam
-sudo git clone ${git_url} /tmp/bcparks-dam
-#sudo git clone -b generic-ami ${git_url} /tmp/bcparks-dam
+echo '### Disk usage before clone ###'
+df -h
+df -i
+
+sudo rm -rf /tmp/bcparks-dam
+sudo mkdir -p /tmp/bcparks-dam
+
+# Clone only what we need to reduce disk usage during bootstrap.
+if ! sudo git clone --branch ${branch_name} --depth 1 --filter=blob:none --sparse ${git_url} /tmp/bcparks-dam; then
+  echo 'ERROR: git clone failed. Disk diagnostics:'
+  df -h
+  df -i
+  exit 1
+fi
+
+sudo git -C /tmp/bcparks-dam sparse-checkout set src/resourcespace/releases/${resourcespace_release_version} src/resourcespace/files src/resourcespace/tools
 
 # Copy ResourceSpace files
 echo '### Copying ResourceSpace files ###'
 sudo mkdir -p /var/www/resourcespace
-sudo cp -R /tmp/bcparks-dam/src/resourcespace/releases/10.7-r28789/* /var/www/resourcespace
+sudo cp -R /tmp/bcparks-dam/src/resourcespace/releases/${resourcespace_release_version}/* /var/www/resourcespace
 sudo chown -R www-data:www-data /var/www/resourcespace
 sudo chmod -R 755 /var/www/resourcespace
 

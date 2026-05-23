@@ -33,6 +33,12 @@ variable "branch_name" {
   type        = string
 }
 
+variable "resourcespace_release_version" {
+  description = "ResourceSpace release directory to deploy"
+  type        = string
+  default     = "10.7-r28789"
+}
+
 variable "git_url" {
   description = "url of the git repo to clone the ansible files"
   default     = "https://github.com/bcgov/bcparks-dam.git"

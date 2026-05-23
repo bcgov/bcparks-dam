@@ -88,6 +88,7 @@ data "template_file" "userdata_script" {
     custom_domain             = local.effective_custom_domain
     licence_plate             = var.licence_plate
     branch_name               = var.branch_name
+    resourcespace_release_version = var.resourcespace_release_version
     aws_region                = var.aws_region
     rds_endpoint              = aws_rds_cluster.mysql.endpoint
     efs_dns_name              = aws_efs_file_system.efs_filestore.dns_name
@@ -137,7 +138,7 @@ module "asg" {
     {
       device_name = "/dev/xvda"
       ebs = {
-        volume_size = 10
+        volume_size = 30
         volume_type = "gp2"
         delete_on_termination = true
       }
