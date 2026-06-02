@@ -1,5 +1,5 @@
 #!/bin/bash
-# This script installs the APCu extension for PHP 8.2 on a Debian-based system.
+# This script installs the APCu extension for PHP 8.4 on a Debian-based system.
 
 # Install APC User Cache (APCu)
 # https://pecl.php.net/package/APCu
@@ -14,9 +14,9 @@ phpize
 make
 sudo make install
 # Enable the APCu extension
-echo "extension=apcu.so" | sudo tee /etc/php/8.2/mods-available/apcu.ini
+echo "extension=apcu.so" | sudo tee /etc/php/8.4/mods-available/apcu.ini
 sudo phpenmod apcu
-sudo systemctl restart php8.2-fpm
+sudo systemctl restart php8.4-fpm
 sudo systemctl reload nginx
 cd /tmp
 sudo rm -rf apcu-5.1.23 apcu-5.1.23.tgz
