@@ -5,9 +5,9 @@
 # https://pecl.php.net/package/APCu
 sudo apt-get -y install build-essential autoconf php-dev php-pear
 cd /tmp
-sudo wget https://pecl.php.net/get/apcu-5.1.23.tgz  # Replace with the latest compatible version
-sudo tar -xf apcu-5.1.23.tgz
-cd apcu-5.1.23
+sudo wget https://pecl.php.net/get/apcu-5.1.28.tgz  # Replace with the latest compatible version
+sudo tar -xf apcu-5.1.28.tgz
+cd apcu-5.1.28
 # Build and install APCu
 phpize
 ./configure
@@ -19,5 +19,5 @@ sudo phpenmod apcu
 sudo systemctl restart php8.4-fpm
 sudo systemctl reload nginx
 cd /tmp
-sudo rm -rf apcu-5.1.23 apcu-5.1.23.tgz
+sudo rm -rf apcu-5.1.28 apcu-5.1.28.tgz
 echo '### APCu installation completed ###'
