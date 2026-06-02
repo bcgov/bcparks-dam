@@ -24,7 +24,7 @@ resource "aws_rds_cluster_parameter_group" "mysql" {
 resource "aws_rds_cluster" "mysql" {
   cluster_identifier      = "bcparks-dam-mysql-cluster"
   engine                  = "aurora-mysql"
-  engine_version          = "8.0.mysql_aurora.3.08.2"
+  engine_version          = "8.0.mysql_aurora.3.10.3"
   serverlessv2_scaling_configuration {
     min_capacity = 2
     max_capacity = 16
