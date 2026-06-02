@@ -23,21 +23,26 @@ wait_for_dpkg_lock() {
   done
 }
 
+# Always run apt-get non-interactively in bootstrap scripts.
+apt_get_noninteractive() {
+  sudo DEBIAN_FRONTEND=noninteractive apt-get "$@"
+}
+
 # INSTALL NGINX AND PHP
 echo '### Installing Nginx and php'
 echo '### Updating package lists ###'
 wait_for_dpkg_lock
-sudo apt-get update -y
+apt_get_noninteractive update -y
 
 # Install Nginx
 echo '### Installing Nginx ###'
 wait_for_dpkg_lock
-sudo apt-get install -y nginx
+apt_get_noninteractive install -y nginx
 
 # Install PHP and required extensions
 echo '### Installing PHP and extensions ###'
 wait_for_dpkg_lock
-sudo apt-get install -y php-fpm php-mysqli php-curl php-dom php-gd php-intl php-mbstring php-xml php-zip php-ldap php-json php-apcu php-cli unzip
+apt_get_noninteractive install -y php-fpm php-mysqli php-curl php-dom php-gd php-intl php-mbstring php-xml php-zip php-ldap php-json php-apcu php-cli unzip
 
 # Start and enable Nginx and PHP-FPM services
 echo '### Starting services ###'
@@ -58,7 +63,7 @@ fi
 # INSTALL ResourceSpace
 echo '### Cloning ResourceSpace repository ###'
 wait_for_dpkg_lock
-sudo apt-get install -y git
+apt_get_noninteractive install -y git
 echo '### Disk usage before clone ###'
 df -h
 df -i
@@ -92,9 +97,9 @@ sudo env CUSTOM_DOMAIN=${custom_domain} /tmp/configure-nginx.sh
 
 echo '### Installing nfs-common for EFS support ###'
 wait_for_dpkg_lock
-sudo apt-get update
+apt_get_noninteractive update
 wait_for_dpkg_lock
-sudo apt-get install -y nfs-common
+apt_get_noninteractive install -y nfs-common
 
 # MOUNT THE EFS PERSISTENT FILESYSTEM
 # This volume contains the resourcespace filestore. We tried using S3, but it was slow and unreliable.
@@ -120,7 +125,7 @@ echo '### Fixing EFS ownership ###'
 # MOUNT THE S3 BUCKET
 # The S3 bucket /mnt/s3-backup is used for backups and file transfers.
 echo '### Mounting the S3 bucket ###'
-sudo apt-get -y install s3fs
+apt_get_noninteractive install -y s3fs
 sudo mkdir /mnt/s3-backup
 sudo sed -i 's/^#\s*user_allow_other/user_allow_other/' /etc/fuse.conf
 sudo s3fs bcparks-dam-backup-${target_env} /mnt/s3-backup -o iam_role=BCParks-DAM-EC2-Role -o use_cache=/tmp -o allow_other -o uid=1001 -o gid=1001 -o mp_umask=022 -o multireq_max=5 -o use_path_request_style -o url=https://s3-${aws_region}.amazonaws.com -o endpoint=${aws_region}
@@ -259,7 +264,7 @@ if [ -f "$PHP_POOL" ]; then
 fi
 
 # Install ImageMagick
-sudo apt-get install -y imagemagick php-imagick
+apt_get_noninteractive install -y imagemagick php-imagick
 
 # Update ImageMagick policy if it exists
 MAGICK_POLICY="/etc/ImageMagick-7/policy.xml"
@@ -271,19 +276,19 @@ if [ -f "$MAGICK_POLICY" ]; then
   sudo sed -i 's|<!-- <policy domain="resource" name="thread" value="[^"]*"/> -->|<policy domain="resource" name="thread" value="2"/>|' "$MAGICK_POLICY"
 fi
 
-sudo apt-get install -y ghostscript
-sudo apt-get install -y ffmpeg
-sudo apt-get install -y libimage-exiftool-perl
-sudo apt install -y mariadb-client
-sudo apt install -y net-tools
-sudo apt install -y clamav clamav-daemon
+apt_get_noninteractive install -y ghostscript
+apt_get_noninteractive install -y ffmpeg
+apt_get_noninteractive install -y libimage-exiftool-perl
+apt_get_noninteractive install -y mariadb-client
+apt_get_noninteractive install -y net-tools
+apt_get_noninteractive install -y clamav clamav-daemon
 sudo systemctl enable clamav-freshclam
 sudo systemctl enable clamav-daemon
 sudo systemctl start clamav-freshclam
 sudo systemctl start clamav-daemon
 
 echo '### Setting up cronjob for offline jobs ###'
-sudo apt-get install -y cron
+apt_get_noninteractive install -y cron
 sudo tee /etc/cron.d/resourcespace >/dev/null << 'EOF'
 SHELL=/bin/bash
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
@@ -299,7 +304,7 @@ sudo systemctl restart cron
 
 # Install SQLite
 echo '### Installing sqlite3 ###'
-sudo apt-get install -y php-sqlite3
+apt_get_noninteractive install -y php-sqlite3
 
 # Install APC User Cache (APCu)
 echo '### Installing APCu ###'
@@ -309,7 +314,7 @@ sudo /tmp/install-apcu.sh
 #sudo rm /tmp/install-apcu.sh
 
 # Install performance monitor utility
-sudo apt-get install -y htop
+apt_get_noninteractive install -y htop
 
 # Update the slideshow directory in config.php
 sudo cp /tmp/bcparks-dam/src/resourcespace/files/update-slideshow.sh /tmp/
