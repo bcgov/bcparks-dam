@@ -116,6 +116,12 @@ $case_insensitive_username = true;
 $user_pref_user_management_notifications = true; # Send notifications to users regarding events such as account changes or other administrative updates that affect user management
 $check_upgrade_available = false; # Check for available ResourceSpace upgrades
 
+# SimpleSAML attribute mapping overrides for IDIR assertions.
+# These values override plugin defaults (uid/cn/mail).
+$simplesaml_username_attribute = 'idir_username';
+$simplesaml_fullname_attribute = 'display_name';
+$simplesaml_email_attribute = 'email';
+
 # Search
 $stemming = true; # Reduce words in search queries and indexed content to their basic root form. For example, 'running', 'runs', and 'ran' might all be reduced to 'run'
 $daterange_search = true; # Enable searching by a range of dates
