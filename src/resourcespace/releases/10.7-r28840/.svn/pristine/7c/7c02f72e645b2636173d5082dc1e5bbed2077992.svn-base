@@ -1,9 +1,0 @@
-consentadmin-main:
-    path:       /
-    defaults:   { _controller: 'SimpleSAML\Module\consentAdmin\Controller\ConsentAdmin::main' }
-    methods: [GET]
-
-consentadmin-logout:
-    path:       /logout
-    defaults:   { _controller: 'SimpleSAML\Module\consentAdmin\Controller\ConsentAdmin::logout' }
-    methods: [GET]
