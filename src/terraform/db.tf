@@ -26,7 +26,7 @@ resource "aws_rds_cluster" "mysql" {
   engine                  = "aurora-mysql"
   engine_version          = "8.0.mysql_aurora.3.10.3"
   serverlessv2_scaling_configuration {
-    min_capacity = 2
+    min_capacity = 0.5
     max_capacity = 16
   }
   

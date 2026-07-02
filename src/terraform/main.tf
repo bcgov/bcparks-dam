@@ -1,5 +1,5 @@
 # main.tf
-# update 20260126
+# update 20260602
 
 provider "aws" {
   region = var.aws_region
@@ -138,7 +138,7 @@ module "asg" {
     {
       device_name = "/dev/xvda"
       ebs = {
-        volume_size = 30
+        volume_size = 10
         volume_type = "gp2"
         delete_on_termination = true
       }
