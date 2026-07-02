@@ -19,7 +19,7 @@ $version_file = dirname(__FILE__) . '/../version.txt';
 if (file_exists($version_file)) {
     $productversion = trim(file_get_contents($version_file));
 } else {
-    $productversion = '10.7 r28789'; # fallback if file missing
+    $productversion = '11.0'; # fallback if file missing
 }
 
 # Paths
@@ -63,17 +63,19 @@ $staticsync_filepath_to_field = 148;
 $autorotate_ingest = true;
 $offline_job_queue = true; # Use offline job queue to generate previews in the background for improved performance
 $resource_type_extension_mapping = array (
-    #27 => array('pdf', 'doc', 'docx', 'epub', 'ppt', 'pptx', 'odt', 'ods', 'tpl', 'ott', 'rtf', 'txt', 'xml'), # RST Map in PROD
+    #PROD
+    #27 => array('pdf', 'doc', 'docx', 'epub', 'ppt', 'pptx', 'odt', 'ods', 'tpl', 'ott', 'rtf', 'txt', 'xml'), # RST Map
     3 => array('mov', '33gp', 'avi', 'mpg', 'mp4', 'flv', 'wmv', 'webm'), # Video in PROD, DEV
-    99 => array('flac', 'mp3', '3ga', 'cda', 'rec', 'aa', 'au', 'mp4a', 'wav', 'aac', 'ogg', 'weba'), # Audio in PROD
-    26 => array('webp') # RST Recreation Resource in PROD
+    99 => array('flac', 'mp3', '3ga', 'cda', 'rec', 'aa', 'au', 'mp4a', 'wav', 'aac', 'ogg', 'weba'), # Audio
+    26 => array('webp'), # RST Recreation Resource
+    29 => array('svg', 'eps', 'ait', 'png') # Pictogram resource type
 
-    #24 => array('pdf', 'doc', 'docx', 'epub', 'ppt', 'pptx', 'odt', 'ods', 'tpl', 'ott', 'rtf', 'txt', 'xml'), # RST Map in TEST
-    #23 => array('webp') # RST Photo in TEST
+    #TEST
+    #24 => array('pdf', 'doc', 'docx', 'epub', 'ppt', 'pptx', 'odt', 'ods', 'tpl', 'ott', 'rtf', 'txt', 'xml'), # RST Map
+    #23 => array('webp') # RST Photo
 );
 unset($resource_type_extension_mapping[2]); # This default resource type was removed
 unset($resource_type_extension_mapping[4]); # This default resource type was removed
-
 
 # Collections, downloads, and comments
 $collection_download = true;
@@ -104,6 +106,7 @@ $home_slideshow_height = 1080;
 $xlthumbs = true; # Generate and display extra-large thumbnails
 $image_preview_zoom = true; # Enable the image preview zoom feature, which uses OpenSeadragon
 $preview_tiles = true; # Generate extra preview tiles for use with image preview zoom
+$thumbs_display_fields = array(8,51);
 
 # Themes and user interface
 $themes_simple_view = true;
