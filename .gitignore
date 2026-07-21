@@ -13,7 +13,7 @@ yarn-error.log*
 .idea
 .vscode
 .eslintcache
-log/
+/log
 
 # Sample certificates and keys bundled with the SimpleSAML plugin
 # /plugins/simplesaml/lib/vendor/simplesamlphp/xml-security/resources/keys/

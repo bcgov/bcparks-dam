@@ -113,6 +113,7 @@ $themes_simple_view = true;
 $themes_show_background_image = true;
 $contact_link = false;
 $use_native_input_for_date_field = true; # Use the browser's native HTML5 date input control instead of a custom date picker
+$user_pref_appearance = "light"; # Default user interface appearance preference (light or dark)
 
 # User management and notifications
 $case_insensitive_username = true;
