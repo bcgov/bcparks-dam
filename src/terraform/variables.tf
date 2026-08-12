@@ -36,7 +36,7 @@ variable "branch_name" {
 variable "resourcespace_release_version" {
   description = "ResourceSpace release directory to deploy"
   type        = string
-  default     = "11.0-r29396"
+  default     = "11.0-r29509"
 }
 
 variable "git_url" {
