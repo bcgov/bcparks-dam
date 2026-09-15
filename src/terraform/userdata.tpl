@@ -289,11 +289,14 @@ sudo systemctl start clamav-daemon
 
 echo '### Setting up cronjob for offline jobs ###'
 apt_get_noninteractive install -y cron
+sudo touch /var/log/resourcespace-offline-jobs.log
+sudo chown www-data:adm /var/log/resourcespace-offline-jobs.log
+sudo chmod 0640 /var/log/resourcespace-offline-jobs.log
 sudo tee /etc/cron.d/resourcespace >/dev/null << 'EOF'
 SHELL=/bin/bash
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
-*/4 * * * * www-data cd /var/www/resourcespace/pages/tools && /usr/bin/php offline_jobs.php --max-jobs 1
+*/4 * * * * www-data cd /var/www/resourcespace/pages/tools && /usr/bin/php offline_jobs.php --max-jobs 1 >> /var/log/resourcespace-offline-jobs.log 2>&1
 */10 * * * * www-data cd /var/www/resourcespace/pages/tools && /usr/bin/php staticsync.php >> /var/www/resourcespace/filestore/staticsync.log 2>&1
 0 10 * * * root rm -rf /var/www/resourcespace/filestore/tmp/*
 EOF
