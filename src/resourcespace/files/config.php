@@ -130,6 +130,8 @@ $simplesaml_email_attribute = 'email';
 $stemming = true; # Reduce words in search queries and indexed content to their basic root form. For example, 'running', 'runs', and 'ran' might all be reduced to 'run'
 $daterange_search = true; # Enable searching by a range of dates
 $search_filter_nodes = true; # Enable hierarchical search using category trees
+$simple_search_date = false;
+$default_res_types = "1";
 
 # TUS protocol parameters for uploads
 $tus_enabled = true; # Enable TUS protocol
