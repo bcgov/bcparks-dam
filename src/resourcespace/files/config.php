@@ -53,6 +53,7 @@ $related_search_show_self = true; # Include the current resource in the related 
 $relate_on_upload = true;
 $relate_on_upload_default = true;
 $file_checksums = true; # Enable file checksum verification on upload
+$upload_concurrent_limit = 1; # Process one upload at a time to limit preview/metadata subprocesses
 
 # Static sync and offline jobs
 $syncdir = '/var/www/resourcespace/filestore/static_sync';
@@ -97,7 +98,24 @@ $ffmpeg_preview_force = true;
 $ffmpeg_preview_extension = 'mp4';
 $ffmpeg_preview_options = '-f mp4 -b:v 1200k -b:a 64k -ac 1 -c:v libx264 -pix_fmt yuv420p -profile:v baseline -level 3 -c:a aac -strict -2';
 $imagemagick_preserve_profiles = true;
-$preview_generate_max_file_size = 3; # Immediately generate previews if the file size is <=3MB
+$preview_generate_max_file_size = 1; # Immediately generate previews if the file size is <=1MB
+$minimal_preview_creation_exclude_extensions = [
+    'jpg',
+    'jpeg',
+    'png',
+    'gif',
+    'webp',
+    'tif',
+    'tiff',
+    'bmp',
+    'svg',
+    'eps',
+    'pdf',
+    'mp4',
+    'mov',
+    'avi',
+    'webm',
+];
 
 # Slideshows and thumbnails/previews
 $slideshow_big = true; # Use the large slideshow layout by default
