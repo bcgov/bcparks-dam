@@ -63,6 +63,7 @@ $staticsync_file_minimum_age = 120;
 $staticsync_filepath_to_field = 148;
 $autorotate_ingest = true;
 $offline_job_queue = true; # Use offline job queue to generate previews in the background for improved performance
+$upload_then_process = true; # Store uploads first, then process metadata and previews through the offline queue
 $resource_type_extension_mapping = array (
     #PROD
     #27 => array('pdf', 'doc', 'docx', 'epub', 'ppt', 'pptx', 'odt', 'ods', 'tpl', 'ott', 'rtf', 'txt', 'xml'), # RST Map
@@ -99,9 +100,8 @@ $ffmpeg_preview_extension = 'mp4';
 $ffmpeg_preview_options = '-f mp4 -b:v 1200k -b:a 64k -ac 1 -c:v libx264 -pix_fmt yuv420p -profile:v baseline -level 3 -c:a aac -strict -2';
 $imagemagick_preserve_profiles = true;
 $preview_generate_max_file_size = 1; # Immediately generate previews if the file size is <=1MB
+$minimal_previews_sizes = array('thm'); #'pre', 'col', 'thm'
 $minimal_preview_creation_exclude_extensions = [
-    'jpg',
-    'jpeg',
     'png',
     'gif',
     'webp',
@@ -116,6 +116,8 @@ $minimal_preview_creation_exclude_extensions = [
     'avi',
     'webm',
 ];
+#    'jpg',
+#    'jpeg',
 
 # Slideshows and thumbnails/previews
 $slideshow_big = true; # Use the large slideshow layout by default
