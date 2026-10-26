@@ -255,11 +255,11 @@ if [ -f "$PHP_INI" ]; then
 fi
 
 if [ -f "$PHP_POOL" ]; then
-  sudo sed -i 's|^[;[:space:]]*pm.max_children\s*=.*|pm.max_children = 10|' "$PHP_POOL"
-  sudo sed -i 's|^[;[:space:]]*pm.start_servers\s*=.*|pm.start_servers = 2|' "$PHP_POOL"
-  sudo sed -i 's|^[;[:space:]]*pm.min_spare_servers\s*=.*|pm.min_spare_servers = 2|' "$PHP_POOL"
-  sudo sed -i 's|^[;[:space:]]*pm.max_spare_servers\s*=.*|pm.max_spare_servers = 4|' "$PHP_POOL"
-  sudo sed -i 's|^[;[:space:]]*pm.max_requests\s*=.*|pm.max_requests = 300|' "$PHP_POOL"
+  sudo sed -i 's|^[;[:space:]]*pm.max_children\s*=.*|pm.max_children = 50|' "$PHP_POOL"
+  sudo sed -i 's|^[;[:space:]]*pm.start_servers\s*=.*|pm.start_servers = 15|' "$PHP_POOL"
+  sudo sed -i 's|^[;[:space:]]*pm.min_spare_servers\s*=.*|pm.min_spare_servers = 10|' "$PHP_POOL"
+  sudo sed -i 's|^[;[:space:]]*pm.max_spare_servers\s*=.*|pm.max_spare_servers = 20|' "$PHP_POOL"
+  sudo sed -i 's|^[;[:space:]]*pm.max_requests\s*=.*|pm.max_requests = 500|' "$PHP_POOL"
   sudo sed -i 's|^[;[:space:]]*request_terminate_timeout\s*=.*|request_terminate_timeout = 1200|' "$PHP_POOL"
 fi
 
@@ -296,7 +296,7 @@ sudo tee /etc/cron.d/resourcespace >/dev/null << 'EOF'
 SHELL=/bin/bash
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
-*/4 * * * * www-data cd /var/www/resourcespace/pages/tools && /usr/bin/php offline_jobs.php --max-jobs 1 >> /var/log/resourcespace-offline-jobs.log 2>&1
+*/4 * * * * www-data cd /var/www/resourcespace/pages/tools && /usr/bin/php offline_jobs.php --max-jobs 10 >> /var/log/resourcespace-offline-jobs.log 2>&1
 */10 * * * * www-data cd /var/www/resourcespace/pages/tools && /usr/bin/php staticsync.php >> /var/www/resourcespace/filestore/staticsync.log 2>&1
 0 10 * * * root rm -rf /var/www/resourcespace/filestore/tmp/*
 EOF
