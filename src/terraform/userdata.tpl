@@ -29,12 +29,12 @@ apt_get_noninteractive() {
 }
 
 # Update to latest Debian 13 (Temporary workaround until updated v13.7 image/AMI is available)
-#echo '### Updating to latest Debian 13 ###'
-#wait_for_dpkg_lock
-#apt_get_noninteractive update
-#apt_get_noninteractive full-upgrade -y
-#apt_get_noninteractive autoremove -y
-#apt_get_noninteractive clean -y
+echo '### Updating to latest Debian 13 ###'
+wait_for_dpkg_lock
+apt_get_noninteractive update
+apt_get_noninteractive full-upgrade -y
+apt_get_noninteractive autoremove -y
+apt_get_noninteractive clean -y
 
 # INSTALL NGINX AND PHP
 echo '### Installing Nginx and php'
