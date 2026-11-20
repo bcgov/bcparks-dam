@@ -22,7 +22,7 @@ variable "instance_type_by_env" {
   type        = map(string)
   default = {
     dev  = "t3a.small"
-    test = "t3a.large"
+    test = "t3a.small"
     prod = "t3a.large"
   }
 }
