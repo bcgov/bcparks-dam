@@ -76,9 +76,9 @@ ensure_email() {
 }
 
 # Dev defaults provided by you:
-#   Export bucket in dev: s3://bcparks-dam-dev-backup/
+#   Export bucket in dev: s3://bcparks-dam-backup-dev/
 default_bucket_for_env() {
-  echo "s3://bcparks-dam-${ENV_NAME}-backup"
+  echo "s3://bcparks-dam-backup-${ENV_NAME}"
 }
 
 ensure_bucket() {
